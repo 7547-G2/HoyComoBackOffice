@@ -42,7 +42,7 @@
     "webpack": "^3.5.1"
   },
   "scripts": {
-    "start": "webpack-dev-server --port 3020 --host 0.0.0.0 ",
+    "start": "webpack-dev-server --port $PORT --host 0.0.0.0 ",
     "start-other": "webpack-dev-server --port",
     "start-dock-dev": "npm install && webpack-dev-server --port 3000 --host 0.0.0.0  --inline --hot"
   },
