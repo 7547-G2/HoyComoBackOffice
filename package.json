@@ -38,7 +38,8 @@
     "redux-persist": "^4.10.1",
     "redux-thunk": "^2.2.0",
     "resolve-url-loader": "^2.2.0",
-    "striptags": "^3.1.1"
+    "striptags": "^3.1.1",
+    "webpack": "^3.5.1"
   },
   "scripts": {
     "start": "webpack-dev-server --port 3020",
