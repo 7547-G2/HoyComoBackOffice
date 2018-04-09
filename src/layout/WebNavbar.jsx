@@ -19,7 +19,7 @@ export class WebNavbar extends React.Component {
           {this.props.isAuthenticated &&
             <div id='navs'>
               <Nav>
-                <LinkContainer to={'/comercio'}>
+                <LinkContainer to={'/comercios'}>
                   <NavItem eventKey={1} href="#">
                     Comercios
                   </NavItem>

@@ -10,6 +10,7 @@ import PrivateRoute from '../utils/PrivateRoute'
 import { Home } from '../layout/Home'
 import WebNavbar from '../layout/WebNavbar'
 import ComercioIndex from '../modules/comercio/ComercioIndex'
+import EditarComercio from '../modules/comercio/EditarComercio'
 import { Grid } from 'react-bootstrap'
 import store from './store.js'
 
@@ -37,7 +38,8 @@ export class App extends React.Component {
           <Switch>
             <Route path="/login" component={Login} />
             <PrivateRoute exact={true} path="/" permiso={true} component={Home} />
-            <PrivateRoute exact={true} path="/comercio" permiso={true} component={ComercioIndex} />
+            <PrivateRoute exact={false} path="/comercios/:id" permiso={true} component={EditarComercio} />
+            <PrivateRoute exact={true} path="/comercios" permiso={true} component={ComercioIndex} />
           </Switch>
         </Grid>
       </div>

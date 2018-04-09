@@ -12,10 +12,15 @@ export class BuscarComercioTable extends React.Component {
     history.push('/comercios/' + id)
   }
 
+  activeAction(id) {
+    history.push('/comercios/' + id)
+  }
+
   getTablaComercios() {
     if (this.props.activeSearch && this.props.result.length != 0) {
       // if (permisoEditComercios(this.props.permisosComercio))
-      return <CustomTable data={this.props.result} headers={['Nombre', 'Email', 'Razón Social']} editAction={this.editarAction} />
+      return <CustomTable data={this.props.result} headers={['Nombre', 'Email', 'Tipo De Comercio','Domicilio']}
+        editAction={this.editarAction} activeAction={this.activeAction} />
       // else
       //   return <CustomTable data={this.props.result} headers={['Nombre', 'Email', 'Organismo']} />
     } else if (this.props.activeSearch) {

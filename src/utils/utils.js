@@ -22,5 +22,6 @@ export const getTipoComerciosSelectOptions = (allTipoComercios) => {
   tipoComerciosOptions.push({ value: 1, label: 'chino' })
   tipoComerciosOptions.push({ value: 2, label: 'parrilla' })
   tipoComerciosOptions.push({ value: 3, label: 'pastas' })
+  tipoComerciosOptions.push({ value: 4, label: 'sushi' })
   return tipoComerciosOptions
 }

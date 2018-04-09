@@ -37,7 +37,7 @@ export class BuscarComercioForm extends React.Component {
         let nombreSearch = ReactDOM.findDOMNode(this.nombreSearch).value
         let emailSearch = ReactDOM.findDOMNode(this.emailSearch).value
         let tipoComercioSearch = this.state.tipoComercioFiltro
-        this.props.usuarios(nombreSearch, emailSearch, tipoComercioSearch)
+        this.props.comercios(nombreSearch, emailSearch, tipoComercioSearch)
       }}>
         <Row>
           <Col lg={4}>

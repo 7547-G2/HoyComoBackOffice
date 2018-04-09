@@ -5,7 +5,7 @@ import { push } from 'react-router-redux'
 import api from '../../config/api'
 
 const HYDRATE_COMERCIOS = 'HYDRATE_COMERCIOS'
-const HYDRATE_USUARIO_BY_ID = 'HYDRATE_USUARIO_BY_ID'
+const HYDRATE_COMERCIO_BY_ID = 'HYDRATE_COMERCIO_BY_ID'
 const HYDRATE_TIPO_COMERCIOS = 'HYDRATE_TIPO_COMERCIOS'
 const QUERY_ERROR = 'QUERY_ERROR'
 const INTERNAL_ERROR = 'INTERNAL_ERROR'
@@ -14,13 +14,13 @@ const CLEAR_COMERCIO_RESULT = 'CLEAR_COMERCIO_RESULT'
 const CLEAR_ALERT = 'CLEAR_ALERT'
 const REMOVE_ROL = 'REMOVE_ROL'
 const ADD_ROL = 'ADD_ROL'
-const PATCH_USUARIO = 'PATCH_USUARIO'
+const PATCH_COMERCIO = 'PATCH_COMERCIO'
 
 const initialState = {
   result: [],
   alert: {},
   allTipoComercios: [],
-  activeUser: {},
+  activeComercio: {},
   activeSearch: false
 }
 
@@ -53,8 +53,8 @@ export const comercios = data => ({
   type: HYDRATE_COMERCIOS, data
 })
 
-export const usuarioById = data => ({
-  type: HYDRATE_USUARIO_BY_ID, data
+export const comercioById = data => ({
+  type: HYDRATE_COMERCIO_BY_ID, data
 })
 
 export const removerRol = data => ({
@@ -65,8 +65,8 @@ export const agregarRol = data => ({
   type: ADD_ROL, data
 })
 
-export const patchUsuario = data => ({
-  type: PATCH_USUARIO, data
+export const patchComercio = data => ({
+  type: PATCH_COMERCIO, data
 })
 
 // thunks
@@ -74,31 +74,72 @@ export const clearComercios = () => dispatch => {
   dispatch(clearComercioResult())
 }
 
-export const getUsuarioById = (id) => dispatch => {
-  let config = getConfig()
-  let queryStringOrganismos = '?sort_by=nombre'
+export const getComercioById = (id) => dispatch => {
+  // let config = getConfig()
+  // let queryStringTipoComercios = '?sort_by=nombre'
 
-  axios.all([
-    axios.get(api.usuarios + '/' + id, config),
-    axios.get(api.roles, config),
-    axios.get(api.organismos + queryStringOrganismos, config)
-  ])
-    .then(axios.spread(function (usuario, roles, organismos) {
-      return { usuario: usuario.data.data, roles: roles.data.data, organismos: organismos.data.data }
-    }))
-    .then(data => {
-      dispatch(usuarioById(data))
-    })
-    .catch(err => {
-      if (err.response && err.response.status) {
-        dispatch(queryError(getErrorResponse(err)))
-      } else {
-        dispatch(internalError(err))
-      }
-    })
+  // axios.all([
+  //   axios.get(api.comercios + '/' + id, config),
+  //   axios.get(api.roles, config),
+  //   axios.get(api.tipoComercios + queryStringTipoComercios, config)
+  // ])
+  //   .then(axios.spread(function (usuario, roles, organismos) {
+  //     return { usuario: usuario.data.data, roles: roles.data.data, organismos: organismos.data.data }
+  //   }))
+  //   .then(data => {
+  //     dispatch(comercioById(data))
+  //   })
+  //   .catch(err => {
+  //     if (err.response && err.response.status) {
+  //       dispatch(queryError(getErrorResponse(err)))
+  //     } else {
+  //       dispatch(internalError(err))
+  //     }
+  //   })
+  let comercios = [{
+    id: 1, nombre: 'nicolas',
+    razonSocial: 'razon 1',
+    calle: 'calle falsa',
+    numero: '1234',
+    codigoPostal: '1000',
+    email: 'email@example.com',
+    tipoComercio: { id: 3, nombre: 'pastas' },
+    habilitado: 1
+  }, {
+    id: 2, nombre: 'un nombre',
+    razonSocial: 'razon 2',
+    calle: 'calle falsa',
+    numero: '1235',
+    codigoPostal: '1001',
+    email: 'email2@example.com',
+    tipoComercio: { id: 3, nombre: 'pastas' },
+    habilitado: 1
+  }, {
+    id: 3, nombre: 'la dehabilitada',
+    razonSocial: 'razon 3',
+    calle: 'calle falsa',
+    numero: '1236',
+    codigoPostal: '1002',
+    email: 'email3@example.com',
+    tipoComercio: { id: 3, nombre: 'pastas' },
+    habilitado: 0
+  }, {
+    id: 4, nombre: 'nicolas',
+    razonSocial: 'razon 4',
+    calle: 'calle falsa',
+    numero: '1237',
+    codigoPostal: '1003',
+    email: 'email4@example.com',
+    tipoComercio: { id: 1, nombre: 'pastas' },
+    habilitado: 1
+  }]
+  let data = {}
+  data.comercio = comercios[id - 1]
+  data.tipoComercios = [{id: 1, nombre: 'parrillada'}, {id: 2, nombre: 'sushis'}, {id: 3, nombre: 'pastas'}, {id: 4, nombre: 'chino'}]
+  dispatch(comercioById(data))
 }
 
-export const getComercios = (nombre, email, tipoComercio) => dispatch => {
+export const getComercios = (/*nombre, email, tipoComercio*/) => dispatch => {
   // let config = getConfig()
   // let queryString = ''
   // if (nombre != '') queryString += '?nombre=' + nombre
@@ -124,25 +165,57 @@ export const getComercios = (nombre, email, tipoComercio) => dispatch => {
   //   }
   // })
   dispatch(comercios( { comercios: [
-    {id: 1, nombre: 'nicolas', razonSocial: 'una razon', calle: 'calle falsa', numero: '1234', codigoPostal:'1000',email: 'email@example.com', tipoComercio: {id:3, nombre:'pastas'}
-    }] , tipoComercios: [{id: 1, nombre: 'parrillada'}, {id: 3, nombre: 'pastas'}] }))
+    { id: 1, nombre: 'nicolas', 
+      razonSocial: 'razon 1',
+      calle: 'calle falsa',
+      numero: '1234',
+      codigoPostal:'1000', 
+      email: 'email@example.com',
+      tipoComercio: {id:3, nombre:'pastas'}, 
+      habilitado: 1
+    },{ id: 2, nombre: 'un nombre', 
+      razonSocial: 'razon 2',
+      calle: 'calle falsa',
+      numero: '1235',
+      codigoPostal:'1001', 
+      email: 'email2@example.com',
+      tipoComercio: {id:3, nombre:'pastas'}, 
+      habilitado: 1
+    },{ id: 3, nombre: 'la dehabilitada', 
+      razonSocial: 'razon 3',
+      calle: 'calle falsa',
+      numero: '1236',
+      codigoPostal:'1002', 
+      email: 'email3@example.com',
+      tipoComercio: {id:3, nombre:'pastas'}, 
+      habilitado: 0
+    },{ id: 4, nombre: 'nicolas', 
+      razonSocial: 'razon 4',
+      calle: 'calle falsa',
+      numero: '1237',
+      codigoPostal:'1003', 
+      email: 'email4@example.com',
+      tipoComercio: {id:1, nombre:'pastas'}, 
+      habilitado: 1
+    }
+  ] , tipoComercios: [{id: 1, nombre: 'parrillada'}, {id: 2, nombre: 'sushis'}, {id: 3, nombre: 'pastas'}, {id: 4, nombre: 'chino'}] }))
 }
 
-export const updateUsuario = (idUsuario, nombre, organismo_id, password, verificacion_password) => dispatch => {
+export const updateComercio = (idComercio, nombre, tipoComercio_id, password, verificacion_password) => dispatch => {
   let config = getConfig()
   let body = {}
   if (nombre) body.nombre = nombre
-  if (organismo_id) body.organismo_id = organismo_id
+  if (tipoComercio_id) body.tipo_comercio_id = tipoComercio_id
   if (password) body.password = password
   if (verificacion_password) body.verificacion_password = verificacion_password
 
-  axios.patch(api.usuarios + '/' + idUsuario, body, config)
+  axios.patch(api.comercios + '/' + idComercio, body, config)
     .then(res => {
       return res.data.data
     })
     .then(() => {
-      dispatch(getUsuarioById(idUsuario))
-      dispatch(successful('El usuario se actualizó correctamente'))
+      dispatch(getComercioById(idComercio))
+      dispatch(successful('El comercio se actualizó correctamente'))
     })
     .catch(err => {
       if (err.response && err.response.status) {
@@ -169,7 +242,7 @@ export const createComercio = (nombre, razonSocial, calle, numero, codigoPostal,
     verificacion_password: verificacion_password
   }
 
-  axios.post(api.usuarios, body, config)
+  axios.post(api.comercios, body, config)
     .then(res => res.data.data)
     .then(data => {
       dispatch(push('/' + api.claveComercios + '/' + data.id))
@@ -202,45 +275,46 @@ export const obtenerTipoComercios = () => dispatch => {
   dispatch(tipoComerciosTodos(data))
 }
 
-export const deleteRol = (idUsuario, idRol) => dispatch => {
-  let config = getConfig()
-  axios.delete(api.usuarios + '/' + idUsuario + '/' + api.claveRoles + '/' + idRol, config)
-    .then(res => res.data.data)
-    .then(() => {
-      dispatch(removerRol(idRol))
-      dispatch(successful('El rol se eliminó correctamente'))
-    })
-    .catch(err => {
-      if (err.response && err.response.status) {
-        dispatch(queryError(getErrorResponse(err)))
-      } else {
-        dispatch(internalError(err))
-      }
-    })
-}
+// export const deleteRol = (idUsuario, idRol) => dispatch => {
+//   let config = getConfig()
+//   axios.delete(api.usuarios + '/' + idUsuario + '/' + api.claveRoles + '/' + idRol, config)
+//     .then(res => res.data.data)
+//     .then(() => {
+//       dispatch(removerRol(idRol))
+//       dispatch(successful('El rol se eliminó correctamente'))
+//     })
+//     .catch(err => {
+//       if (err.response && err.response.status) {
+//         dispatch(queryError(getErrorResponse(err)))
+//       } else {
+//         dispatch(internalError(err))
+//       }
+//     })
+// }
 
-export const addRol = (idUsuario, idRol) => dispatch => {
-  let config = getConfig()
-  let body = { rol_id: idRol }
-  axios.post(api.usuarios + '/' + idUsuario + '/' + api.claveRoles, body, config)
-    .then(res => res.data.data)
-    .then(() => {
-      dispatch(agregarRol(idRol))
-      dispatch(successful('El rol se agregó correctamente'))
-    })
-    .catch(err => {
-      if (err.response && err.response.status) {
-        dispatch(queryError(getErrorResponse(err)))
-      } else {
-        dispatch(internalError(err))
-      }
-    })
-}
+// export const addRol = (idUsuario, idRol) => dispatch => {
+//   let config = getConfig()
+//   let body = { rol_id: idRol }
+//   axios.post(api.usuarios + '/' + idUsuario + '/' + api.claveRoles, body, config)
+//     .then(res => res.data.data)
+//     .then(() => {
+//       dispatch(agregarRol(idRol))
+//       dispatch(successful('El rol se agregó correctamente'))
+//     })
+//     .catch(err => {
+//       if (err.response && err.response.status) {
+//         dispatch(queryError(getErrorResponse(err)))
+//       } else {
+//         dispatch(internalError(err))
+//       }
+//     })
+// }
 
 const fetchComerciosTable = (data) => {
   let returnValue = []
   data.map(function (rowObject) {
-    returnValue.push({ id: rowObject.id, nombre: rowObject.nombre, email: rowObject.email, organismo: rowObject.tipoComercio.nombre })
+    returnValue.push({ id: rowObject.id, nombre: rowObject.nombre, email: rowObject.email, tipoComercio: rowObject.tipoComercio.nombre,
+      domicilio: rowObject.calle + ' ' + rowObject.numero + ', cp: ' + rowObject.codigoPostal, habilitado: rowObject.habilitado  })
   })
   return returnValue
 }
@@ -276,13 +350,21 @@ const fetchTipoComercios = (/*data*/) => {
   return returnValue
 }
 
-// const fetchUsuario = (data) => {
-//   let returnValue = []
-//   data.Roles.map(function (rowObject) {
-//     returnValue.push({ id: rowObject.id, nombre: rowObject.nombre, descripcion: rowObject.descripcion })
-//   })
-//   return { id: data.id, nombre: data.nombre, email: data.email, roles: returnValue, organismo: data.Organismo }
-// }
+const fetchComercio = (data) => {
+  // let returnValue = []
+  // data.Roles.map(function (rowObject) {
+  //   returnValue.push({ id: rowObject.id, nombre: rowObject.nombre, descripcion: rowObject.descripcion })
+  // })
+  return { id: data.id, 
+    nombre: data.nombre,
+    razonSocial: data.razonSocial,
+    codigoPostal: data.codigoPostal,
+    calle: data.calle,
+    numero: data.numero,
+    habilitado: data.habilitado,
+    email: data.email, /*roles: returnValue,*/ 
+    tipoComercio: data.tipoComercio }
+}
 
 export default (state = initialState, action) => {
   switch (action.type) {
@@ -302,14 +384,14 @@ export default (state = initialState, action) => {
       alert: {},
       activeSearch: true
     }
-    // case HYDRATE_USUARIO_BY_ID:
-    //   return {
-    //     ...state,
-    //     result: [],
-    //     activeUser: fetchUsuario(action.data.usuario),
-    //     allRoles: fetchRoles(action.data.roles),
-    //     allOrganismos: fetchOrganismos(action.data.organismos),
-    //   }
+  case HYDRATE_COMERCIO_BY_ID:
+    return {
+      ...state,
+      result: [],
+      activeComercio: fetchComercio(action.data.comercio),
+      // allRoles: fetchRoles(action.data.roles),
+      allTipoComercios: fetchTipoComercios(action.data.tipoComercios),
+    }
     // case REMOVE_ROL:
     //   return {
     //     ...state,
