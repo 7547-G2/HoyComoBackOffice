@@ -20,10 +20,11 @@ export class EditarComercioForm extends React.Component {
         codigoPostal: { error: false, mensaje: '' },
         calle: { error: false, mensaje: '' },
         email: { error: false, mensaje: '' },
-        habilitado: { error: false, mensaje: '' },
+        habilitado: { seleccionado: props.activeComercio.habilitado, error: false, mensaje: '' },
         tipoComercio: { seleccionado: props.activeComercio.tipoComercio.id, error: false, mensaje: ''}
       }
     }
+    this.updateHabilitadoSelect = this.updateHabilitadoSelect.bind(this)
     this.updateTipoComercioSelect = this.updateTipoComercioSelect.bind(this)
     this.editarComercioSubmit = this.editarComercioSubmit.bind(this)
   }
@@ -36,13 +37,13 @@ export class EditarComercioForm extends React.Component {
       codigoPostal: { error: false, mensaje: '' },
       calle: { error: false, mensaje: '' },
       email: { error: false, mensaje: '' },
-      habilitado: { error: false, mensaje: '' },
+      habilitado: { error: false, mensaje: '', seleccionado: this.state.habilitado.seleccionado },
       tipoComercio: { error: false, mensaje: '', seleccionado: this.state.tipoComercio.seleccionado},
     }
     this.setState({ ...this.state, updateForm: updateForm })
   }
 
-  validarUpdateForm(nombre, razonSocial, numero, codigoPostal, calle, email, habilitado) {
+  validarUpdateForm(nombre, razonSocial, numero, codigoPostal, calle, email) {
     let formOk = true
 
     let updateForm = {
@@ -52,7 +53,7 @@ export class EditarComercioForm extends React.Component {
       codigoPostal: { error: false, mensaje: '' },
       calle: { error: false, mensaje: '' },
       email: { error: false, mensaje: '' },
-      habilitado: { error: false, mensaje: '' },
+      habilitado:  this.state.updateForm.habilitado,
       tipoComercio: this.state.updateForm.tipoComercio
     }
 
@@ -110,7 +111,7 @@ export class EditarComercioForm extends React.Component {
       updateForm.email.mensaje = ''
     }
 
-    if (habilitado == null || habilitado == '') {
+    if (this.state.updateForm.habilitado.seleccionado <= 0) {
       updateForm.habilitado.error = true
       updateForm.habilitado.mensaje = 'Este campo es obligatorio'
       formOk = false
@@ -141,15 +142,23 @@ export class EditarComercioForm extends React.Component {
       updateForm: newUpdateForm
     })
   }
+
+  updateHabilitadoSelect (newValue) {
+    let newUpdateForm = {...this.state.updateForm}
+    newUpdateForm.habilitado.seleccionado = (newValue != null) ? newValue.value : -1
+    this.setState({
+      ...this.state, 
+      updateForm: newUpdateForm
+    })
+  }
+
   editarComercioSubmit () {
     if (this.validarUpdateForm(ReactDOM.findDOMNode(this.nombreInput).value, 
       ReactDOM.findDOMNode(this.razonSocialInput).value, 
       ReactDOM.findDOMNode(this.numeroInput).value, 
       ReactDOM.findDOMNode(this.codigoPostalInput).value, 
       ReactDOM.findDOMNode(this.calleInput).value, 
-      ReactDOM.findDOMNode(this.habilitadoInput).value, 
-      ReactDOM.findDOMNode(this.emailInput).value,
-      ReactDOM.findDOMNode(this.habilitadoInput).value)) {
+      ReactDOM.findDOMNode(this.emailInput).value)) {
       this.props.updateComercio(
         this.props.activeComercio.id,
         ReactDOM.findDOMNode(this.nombreInput).value,
@@ -222,10 +231,11 @@ export class EditarComercioForm extends React.Component {
           </Col>
           <Col lg={2} md={2}>
             <CustomFormField  validationState={this.state.updateForm.habilitado.error ? 'error' : null} 
-              validationMessage={this.state.updateForm.habilitado.mensaje} bsSize="small" controlId="habilitado" 
+              validationMessage={this.state.updateForm.habilitado.mensaje} bsSize="small" controlId="habilitadoSelect" 
               label="Habilitado" inputComponent={
-                <FormControl defaultValue={this.props.activeComercio.habilitado} key="habilitadoInput" bsSize="small" 
-                  ref={habilitadoInput => { this.habilitadoInput = habilitadoInput }} type="text"></FormControl>
+                <Select name="habilitadoSelect" value={this.state.updateForm.habilitado.seleccionado}
+                  options={[{ value: 1, label: 'verdadero' }, { value: 0, label: 'falso' }]} id="habilitadoSelect" 
+                  key="habilitadoSelect" onChange={this.updateHabilitadoSelect} placeholder="Selecciona"/>
               }/>
           </Col>
         </Row>
