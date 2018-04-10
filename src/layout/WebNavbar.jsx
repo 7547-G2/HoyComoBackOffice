@@ -5,10 +5,13 @@ import { Navbar, Nav, NavItem, MenuItem, NavDropdown } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
 import { logout } from '../modules/login/authReducer'
 
+const navbar = {}//{backgroundColor: '#6262f0'}
+const font = {color: '#ffffff'}
+
 export class WebNavbar extends React.Component {
   render() {
     return (
-      <Navbar inverse collapseOnSelect>
+      <Navbar style={navbar} inverse collapseOnSelect>
         <Navbar.Header>
           <Navbar.Brand>
             <a onClick={this.props.home}>Inicio</a>
@@ -20,7 +23,7 @@ export class WebNavbar extends React.Component {
             <div id='navs'>
               <Nav>
                 <LinkContainer to={'/comercios'}>
-                  <NavItem eventKey={1} href="#">
+                  <NavItem style={font}  eventKey={1} href="#">
                     Comercios
                   </NavItem>
                 </LinkContainer>
