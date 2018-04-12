@@ -21,7 +21,7 @@ export class CustomModal extends React.Component {
 
   render() {
     return (
-      <Modal
+      <Modal  bsSize='lg'
         {...this.props}
         show={this.state.show}
         onHide={this.hideModal}

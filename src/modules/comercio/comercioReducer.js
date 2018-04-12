@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { getConfig, getErrorResponse } from '../../utils/utils'
+import { getConfig, getNullConfig, getErrorResponse } from '../../utils/utils'
 import { push } from 'react-router-redux'
 // import _ from 'lodash'
 import api from '../../config/api'
@@ -226,24 +226,24 @@ export const updateComercio = (idComercio, nombre, tipoComercio_id, password, ve
     })
 }
 
-export const createComercio = (nombre, razonSocial, calle, numero, codigoPostal, email, verificacion_email, tipo_comercio_id, password, verificacion_password) => dispatch => {
+export const createComercio = (nombre, razonSocial, calle, numero, codigoPostal, email, verificacion_email, tipo_comercio_id) => dispatch => {
 
-  let config = getConfig()
+  let config = getNullConfig()
   let body = {
+    email: email,
     nombre: nombre,
     razonSocial: razonSocial,
     calle: calle,
     numero: numero,
     codigoPostal: codigoPostal,
+    tipo: 'parrilla',
     tipo_comercio_id: tipo_comercio_id,
-    email: email,
-    verificacion_email: verificacion_email,
-    password: verificacion_password,
-    verificacion_password: verificacion_password
+    password: 'aaaa',
+    token: 'token'
   }
 
   axios.post(api.comercios, body, config)
-    .then(res => res.data.data)
+    .then(res => res.data)
     .then(data => {
       dispatch(push('/' + api.claveComercios + '/' + data.id))
     })

@@ -1,12 +1,13 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { connect } from 'react-redux'
-import { Row, Col, Button, FormControl } from 'react-bootstrap'
+import { Row, Col, Button, FormControl, Well } from 'react-bootstrap'
 import { createComercio } from './comercioReducer'
 import { getTipoComerciosSelectOptions } from '../../utils/utils'
 import { CustomModal } from '../../utils/CustomModal'
 import { CustomFormField } from '../../utils/CustomFormField'
 import Select from 'react-select'
+import GoogleMapReact from 'google-map-react'
 
 export class CrearComercioModal extends React.Component {
 
@@ -21,8 +22,6 @@ export class CrearComercioModal extends React.Component {
         numero: { error: false, mensaje: '' },
         codigoPostal: { error: false, mensaje: '' },
         email2: { error: false, mensaje: '' },
-        pass: { error: false, mensaje: '' },
-        pass2: { error: false, mensaje: '' },
         tipoComercio: { seleccionado: -1, error: false, mensaje: '' }
       }
     }
@@ -39,14 +38,12 @@ export class CrearComercioModal extends React.Component {
       numero: { error: false, mensaje: '' },
       codigoPostal: { error: false, mensaje: '' },
       email2: { error: false, mensaje: '' },
-      pass: { error: false, mensaje: '' },
-      pass2: { error: false, mensaje: '' },
       tipoComercio: { seleccionado: -1, error: false, mensaje: '' }
     }
     this.setState({ ...this.state, createForm: createForm })
   }
 
-  validarCreateForm(nombre, razonSocial, calle, numero, codigoPostal, email, email2, pass, pass2) {
+  validarCreateForm(nombre, razonSocial, calle, numero, codigoPostal, email, email2) {
     let formOk = true
 
     let createForm = {
@@ -57,8 +54,6 @@ export class CrearComercioModal extends React.Component {
       numero: { error: false, mensaje: '' },
       codigoPostal: { error: false, mensaje: '' },
       email2: { error: false, mensaje: '' },
-      pass: { error: false, mensaje: '' },
-      pass2: { error: false, mensaje: '' },
       tipoComercio: { seleccionado: this.state.createForm.tipoComercio.seleccionado, error: false, mensaje: '' }
     }
 
@@ -94,18 +89,31 @@ export class CrearComercioModal extends React.Component {
       createForm.numero.mensaje = 'Este campo es obligatorio'
       formOk = false
     } else {
-      createForm.numero.error = false
-      createForm.numero.mensaje = ''
+      if((!Number.isInteger(Number(numero))) || (numero < 0)){
+        createForm.numero.error = true
+        createForm.numero.mensaje = 'Debe ser un entero'
+        formOk = false
+      }else{
+        createForm.numero.error = false
+        createForm.numero.mensaje = ''
+      }
     }
-
+    
     if (codigoPostal == null || codigoPostal == '') {
       createForm.codigoPostal.error = true
       createForm.codigoPostal.mensaje = 'Este campo es obligatorio'
       formOk = false
     } else {
-      createForm.codigoPostal.error = false
-      createForm.codigoPostal.mensaje = ''
+      if((!Number.isInteger(Number(codigoPostal))) || (codigoPostal < 0)){
+        createForm.codigoPostal.error = true
+        createForm.codigoPostal.mensaje = 'Debe ser un entero'
+        formOk = false
+      }else{
+        createForm.codigoPostal.error = false
+        createForm.codigoPostal.mensaje = ''
+      }
     }
+
 
     if (this.state.createForm.tipoComercio.seleccionado <= 0) {
       createForm.tipoComercio.error = true
@@ -143,33 +151,6 @@ export class CrearComercioModal extends React.Component {
       createForm.email2.mensaje = ''
     }
 
-    if (pass == null || pass == '') {
-      createForm.pass.error = true
-      createForm.pass.mensaje = 'Este campo es obligatorio'
-      formOk = false
-    } else {
-      createForm.pass.error = false
-      createForm.pass.mensaje = ''
-    }
-
-    if (pass2 == null || pass2 == '') {
-      createForm.pass2.error = true
-      createForm.pass2.mensaje = 'Este campo es obligatorio'
-      formOk = false
-    } else {
-      createForm.pass2.error = false
-      createForm.pass2.mensaje = ''
-    }
-
-    if (formOk && pass != pass2) {
-      createForm.pass2.error = true
-      createForm.pass2.mensaje = 'Las contraseñas no coinciden'
-      formOk = false
-    } else if (formOk) {
-      createForm.pass2.error = false
-      createForm.pass2.mensaje = ''
-    }
-
     this.setState({ ...this.state, createForm: createForm })
 
     return formOk
@@ -195,8 +176,9 @@ export class CrearComercioModal extends React.Component {
 
   getCrearModalBody() {
     let body = []
+    body.push(<h5  key="comercio"><b>Datos del comercio</b></h5>)
     body.push(<Row key={'formCreateRow1'}>
-      <Col lg={6}>
+      <Col lg={3}>
         <CustomFormField key="nombreGroup" validationState={this.state.createForm.nombre.error ? 'error' : null}
           validationMessage={this.state.createForm.nombre.mensaje} bsSize="small" controlId="nombreInput"
           label="Nombre" inputComponent={
@@ -205,6 +187,14 @@ export class CrearComercioModal extends React.Component {
         />
       </Col>
       <Col lg={6}>
+        <CustomFormField key="razonSocialGroup" validationState={this.state.createForm.razonSocial.error ? 'error' : null}
+          validationMessage={this.state.createForm.razonSocial.mensaje} bsSize="small" controlId="razonSocialInput"
+          label="Razón Social" inputComponent={
+            <FormControl ref={razonSocialInput => { this.razonSocialInput = razonSocialInput }} key="razonSocialInput" bsSize="small"
+              type="text" placeholder="ingresá la razón social del comercio"></FormControl>}
+        />
+      </Col>
+      <Col lg={3}>
         <CustomFormField key="tipoComercioGroup" validationState={this.state.createForm.tipoComercio.error ? 'error' : null}
           bsSize="small" controlId="tipoComercioSelect" validationMessage={this.state.createForm.tipoComercio.mensaje}
           label="Tipo Comercio" inputComponent={
@@ -214,23 +204,13 @@ export class CrearComercioModal extends React.Component {
           } />
       </Col>
     </Row>)
-    body.push(<Row key={'formCreateRow2'}>
-      <Col lg={12}>
-        <CustomFormField key="razonSocialGroup" validationState={this.state.createForm.razonSocial.error ? 'error' : null}
-          validationMessage={this.state.createForm.razonSocial.mensaje} bsSize="small" controlId="razonSocialInput"
-          label="Razón Social" inputComponent={
-            <FormControl ref={razonSocialInput => { this.razonSocialInput = razonSocialInput }} key="razonSocialInput" bsSize="small"
-              type="text" placeholder="ingresá la razón social del comercio"></FormControl>}
-        />
-      </Col>
-    </Row>)
     body.push(<Row key={'formCreateRow3'}>
       <Col lg={6}>
         <CustomFormField key="calleGroup" validationState={this.state.createForm.calle.error ? 'error' : null}
-          validationMessage={this.state.createForm.calle.mensaje} bsSize="small" controlId="verificarCalleInput"
+          validationMessage={this.state.createForm.calle.mensaje} bsSize="small" controlId="calleInput"
           label="Calle" inputComponent={
-            <FormControl ref={verificarCalleInput => { this.verificarCalleInput = verificarCalleInput }}
-              bsSize="small" type="text" placeholder="ingresá la calle" key="verificarCalleInput"></FormControl>}
+            <FormControl ref={calleInput => { this.calleInput = calleInput }}
+              bsSize="small" type="text" placeholder="ingresá la calle" key="calleInput"></FormControl>}
         />
       </Col>
       <Col lg={3}>
@@ -250,6 +230,33 @@ export class CrearComercioModal extends React.Component {
         />
       </Col>
     </Row>)
+    body.push(<Row key={'formCreateRow6'}>
+      <Col lg={12}>
+        <Well bsSize="small">
+          <div style={{ height: '30vh', width: '100%' }}>
+            <GoogleMapReact
+              bootstrapURLKeys={{
+                key: 'AIzaSyC_rDpCs7Wgs5-qpnfx70_-LgvO89-zIDA',
+              }}
+              defaultCenter={
+                {
+                  lat: -34.59378080536352,
+                  lng: -58.44440356103553
+                }}
+              defaultZoom={12}
+            >
+              {/* <AnyReactComponent
+                lat={-34.59378080536352}
+                lng={-58.44440356103553}
+                text={'Kreyser Avrora'}
+              /> */}
+            </GoogleMapReact>
+          </div>
+        </Well>
+      </Col>
+    </Row>)
+    body.push(<hr key="division"/>)
+    body.push(<h5 key="responsable"><b>Datos del responsable</b></h5>)
     body.push(<Row key={'formCreateRow4'}>
       <Col lg={6}>
         <CustomFormField key="emailGroup" validationState={this.state.createForm.email.error ? 'error' : null}
@@ -268,24 +275,6 @@ export class CrearComercioModal extends React.Component {
         />
       </Col>
     </Row>)
-    body.push(<Row key={'formCreateRow5'}>
-      <Col lg={6}>
-        <CustomFormField key="passGroup" validationState={this.state.createForm.pass.error ? 'error' : null}
-          validationMessage={this.state.createForm.pass.mensaje} bsSize="small" controlId="passInput"
-          label="Contraseña" inputComponent={
-            <FormControl ref={passInput => { this.passInput = passInput }}
-              bsSize="small" type="password" placeholder="ingresá una contraseña" key="passInput"></FormControl>}
-        />
-      </Col>
-      <Col lg={6}>
-        <CustomFormField key="pass2Group" validationState={this.state.createForm.pass2.error ? 'error' : null}
-          validationMessage={this.state.createForm.pass2.mensaje} bsSize="small" controlId="pass2Input"
-          label="Verificar contraseña" inputComponent={
-            <FormControl ref={passInput2 => { this.passInput2 = passInput2 }}
-              bsSize="small" type="password" placeholder="verificá la contraseña" key="pass2Input"></FormControl>}
-        />
-      </Col>
-    </Row>)
     return body
   }
 
@@ -293,17 +282,14 @@ export class CrearComercioModal extends React.Component {
     let buttons = []
     buttons.push(<Button key={'createComercioButton'} bsSize={'small'} bsStyle={'primary'} onClick={() => {
       let nombre = ReactDOM.findDOMNode(this.nombreInput).value
-      let razonSocial = ReactDOM.findDOMNode(this.nombreInput).value
-      let calle = ReactDOM.findDOMNode(this.nombreInput).value
-      let numero = ReactDOM.findDOMNode(this.nombreInput).value
-      let codigoPostal = ReactDOM.findDOMNode(this.nombreInput).value
+      let razonSocial = ReactDOM.findDOMNode(this.razonSocialInput).value
+      let calle = ReactDOM.findDOMNode(this.calleInput).value
+      let numero = ReactDOM.findDOMNode(this.numeroInput).value
+      let codigoPostal = ReactDOM.findDOMNode(this.codigoPostalInput).value
       let email = ReactDOM.findDOMNode(this.emailInput).value
       let email2 = ReactDOM.findDOMNode(this.verificarEmailInput).value
-      let pass = ReactDOM.findDOMNode(this.passInput).value
-      let pass2 = ReactDOM.findDOMNode(this.passInput2).value
-
-      if (this.validarCreateForm(nombre, razonSocial, calle, numero, codigoPostal, email, email2, pass, pass2)) {
-        this.props.createComercio(nombre, razonSocial, calle, numero, codigoPostal, email, email2, this.state.createForm.tipoComercio.seleccionado, pass, pass2)
+      if (this.validarCreateForm(nombre, razonSocial, calle, numero, codigoPostal, email, email2)) {
+        this.props.createComercio(nombre, razonSocial, calle, numero, codigoPostal, email, email2, this.state.createForm.tipoComercio.seleccionado)
         this.modal.hideModal()
       }
     }}>Guardar</Button>)
@@ -320,8 +306,8 @@ export class CrearComercioModal extends React.Component {
 }
 
 const mapDispatch = (dispatch) => ({
-  createComercio: (nombreComercio, razonSocial, calle, numero, codigoPostal, email, verificarEmail, tipoComercio, password, confirmacionPassword) => {
-    dispatch(createComercio(nombreComercio, razonSocial, calle, numero, codigoPostal, email, verificarEmail, tipoComercio, password, confirmacionPassword))
+  createComercio: (nombreComercio, razonSocial, calle, numero, codigoPostal, email, verificarEmail, tipoComercio) => {
+    dispatch(createComercio(nombreComercio, razonSocial, calle, numero, codigoPostal, email, verificarEmail, tipoComercio))
   }
 })
 

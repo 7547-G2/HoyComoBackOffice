@@ -3,10 +3,11 @@ import ReactDOM from 'react-dom'
 import { connect } from 'react-redux'
 import { updateComercio } from './comercioReducer'
 import { getTipoComerciosSelectOptions } from '../../utils/utils'
-
 import Select from 'react-select'
-import { Row, Col, FormControl } from 'react-bootstrap'
+import { Row, Col, FormControl, Panel, Image, FormGroup, ControlLabel, HelpBlock, Grid } from 'react-bootstrap'
 import { CustomFormField } from '../../utils/CustomFormField'
+
+import Img1 from './upload/1.png'
 
 export class EditarComercioForm extends React.Component {
   constructor(props) {
@@ -21,7 +22,7 @@ export class EditarComercioForm extends React.Component {
         calle: { error: false, mensaje: '' },
         email: { error: false, mensaje: '' },
         habilitado: { seleccionado: props.activeComercio.habilitado, error: false, mensaje: '' },
-        tipoComercio: { seleccionado: props.activeComercio.tipoComercio.id, error: false, mensaje: ''}
+        tipoComercio: { seleccionado: props.activeComercio.tipoComercio.id, error: false, mensaje: '' }
       }
     }
     this.updateHabilitadoSelect = this.updateHabilitadoSelect.bind(this)
@@ -38,7 +39,7 @@ export class EditarComercioForm extends React.Component {
       calle: { error: false, mensaje: '' },
       email: { error: false, mensaje: '' },
       habilitado: { error: false, mensaje: '', seleccionado: this.state.habilitado.seleccionado },
-      tipoComercio: { error: false, mensaje: '', seleccionado: this.state.tipoComercio.seleccionado},
+      tipoComercio: { error: false, mensaje: '', seleccionado: this.state.tipoComercio.seleccionado },
     }
     this.setState({ ...this.state, updateForm: updateForm })
   }
@@ -53,7 +54,7 @@ export class EditarComercioForm extends React.Component {
       codigoPostal: { error: false, mensaje: '' },
       calle: { error: false, mensaje: '' },
       email: { error: false, mensaje: '' },
-      habilitado:  this.state.updateForm.habilitado,
+      habilitado: this.state.updateForm.habilitado,
       tipoComercio: this.state.updateForm.tipoComercio
     }
 
@@ -134,30 +135,30 @@ export class EditarComercioForm extends React.Component {
     return formOk
   }
 
-  updateTipoComercioSelect (newValue) {
-    let newUpdateForm = {...this.state.updateForm}
+  updateTipoComercioSelect(newValue) {
+    let newUpdateForm = { ...this.state.updateForm }
     newUpdateForm.tipoComercio.seleccionado = (newValue != null) ? newValue.value : -1
     this.setState({
-      ...this.state, 
+      ...this.state,
       updateForm: newUpdateForm
     })
   }
 
-  updateHabilitadoSelect (newValue) {
-    let newUpdateForm = {...this.state.updateForm}
+  updateHabilitadoSelect(newValue) {
+    let newUpdateForm = { ...this.state.updateForm }
     newUpdateForm.habilitado.seleccionado = (newValue != null) ? newValue.value : -1
     this.setState({
-      ...this.state, 
+      ...this.state,
       updateForm: newUpdateForm
     })
   }
 
-  editarComercioSubmit () {
-    if (this.validarUpdateForm(ReactDOM.findDOMNode(this.nombreInput).value, 
-      ReactDOM.findDOMNode(this.razonSocialInput).value, 
-      ReactDOM.findDOMNode(this.numeroInput).value, 
-      ReactDOM.findDOMNode(this.codigoPostalInput).value, 
-      ReactDOM.findDOMNode(this.calleInput).value, 
+  editarComercioSubmit() {
+    if (this.validarUpdateForm(ReactDOM.findDOMNode(this.nombreInput).value,
+      ReactDOM.findDOMNode(this.razonSocialInput).value,
+      ReactDOM.findDOMNode(this.numeroInput).value,
+      ReactDOM.findDOMNode(this.codigoPostalInput).value,
+      ReactDOM.findDOMNode(this.calleInput).value,
       ReactDOM.findDOMNode(this.emailInput).value)) {
       this.props.updateComercio(
         this.props.activeComercio.id,
@@ -171,74 +172,96 @@ export class EditarComercioForm extends React.Component {
       <form>
         <Row>
           <Col lg={4} md={4}>
-            <CustomFormField  validationState={this.state.updateForm.nombre.error ? 'error' : null} 
-              validationMessage={this.state.updateForm.nombre.mensaje} bsSize="small" controlId="nombre" 
+            <CustomFormField validationState={this.state.updateForm.nombre.error ? 'error' : null}
+              validationMessage={this.state.updateForm.nombre.mensaje} bsSize="small" controlId="nombre"
               label="Nombre" inputComponent={
-                <FormControl defaultValue={this.props.activeComercio.nombre} key="nombreInput" bsSize="small" 
+                <FormControl defaultValue={this.props.activeComercio.nombre} key="nombreInput" bsSize="small"
                   ref={nombreInput => { this.nombreInput = nombreInput }} type="text"></FormControl>
-              }/>
+              } />
           </Col>
           <Col lg={4} md={4}>
-            <CustomFormField  validationState={this.state.updateForm.calle.error ? 'error' : null} 
-              validationMessage={this.state.updateForm.calle.mensaje} bsSize="small" controlId="calle" 
+            <CustomFormField validationState={this.state.updateForm.calle.error ? 'error' : null}
+              validationMessage={this.state.updateForm.calle.mensaje} bsSize="small" controlId="calle"
               label="Calle" inputComponent={
-                <FormControl defaultValue={this.props.activeComercio.calle} key="calleInput" bsSize="small" 
+                <FormControl defaultValue={this.props.activeComercio.calle} key="calleInput" bsSize="small"
                   ref={calleInput => { this.calleInput = calleInput }} type="text"></FormControl>
-              }/>
+              } />
           </Col>
           <Col lg={2} md={2}>
-            <CustomFormField  validationState={this.state.updateForm.numero.error ? 'error' : null} 
-              validationMessage={this.state.updateForm.numero.mensaje} bsSize="small" controlId="numero" 
+            <CustomFormField validationState={this.state.updateForm.numero.error ? 'error' : null}
+              validationMessage={this.state.updateForm.numero.mensaje} bsSize="small" controlId="numero"
               label="Numero" inputComponent={
-                <FormControl defaultValue={this.props.activeComercio.numero} key="numeroInput" bsSize="small" 
+                <FormControl defaultValue={this.props.activeComercio.numero} key="numeroInput" bsSize="small"
                   ref={numeroInput => { this.numeroInput = numeroInput }} type="text"></FormControl>
-              }/>
+              } />
           </Col>
           <Col lg={2} md={2}>
-            <CustomFormField  validationState={this.state.updateForm.codigoPostal.error ? 'error' : null} 
-              validationMessage={this.state.updateForm.codigoPostal.mensaje} bsSize="small" controlId="codigoPostal" 
+            <CustomFormField validationState={this.state.updateForm.codigoPostal.error ? 'error' : null}
+              validationMessage={this.state.updateForm.codigoPostal.mensaje} bsSize="small" controlId="codigoPostal"
               label="Código Postal" inputComponent={
-                <FormControl defaultValue={this.props.activeComercio.codigoPostal} key="codigoPostalInput" bsSize="small" 
+                <FormControl defaultValue={this.props.activeComercio.codigoPostal} key="codigoPostalInput" bsSize="small"
                   ref={codigoPostalInput => { this.codigoPostalInput = codigoPostalInput }} type="text"></FormControl>
-              }/>
+              } />
           </Col>
         </Row>
         <Row>
           <Col lg={4} md={4}>
-            <CustomFormField  validationState={this.state.updateForm.razonSocial.error ? 'error' : null} 
-              validationMessage={this.state.updateForm.razonSocial.mensaje} bsSize="small" controlId="razonSocial" 
+            <CustomFormField validationState={this.state.updateForm.razonSocial.error ? 'error' : null}
+              validationMessage={this.state.updateForm.razonSocial.mensaje} bsSize="small" controlId="razonSocial"
               label="Razón Social" inputComponent={
-                <FormControl defaultValue={this.props.activeComercio.razonSocial} key="razonSocialInput" bsSize="small" 
+                <FormControl defaultValue={this.props.activeComercio.razonSocial} key="razonSocialInput" bsSize="small"
                   ref={razonSocialInput => { this.razonSocialInput = razonSocialInput }} type="text"></FormControl>
-              }/>
+              } />
           </Col>
           <Col lg={4} md={4}>
-            <CustomFormField  validationState={this.state.updateForm.email.error ? 'error' : null} 
-              validationMessage={this.state.updateForm.email.mensaje} bsSize="small" controlId="email" 
+            <CustomFormField validationState={this.state.updateForm.email.error ? 'error' : null}
+              validationMessage={this.state.updateForm.email.mensaje} bsSize="small" controlId="email"
               label="Email" inputComponent={
-                <FormControl defaultValue={this.props.activeComercio.email} key="emailInput" bsSize="small" 
+                <FormControl defaultValue={this.props.activeComercio.email} key="emailInput" bsSize="small"
                   ref={emailInput => { this.emailInput = emailInput }} type="text"></FormControl>
-              }/>
+              } />
           </Col>
           <Col lg={2} md={2}>
-            <CustomFormField validationState={this.state.updateForm.tipoComercio.error ? 'error' : null} 
-              validationMessage={this.state.updateForm.tipoComercio.mensaje} bsSize="small" controlId="tipoComercioSelect" label="Tipo comercio" 
+            <CustomFormField validationState={this.state.updateForm.tipoComercio.error ? 'error' : null}
+              validationMessage={this.state.updateForm.tipoComercio.mensaje} bsSize="small" controlId="tipoComercioSelect" label="Tipo comercio"
               inputComponent={
                 <Select name="tipoComercioSelect" value={this.state.updateForm.tipoComercio.seleccionado}
-                  options={getTipoComerciosSelectOptions(this.props.allTipoComercios,true)} id="tipoComercioSelect" 
-                  key="tipoComercioSelect" onChange={this.updateTipoComercioSelect} placeholder="Seleccioná un tipo comerico"/>
-              }/>
+                  options={getTipoComerciosSelectOptions(this.props.allTipoComercios, true)} id="tipoComercioSelect"
+                  key="tipoComercioSelect" onChange={this.updateTipoComercioSelect} placeholder="Seleccioná un tipo comerico" />
+              } />
           </Col>
           <Col lg={2} md={2}>
-            <CustomFormField  validationState={this.state.updateForm.habilitado.error ? 'error' : null} 
-              validationMessage={this.state.updateForm.habilitado.mensaje} bsSize="small" controlId="habilitadoSelect" 
+            <CustomFormField validationState={this.state.updateForm.habilitado.error ? 'error' : null}
+              validationMessage={this.state.updateForm.habilitado.mensaje} bsSize="small" controlId="habilitadoSelect"
               label="Habilitado" inputComponent={
                 <Select name="habilitadoSelect" value={this.state.updateForm.habilitado.seleccionado}
-                  options={[{ value: 1, label: 'verdadero' }, { value: 0, label: 'falso' }]} id="habilitadoSelect" 
-                  key="habilitadoSelect" onChange={this.updateHabilitadoSelect} placeholder="Selecciona"/>
-              }/>
+                  options={[{ value: 1, label: 'verdadero' }, { value: 0, label: 'falso' }]} id="habilitadoSelect"
+                  key="habilitadoSelect" onChange={this.updateHabilitadoSelect} placeholder="Selecciona" />
+              } />
           </Col>
         </Row>
+        <Row>
+          <Col lg={4}>
+            <Panel>
+              <Panel.Heading>
+                <Panel.Title componentClass="h3">
+                  Logo comercio
+                </Panel.Title>
+              </Panel.Heading>
+              <Panel.Body>
+                {/* <Grid> */}
+                <Image src={Img1} style={{ width: 100, height: 100 }} rounded responsive />
+                {/* </Grid> */}
+                <br></br>
+                <FormGroup controlId={'formControlsFile'} >
+                  <FormControl type={'file'} accept={['.jpg', '.jpeg', '.bmp','.png']}/>
+                  <HelpBlock>{'Imagenes tamaño 100 x 100 (jpg,jpeg,bmp,png)'}</HelpBlock>
+                </FormGroup>
+              </Panel.Body>
+            </Panel>
+          </Col>
+        </Row>
+        <br></br>
       </form>
     )
   }
@@ -250,4 +273,4 @@ const mapDispatch = (dispatch) => ({
   }
 })
 
-export default connect(null, mapDispatch, null, { withRef: true } )(EditarComercioForm)
+export default connect(null, mapDispatch, null, { withRef: true })(EditarComercioForm)
