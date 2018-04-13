@@ -21,6 +21,7 @@ export class EditarComercioForm extends React.Component {
         codigoPostal: { error: false, mensaje: '' },
         calle: { error: false, mensaje: '' },
         email: { error: false, mensaje: '' },
+        imageLogo: { error: false, mensaje: '' },
         habilitado: { seleccionado: props.activeComercio.habilitado, error: false, mensaje: '' },
         tipoComercio: { seleccionado: props.activeComercio.tipoComercio.id, error: false, mensaje: '' }
       }
@@ -38,6 +39,7 @@ export class EditarComercioForm extends React.Component {
       codigoPostal: { error: false, mensaje: '' },
       calle: { error: false, mensaje: '' },
       email: { error: false, mensaje: '' },
+      imageLogo: { error: false, mensaje: '' },
       habilitado: { error: false, mensaje: '', seleccionado: this.state.habilitado.seleccionado },
       tipoComercio: { error: false, mensaje: '', seleccionado: this.state.tipoComercio.seleccionado },
     }
@@ -167,7 +169,28 @@ export class EditarComercioForm extends React.Component {
     }
   }
 
+  _handleImageChange(e) {
+    e.preventDefault()
+
+    let reader = new FileReader()
+    let file = e.target.files[0]
+
+    reader.onloadend = () => {
+      this.setState({
+        file: file,
+        imagePreviewUrl: reader.result
+      })
+    }
+  }
+
   render() {
+    let {imagePreviewUrl} = this.state
+    let imageLogo = null
+    if (imagePreviewUrl) {
+      imageLogo = imagePreviewUrl
+    } else {
+      imageLogo = Img1
+    }
     return (
       <form>
         <Row>
@@ -250,11 +273,12 @@ export class EditarComercioForm extends React.Component {
               </Panel.Heading>
               <Panel.Body>
                 {/* <Grid> */}
-                <Image src={Img1} style={{ width: 100, height: 100 }} rounded responsive />
+                <Image src={imageLogo} style={{ width: 100, height: 100 }}
+                  rounded responsive />
                 {/* </Grid> */}
                 <br></br>
                 <FormGroup controlId={'formControlsFile'} >
-                  <FormControl type={'file'} accept={['.jpg', '.jpeg', '.bmp','.png']}/>
+                  <FormControl onChange={(e)=>this._handleImageChange(e)} type={'file'} accept={['.jpg', '.jpeg', '.bmp','.png']}/>
                   <HelpBlock>{'Imagenes tamaño 100 x 100 (jpg,jpeg,bmp,png)'}</HelpBlock>
                 </FormGroup>
               </Panel.Body>

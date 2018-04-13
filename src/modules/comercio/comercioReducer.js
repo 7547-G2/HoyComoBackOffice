@@ -140,65 +140,63 @@ export const getComercioById = (id) => dispatch => {
 }
 
 export const getComercios = (/*nombre, email, tipoComercio*/) => dispatch => {
-  // let config = getConfig()
-  // let queryString = ''
+  let config = getNullConfig()
+  let queryString = ''
   // if (nombre != '') queryString += '?nombre=' + nombre
   // if (email != '') queryString += (queryString == '') ? '?email=' + email : '&email=' + email
   // if (organismo != '-1') queryString += (queryString == '') ? '?organismo_id=' + organismo : '&organismo_id=' + organismo
-  // let queryStringOrganismos = '?sort_by=nombre'
-
-  // axios.all([
-  //   axios.get(api.usuarios + queryString, config),
-  //   axios.get(api.organismos + queryStringOrganismos, config)
-  // ])
-  // .then(axios.spread(function (usuarios, organismos) {
-  // return { usuarios: usuarios.data.data, organismos: organismos.data.data }
-  // }))
-  // .then(data => {
-  //   dispatch(usuarios(data))
-  // })
-  // .catch(err => {
-  //   if (err.response && err.response.status){
-  //     dispatch(queryError(getErrorResponse(err)))
-  //   } else {
-  //     dispatch(internalError(err))
+  axios.get(api.comercios + queryString, config)
+  axios.all([
+    axios.get(api.comercios + queryString, config),
+  ])
+    .then(axios.spread(function (comercios) {
+      return { comercios: comercios.data }
+    }))
+    .then(data => {
+      dispatch(comercios(data))
+    })
+    .catch(err => {
+      if (err.response && err.response.status) {
+        dispatch(queryError(getErrorResponse(err)))
+      } else {
+        dispatch(internalError(err))
+      }
+    })
+  // dispatch(comercios( { comercios: [
+  //   { id: 1, nombre: 'nicolas', 
+  //     razonSocial: 'razon 1',
+  //     calle: 'calle falsa',
+  //     numero: '1234',
+  //     codigoPostal:'1000', 
+  //     email: 'email@example.com',
+  //     tipoComercio: {id:3, nombre:'pastas'}, 
+  //     habilitado: 1
+  //   },{ id: 2, nombre: 'un nombre', 
+  //     razonSocial: 'razon 2',
+  //     calle: 'calle falsa',
+  //     numero: '1235',
+  //     codigoPostal:'1001', 
+  //     email: 'email2@example.com',
+  //     tipoComercio: {id:3, nombre:'pastas'}, 
+  //     habilitado: 1
+  //   },{ id: 3, nombre: 'la dehabilitada', 
+  //     razonSocial: 'razon 3',
+  //     calle: 'calle falsa',
+  //     numero: '1236',
+  //     codigoPostal:'1002', 
+  //     email: 'email3@example.com',
+  //     tipoComercio: {id:3, nombre:'pastas'}, 
+  //     habilitado: 0
+  //   },{ id: 4, nombre: 'nicolas', 
+  //     razonSocial: 'razon 4',
+  //     calle: 'calle falsa',
+  //     numero: '1237',
+  //     codigoPostal:'1003', 
+  //     email: 'email4@example.com',
+  //     tipoComercio: {id:1, nombre:'pastas'}, 
+  //     habilitado: 1
   //   }
-  // })
-  dispatch(comercios( { comercios: [
-    { id: 1, nombre: 'nicolas', 
-      razonSocial: 'razon 1',
-      calle: 'calle falsa',
-      numero: '1234',
-      codigoPostal:'1000', 
-      email: 'email@example.com',
-      tipoComercio: {id:3, nombre:'pastas'}, 
-      habilitado: 1
-    },{ id: 2, nombre: 'un nombre', 
-      razonSocial: 'razon 2',
-      calle: 'calle falsa',
-      numero: '1235',
-      codigoPostal:'1001', 
-      email: 'email2@example.com',
-      tipoComercio: {id:3, nombre:'pastas'}, 
-      habilitado: 1
-    },{ id: 3, nombre: 'la dehabilitada', 
-      razonSocial: 'razon 3',
-      calle: 'calle falsa',
-      numero: '1236',
-      codigoPostal:'1002', 
-      email: 'email3@example.com',
-      tipoComercio: {id:3, nombre:'pastas'}, 
-      habilitado: 0
-    },{ id: 4, nombre: 'nicolas', 
-      razonSocial: 'razon 4',
-      calle: 'calle falsa',
-      numero: '1237',
-      codigoPostal:'1003', 
-      email: 'email4@example.com',
-      tipoComercio: {id:1, nombre:'pastas'}, 
-      habilitado: 1
-    }
-  ] , tipoComercios: [{id: 1, nombre: 'parrillada'}, {id: 2, nombre: 'sushis'}, {id: 3, nombre: 'pastas'}, {id: 4, nombre: 'chino'}] }))
+  // ] , tipoComercios: [{id: 1, nombre: 'parrillada'}, {id: 2, nombre: 'sushis'}, {id: 3, nombre: 'pastas'}, {id: 4, nombre: 'chino'}] }))
 }
 
 export const updateComercio = (idComercio, nombre, tipoComercio_id, password, verificacion_password) => dispatch => {
@@ -313,7 +311,7 @@ export const obtenerTipoComercios = () => dispatch => {
 const fetchComerciosTable = (data) => {
   let returnValue = []
   data.map(function (rowObject) {
-    returnValue.push({ id: rowObject.id, nombre: rowObject.nombre, email: rowObject.email, tipoComercio: rowObject.tipoComercio.nombre,
+    returnValue.push({ id: rowObject.id, nombre: rowObject.nombre, email: rowObject.email, tipoComercio:  rowObject.tipo /* rowObject.tipoComercio.nombre*/,
       domicilio: rowObject.calle + ' ' + rowObject.numero + ', cp: ' + rowObject.codigoPostal, habilitado: rowObject.habilitado  })
   })
   return returnValue
