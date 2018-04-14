@@ -1,6 +1,9 @@
 import store from '../app/store'
 import _ from 'lodash'
 
+//Constantes
+const fileMaxSize = 0.3 * 1000 * 1000 // 0.5MB
+
 export const getConfig = () => ({
   headers: {
     'Authorization': store.getState().authReducer.user.token,
@@ -35,29 +38,25 @@ export const getTipoComerciosSelectOptions = (allTipoComercios) => {
   return tipoComerciosOptions
 }
 
-
-const fileMinSize = 1 * 1000 * 1000 // 1MB
-const fileMaxSize = 50 * 1000 * 1000 // 50MB
-
-export default function validateFile(values) {
-  let errors = {}
-  console.log(values)
-
-  if (!values.file) {
-    errors.file = 'Required'
-  } else {
-    let file = values.file[0]
-
-    if (!file.name.endsWith('.stl') || !file.name.endsWith('.obj')) {
-      errors.file = 'Scan file must be an .STL or .OBJ file'
-    } else if (file.size < fileMinSize) {
-      errors.file = 'Scan file must be atleast 1MB'
-    } else if (file.size > fileMaxSize) {
-      errors.file = 'Scan file cannot exceed 50MB size'
+export const validFileType = (file) => {
+  let fileTypes = [
+    'image/jpeg',
+    'image/pjpeg',
+    'image/png',
+    'image/bmp']
+  
+  for(var i = 0; i < fileTypes.length; i++) {
+    if(file.type === fileTypes[i]) {
+      return true
     }
   }
+  return false
+}
 
-  console.log(errors)
-  // Object {file: "Required"}
-  return errors
+export const validFileSize = (file) => {
+  let size = file.size
+  if (size > fileMaxSize) {
+    return false
+  }
+  return true
 }

@@ -23,7 +23,6 @@ export class BuscarComercioForm extends React.Component {
   }
 
   updateTipoComercioSearch (newValue) {
-
     this.setState({
       ...this.state, 
       tipoComercioFiltro: (newValue != null) ? newValue.value : -1
