@@ -202,52 +202,21 @@ export const getComercios = (/*nombre, email, tipoComercio*/) => dispatch => {
         dispatch(internalError(err))
       }
     })
-  // dispatch(comercios( { comercios: [
-  //   { id: 1, nombre: 'nicolas', 
-  //     razonSocial: 'razon 1',
-  //     calle: 'calle falsa',
-  //     numero: '1234',
-  //     codigoPostal:'1000', 
-  //     email: 'email@example.com',
-  //     tipoComercio: {id:3, nombre:'pastas'}, 
-  //     estado: pendiente
-  //   },{ id: 2, nombre: 'un nombre', 
-  //     razonSocial: 'razon 2',
-  //     calle: 'calle falsa',
-  //     numero: '1235',
-  //     codigoPostal:'1001', 
-  //     email: 'email2@example.com',
-  //     tipoComercio: {id:3, nombre:'pastas'}, 
-  //     estado: pendiente
-  //   },{ id: 3, nombre: 'la dehabilitada', 
-  //     razonSocial: 'razon 3',
-  //     calle: 'calle falsa',
-  //     numero: '1236',
-  //     codigoPostal:'1002', 
-  //     email: 'email3@example.com',
-  //     tipoComercio: {id:3, nombre:'pastas'}, 
-  //     estado: pendiente
-  //   },{ id: 4, nombre: 'nicolas', 
-  //     razonSocial: 'razon 4',
-  //     calle: 'calle falsa',
-  //     numero: '1237',
-  //     codigoPostal:'1003', 
-  //     email: 'email4@example.com',
-  //     tipoComercio: {id:1, nombre:'pastas'}, 
-  //     estado: pendiente
-  //   }
-  // ] , tipoComercios: [{id: 1, nombre: 'parrillada'}, {id: 2, nombre: 'sushis'}, {id: 3, nombre: 'pastas'}, {id: 4, nombre: 'chino'}] }))
 }
 
-export const updateComercio = (idComercio, nombre, tipoComercio_id, password, verificacion_password) => dispatch => {
-  let config = getConfig()
+export const updateComercio = (idComercio,nombre,razonSocial,numero,codigoPostal,calle,email,estado,tipoComercio,imagenLogo) => dispatch => {
+  let config = getNullConfig()
   let body = {}
+  body.addressDto = { floor: '', department: ''}
   if (nombre) body.nombre = nombre
-  if (tipoComercio_id) body.tipo_comercio_id = tipoComercio_id
-  if (password) body.password = password
-  if (verificacion_password) body.verificacion_password = verificacion_password
-
-  axios.patch(api.comercios + '/' + idComercio, body, config)
+  if (tipoComercio) body.tipo = tipoComercio
+  if (razonSocial) body.razonSocial = razonSocial
+  if (numero && calle) body.addressDto.street = calle.trim() + ' '+ numero
+  if (codigoPostal) body.postalCode = codigoPostal
+  if (imagenLogo) body.imagenLogo = imagenLogo
+  if (email) body.email = email
+  if (estado) body.estado = estado
+  axios.put(api.comercios + '/' + idComercio, body, config)
     .then(res => {
       return res.data.data
     })
@@ -279,7 +248,8 @@ export const createComercio = (nombre, razonSocial, calle, numero, codigoPostal,
       postalCode: codigoPostal,
       floor: '',
       department: ''
-    }
+    },
+    estado: 'pendiente menu'
   }
 
   axios.post(api.comercios, body, config)
@@ -407,6 +377,7 @@ const fetchComercio = (data) => {
     calle: street,
     numero: number,
     estado: data.estado,
+    imagenLogo: data.imagenLogo,
     email: data.email, /*roles: returnValue,*/ 
     tipoComercio: data.tipo }
 }

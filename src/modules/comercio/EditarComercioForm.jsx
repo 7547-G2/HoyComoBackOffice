@@ -15,7 +15,8 @@ export class EditarComercioForm extends React.Component {
     super(props)
     this.state = {
       imageValue: null,
-      imageLogo: Img1,
+      imageLogo: this.props.activeComercio.imagenLogo || Img1,
+      lastImageLogo: this.props.activeComercio.imagenLogo || Img1,
       ready: false,
       updateForm: {
         nombre: { error: false, mensaje: '' },
@@ -29,6 +30,7 @@ export class EditarComercioForm extends React.Component {
         tipoComercio: { seleccionado: props.activeComercio.tipoComercio, error: false, mensaje: '' }
       }
     }
+    this.onImgLoad = this.onImgLoad.bind(this)
     this.handleImageChange = this.handleImageChange.bind(this)
     this.updateEstadoSelect = this.updateEstadoSelect.bind(this)
     this.updateTipoComercioSelect = this.updateTipoComercioSelect.bind(this)
@@ -118,7 +120,7 @@ export class EditarComercioForm extends React.Component {
       updateForm.email.mensaje = ''
     }
 
-    if (this.state.updateForm.estado.seleccionado <= 0) {
+    if (this.state.updateForm.estado.seleccionado == '') {
       updateForm.estado.error = true
       updateForm.estado.mensaje = 'Este campo es obligatorio'
       formOk = false
@@ -152,7 +154,7 @@ export class EditarComercioForm extends React.Component {
 
   updateEstadoSelect(newValue) {
     let newUpdateForm = { ...this.state.updateForm }
-    newUpdateForm.estado.seleccionado = (newValue != null) ? newValue.value : -1
+    newUpdateForm.estado.seleccionado = (newValue != null) ? newValue.value : ''
     this.setState({
       ...this.state,
       updateForm: newUpdateForm
@@ -161,7 +163,8 @@ export class EditarComercioForm extends React.Component {
   
 
   editarComercioSubmit() {
-    if (this.validarUpdateForm(ReactDOM.findDOMNode(this.nombreInput).value,
+    if (this.validarUpdateForm(
+      ReactDOM.findDOMNode(this.nombreInput).value,
       ReactDOM.findDOMNode(this.razonSocialInput).value,
       ReactDOM.findDOMNode(this.numeroInput).value,
       ReactDOM.findDOMNode(this.codigoPostalInput).value,
@@ -169,33 +172,37 @@ export class EditarComercioForm extends React.Component {
       ReactDOM.findDOMNode(this.emailInput).value)) {
       this.props.updateComercio(
         this.props.activeComercio.id,
+        ReactDOM.findDOMNode(this.razonSocialInput).value,
         ReactDOM.findDOMNode(this.nombreInput).value,
-        this.state.updateForm.tipoComercio.seleccionado, null, null)
+        ReactDOM.findDOMNode(this.numeroInput).value,
+        ReactDOM.findDOMNode(this.codigoPostalInput).value,
+        ReactDOM.findDOMNode(this.calleInput).value,
+        ReactDOM.findDOMNode(this.emailInput).value,
+        this.state.updateForm.estado.seleccionado,
+        this.state.updateForm.tipoComercio.seleccionado
+      )
     }
   }
 
   onImgLoad({target:img}) {
-    // console.log(img.offsetHeight)
-    // console.log(img.offsetWidth)
-    // this.setState({dimensions:{height:img.offsetHeight,
-    //   width:img.offsetWidth}})
+    if(img.naturalHeight != img.naturalWidth){
+      let updateForm = this.state.updateForm
+      updateForm.imageLogo.estado = 'error'
+      updateForm.imageLogo.mensaje = 'El imagen debe ser cuadrada'
+      this.setState({
+        ...this.state,
+        updateForm: updateForm,
+        imageLogo: this.state.lastImageLogo
+      })
+    }
   }
 
   handleImageChange(e) {
     e.preventDefault()
     let file = e.target.files[0]
-    // var _URL = window.URL || window.webkitURL
-    // var img
-    // if ((file = e.target.files[0])) {
-    //   img = new Image({ src: _URL.createObjectURL(file), onLoad:() => {
-    //     alert(this.width + ' ' + this.height)
-    //   } })
-    //   img.src = _URL.createObjectURL(file)
-    //   console.log(img.naturalWidth)
-    // }
-
     if (validFileType(file)) {
       if (validFileSize(file)) {
+        let lastImageLogo = this.state.imageLogo
         let updateForm = this.state.updateForm
         updateForm.imageLogo.estado = 'success'
         updateForm.imageLogo.mensaje = 'Se ha subido corectamente'
@@ -203,6 +210,7 @@ export class EditarComercioForm extends React.Component {
           ...this.state,
           file: file,
           imageLogo: window.URL.createObjectURL(file),
+          lastImageLogo: lastImageLogo,
           updateForm: updateForm
         })
       } else {
@@ -287,7 +295,12 @@ export class EditarComercioForm extends React.Component {
               validationMessage={this.state.updateForm.estado.mensaje} bsSize="small" controlId="estadoSelect"
               label="Estado" inputComponent={
                 <Select name="estadoSelect" value={this.state.updateForm.estado.seleccionado}
-                  options={[{ value: 1, label: 'verdadero' }, { value: 0, label: 'falso' }]} id="estadoSelect"
+                  options={[
+                    { value: 'pendiente menu', label: 'pendiente menu' }, 
+                    { value: 'pendiente activacion', label: 'pendiente activacion' },
+                    { value: 'activado', label: 'activado' },
+                    { value: 'desactivado', label: 'desactivado' }
+                  ]} id="estadoSelect"
                   key="estadoSelect" onChange={this.updateEstadoSelect} placeholder="Selecciona" />
               } />
           </Col>
@@ -326,8 +339,29 @@ export class EditarComercioForm extends React.Component {
 }
 
 const mapDispatch = (dispatch) => ({
-  updateComercio: (idComercio, nombreComercio, tipoComercio, password, confirmacionPassword) => {
-    dispatch(updateComercio(idComercio, nombreComercio, tipoComercio, password, confirmacionPassword))
+  updateComercio: (idComercio,
+    nombre,
+    razonSocial,
+    numero,
+    codigoPostal,
+    calle,
+    email,
+    estado,
+    tipoComercio) => {
+    let imagenLogo = ''
+    // if(this.state.imageLogo && this.state.imageLogo != Img1){
+    //   imagenLogo = ''
+    // }
+    dispatch(updateComercio(idComercio,
+      nombre,
+      razonSocial,
+      numero,
+      codigoPostal,
+      calle,
+      email,
+      estado,
+      tipoComercio,
+      imagenLogo))
   }
 })
 
