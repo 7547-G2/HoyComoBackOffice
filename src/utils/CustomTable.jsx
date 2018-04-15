@@ -1,10 +1,10 @@
 import React from 'react'
-import { Grid, FormGroup, FormControl, ControlLabel, Table, Glyphicon } from 'react-bootstrap'
+import {  Table, Glyphicon } from 'react-bootstrap'
 
 export class CustomTable extends React.Component {
 
   getHeaders() {
-    let headers = this.props.headers, i, returnHeaders = [], editAction = this.props.editAction, deleteAction = this.props.deleteAction, activeAction = this.props.activeAction
+    let headers = this.props.headers, i, returnHeaders = [], editAction = this.props.editAction, deleteAction = this.props.deleteAction
 
     for (i in headers) {
       returnHeaders.push(
@@ -13,28 +13,28 @@ export class CustomTable extends React.Component {
         </th>
       )
     }
-    if (editAction || deleteAction || activeAction) {
+    if (editAction || deleteAction ) {
       returnHeaders.push(<th key={'acciones'}></th>)
     }
     return returnHeaders
   }
 
   getTableRows() {
-    let data = this.props.data, editAction = this.props.editAction, deleteAction = this.props.deleteAction, activeAction = this.props.activeAction
+    let data = this.props.data, editAction = this.props.editAction, deleteAction = this.props.deleteAction
     var tableRow = data.map(function (rowObject) {
       let i
       var returnValue = []
 
       for (i in rowObject) {
-        if (i != 'id' && i != 'habilitado')
+        if (i != 'id')
           returnValue.push(
             <td key={i}>
               {rowObject[i]}
             </td>)
       }
 
-      if (editAction || deleteAction || activeAction) {
-        let editRender, deleteRender, activeRender
+      if (editAction || deleteAction) {
+        let editRender, deleteRender
 
         if (editAction) {
           editRender = <a href="javascript:void(0)">
@@ -48,24 +48,12 @@ export class CustomTable extends React.Component {
           </a>
         }
 
-        if (activeAction) {
-          let icon = rowObject.habilitado?'eye-open':'eye-close'
-          let title = rowObject.habilitado?'Habilitado':'Deshabilitado'
-          activeRender = <a href="javascript:void(0)" >
-            <Glyphicon glyph={icon} title={title} onClick={() => activeAction(rowObject.id)}/>
-          </a>
-        }
         let spaceEditDelete = (editRender && deleteRender)?'  ':''
-        let spaceDeleteActive = (deleteRender && activeRender)?'  ':''
-        let spaceEditActive = (editRender && activeRender)?'  ':''
         returnValue.push(
           <td key={'acciones'}>
             {editRender}
             {spaceEditDelete}
-            {spaceEditActive}
             {deleteRender}
-            {spaceDeleteActive}
-            {activeRender}
           </td>)
       }
 

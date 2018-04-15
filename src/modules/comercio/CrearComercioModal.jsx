@@ -22,7 +22,7 @@ export class CrearComercioModal extends React.Component {
         numero: { error: false, mensaje: '' },
         codigoPostal: { error: false, mensaje: '' },
         email2: { error: false, mensaje: '' },
-        tipoComercio: { seleccionado: -1, error: false, mensaje: '' }
+        tipoComercio: { seleccionado: '', error: false, mensaje: '' }
       }
     }
     this.updateTipoComercioSelect = this.updateTipoComercioSelect.bind(this)
@@ -38,7 +38,7 @@ export class CrearComercioModal extends React.Component {
       numero: { error: false, mensaje: '' },
       codigoPostal: { error: false, mensaje: '' },
       email2: { error: false, mensaje: '' },
-      tipoComercio: { seleccionado: -1, error: false, mensaje: '' }
+      tipoComercio: { seleccionado: '', error: false, mensaje: '' }
     }
     this.setState({ ...this.state, createForm: createForm })
   }
@@ -104,18 +104,11 @@ export class CrearComercioModal extends React.Component {
       createForm.codigoPostal.mensaje = 'Este campo es obligatorio'
       formOk = false
     } else {
-      if((!Number.isInteger(Number(codigoPostal))) || (codigoPostal < 0)){
-        createForm.codigoPostal.error = true
-        createForm.codigoPostal.mensaje = 'Debe ser un entero'
-        formOk = false
-      }else{
-        createForm.codigoPostal.error = false
-        createForm.codigoPostal.mensaje = ''
-      }
+      createForm.codigoPostal.error = false
+      createForm.codigoPostal.mensaje = ''
     }
 
-
-    if (this.state.createForm.tipoComercio.seleccionado <= 0) {
+    if (this.state.createForm.tipoComercio.seleccionado == '') {
       createForm.tipoComercio.error = true
       createForm.tipoComercio.mensaje = 'Este campo es obligatorio'
       formOk = false
@@ -167,7 +160,7 @@ export class CrearComercioModal extends React.Component {
 
   updateTipoComercioSelect(newValue) {
     let newCreateForm = { ...this.state.createForm }
-    newCreateForm.tipoComercio.seleccionado = (newValue != null) ? newValue.value : -1
+    newCreateForm.tipoComercio.seleccionado = (newValue != null) ? newValue.value : ''
     this.setState({
       ...this.state,
       createForm: newCreateForm
@@ -200,7 +193,7 @@ export class CrearComercioModal extends React.Component {
           label="Tipo Comercio" inputComponent={
             <Select key="tipoComercioSelect" value={this.state.createForm.tipoComercio.seleccionado}
               options={this.getTipoComercios()} id="tipoComercioSelect" onChange={this.updateTipoComercioSelect}
-              placeholder="seleccioná un tipo de comercio" name="tipoComercioSelect" />
+              placeholder="seleccioná un tipo" name="tipoComercioSelect" />
           } />
       </Col>
     </Row>)
@@ -238,7 +231,7 @@ export class CrearComercioModal extends React.Component {
               bootstrapURLKeys={{
                 key: 'AIzaSyC_rDpCs7Wgs5-qpnfx70_-LgvO89-zIDA',
               }}
-              defaultCenter={
+              center={
                 {
                   lat: -34.59378080536352,
                   lng: -58.44440356103553

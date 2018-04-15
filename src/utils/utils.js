@@ -31,10 +31,11 @@ export const getTipoComerciosSelectOptions = (allTipoComercios) => {
   //   }
 
   // }, this)
-  tipoComerciosOptions.push({ value: 1, label: 'chino' })
-  tipoComerciosOptions.push({ value: 2, label: 'parrilla' })
-  tipoComerciosOptions.push({ value: 3, label: 'pastas' })
-  tipoComerciosOptions.push({ value: 4, label: 'sushi' })
+  tipoComerciosOptions.push({ value: 'Chino', label: 'Chino' })
+  tipoComerciosOptions.push({ value: 'Parrilla', label: 'Parrilla' })
+  tipoComerciosOptions.push({ value: 'Pastas', label: 'Pastas' })
+  tipoComerciosOptions.push({ value: 'Sushi', label: 'Sushi' })
+  tipoComerciosOptions.push({ value: 'Pizzería', label: 'Pizzería' })
   return tipoComerciosOptions
 }
 
@@ -59,4 +60,12 @@ export const validFileSize = (file) => {
     return false
   }
   return true
+}
+
+export const generarContrasenia = (longitud) => {
+  longitud = longitud || 10
+  var caracteres = 'abcdefghijkmnpqrtuvwxyzABCDEFGHIJKLMNPQRTUVWXYZ123456789'
+  var contraseña = ''
+  for (let i=0; i<longitud; i++) contraseña += caracteres.charAt(Math.floor(Math.random()*caracteres.length))
+  return contraseña
 }

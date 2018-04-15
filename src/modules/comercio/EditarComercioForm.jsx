@@ -6,8 +6,9 @@ import { getTipoComerciosSelectOptions, validFileSize, validFileType } from '../
 import Select from 'react-select'
 import { Row, Col, FormControl, Panel, Image, FormGroup, HelpBlock } from 'react-bootstrap'
 import { CustomFormField } from '../../utils/CustomFormField'
+import EditarPlatosTable from './EditarPlatosTable'
 
-import Img1 from './upload/1.png'
+import Img1 from '../../utils/images/ImageLogoDefault.png'
 
 export class EditarComercioForm extends React.Component {
   constructor(props) {
@@ -24,12 +25,12 @@ export class EditarComercioForm extends React.Component {
         calle: { error: false, mensaje: '' },
         email: { error: false, mensaje: '' },
         imageLogo: { estado: null, mensaje: 'Puede subir imagenes cuadradas de extensión jpg, jpeg, bmp o png' },
-        habilitado: { seleccionado: props.activeComercio.habilitado, error: false, mensaje: '' },
-        tipoComercio: { seleccionado: props.activeComercio.tipoComercio.id, error: false, mensaje: '' }
+        estado: { seleccionado: props.activeComercio.estado, error: false, mensaje: '' },
+        tipoComercio: { seleccionado: props.activeComercio.tipoComercio, error: false, mensaje: '' }
       }
     }
     this.handleImageChange = this.handleImageChange.bind(this)
-    this.updateHabilitadoSelect = this.updateHabilitadoSelect.bind(this)
+    this.updateEstadoSelect = this.updateEstadoSelect.bind(this)
     this.updateTipoComercioSelect = this.updateTipoComercioSelect.bind(this)
     this.editarComercioSubmit = this.editarComercioSubmit.bind(this)
   }
@@ -43,7 +44,7 @@ export class EditarComercioForm extends React.Component {
       calle: { error: false, mensaje: '' },
       email: { error: false, mensaje: '' },
       imageLogo: { estado: null, mensaje: 'Puede subir imagenes cuadradas de extensión jpg, jpeg, bmp o png'},
-      habilitado: { error: false, mensaje: '', seleccionado: this.state.habilitado.seleccionado },
+      estado: { error: false, mensaje: '', seleccionado: this.state.estado.seleccionado },
       tipoComercio: { error: false, mensaje: '', seleccionado: this.state.tipoComercio.seleccionado },
     }
     this.setState({ ...this.state, updateForm: updateForm })
@@ -59,7 +60,7 @@ export class EditarComercioForm extends React.Component {
       codigoPostal: { error: false, mensaje: '' },
       calle: { error: false, mensaje: '' },
       email: { error: false, mensaje: '' },
-      habilitado: this.state.updateForm.habilitado,
+      estado: this.state.updateForm.estado,
       tipoComercio: this.state.updateForm.tipoComercio
     }
 
@@ -117,16 +118,16 @@ export class EditarComercioForm extends React.Component {
       updateForm.email.mensaje = ''
     }
 
-    if (this.state.updateForm.habilitado.seleccionado <= 0) {
-      updateForm.habilitado.error = true
-      updateForm.habilitado.mensaje = 'Este campo es obligatorio'
+    if (this.state.updateForm.estado.seleccionado <= 0) {
+      updateForm.estado.error = true
+      updateForm.estado.mensaje = 'Este campo es obligatorio'
       formOk = false
     } else {
-      updateForm.habilitado.error = false
-      updateForm.habilitado.mensaje = ''
+      updateForm.estado.error = false
+      updateForm.estado.mensaje = ''
     }
 
-    if (this.state.updateForm.tipoComercio.seleccionado <= 0) {
+    if (this.state.updateForm.tipoComercio.seleccionado == '') {
       updateForm.tipoComercio.error = true
       updateForm.tipoComercio.mensaje = 'Este campo es obligatorio'
       formOk = false
@@ -142,21 +143,22 @@ export class EditarComercioForm extends React.Component {
 
   updateTipoComercioSelect(newValue) {
     let newUpdateForm = { ...this.state.updateForm }
-    newUpdateForm.tipoComercio.seleccionado = (newValue != null) ? newValue.value : -1
+    newUpdateForm.tipoComercio.seleccionado = (newValue != null) ? newValue.value : ''
     this.setState({
       ...this.state,
       updateForm: newUpdateForm
     })
   }
 
-  updateHabilitadoSelect(newValue) {
+  updateEstadoSelect(newValue) {
     let newUpdateForm = { ...this.state.updateForm }
-    newUpdateForm.habilitado.seleccionado = (newValue != null) ? newValue.value : -1
+    newUpdateForm.estado.seleccionado = (newValue != null) ? newValue.value : -1
     this.setState({
       ...this.state,
       updateForm: newUpdateForm
     })
   }
+  
 
   editarComercioSubmit() {
     if (this.validarUpdateForm(ReactDOM.findDOMNode(this.nombreInput).value,
@@ -172,13 +174,26 @@ export class EditarComercioForm extends React.Component {
     }
   }
 
+  onImgLoad({target:img}) {
+    // console.log(img.offsetHeight)
+    // console.log(img.offsetWidth)
+    // this.setState({dimensions:{height:img.offsetHeight,
+    //   width:img.offsetWidth}})
+  }
+
   handleImageChange(e) {
     e.preventDefault()
     let file = e.target.files[0]
-    // let image = window.Blob.createObjectURL(file)
-    // var img = new Image();
-    // img.src = window.URL.createObjectURL(file)
-    // jic.compress(img)
+    // var _URL = window.URL || window.webkitURL
+    // var img
+    // if ((file = e.target.files[0])) {
+    //   img = new Image({ src: _URL.createObjectURL(file), onLoad:() => {
+    //     alert(this.width + ' ' + this.height)
+    //   } })
+    //   img.src = _URL.createObjectURL(file)
+    //   console.log(img.naturalWidth)
+    // }
+
     if (validFileType(file)) {
       if (validFileSize(file)) {
         let updateForm = this.state.updateForm
@@ -268,12 +283,12 @@ export class EditarComercioForm extends React.Component {
               } />
           </Col>
           <Col lg={2} md={2}>
-            <CustomFormField validationState={this.state.updateForm.habilitado.error ? 'error' : null}
-              validationMessage={this.state.updateForm.habilitado.mensaje} bsSize="small" controlId="habilitadoSelect"
-              label="Habilitado" inputComponent={
-                <Select name="habilitadoSelect" value={this.state.updateForm.habilitado.seleccionado}
-                  options={[{ value: 1, label: 'verdadero' }, { value: 0, label: 'falso' }]} id="habilitadoSelect"
-                  key="habilitadoSelect" onChange={this.updateHabilitadoSelect} placeholder="Selecciona" />
+            <CustomFormField validationState={this.state.updateForm.estado.error ? 'error' : null}
+              validationMessage={this.state.updateForm.estado.mensaje} bsSize="small" controlId="estadoSelect"
+              label="Estado" inputComponent={
+                <Select name="estadoSelect" value={this.state.updateForm.estado.seleccionado}
+                  options={[{ value: 1, label: 'verdadero' }, { value: 0, label: 'falso' }]} id="estadoSelect"
+                  key="estadoSelect" onChange={this.updateEstadoSelect} placeholder="Selecciona" />
               } />
           </Col>
         </Row>
@@ -289,9 +304,12 @@ export class EditarComercioForm extends React.Component {
                 <FormGroup validationState={this.state.updateForm.imageLogo.estado}
                   controlId={'formControlsFile'} >
                   <Image src={this.state.imageLogo} style={{ width: 100, height: 100 }}
+                    onLoad={this.onImgLoad}
                     rounded responsive />
                   <br></br>
-                  <FormControl onChange={this.handleImageChange} value={this.imageValue}
+                  <FormControl 
+                    onChange={this.handleImageChange}
+                    value={this.imageValue}
                     type={'file'} accept={['.jpg', '.jpeg', '.bmp', '.png']} />
                   <HelpBlock>{this.state.updateForm.imageLogo.mensaje}</HelpBlock>
                 </FormGroup>
@@ -299,6 +317,8 @@ export class EditarComercioForm extends React.Component {
             </Panel>
           </Col>
         </Row>
+        <br></br>
+        <EditarPlatosTable />  
         <br></br>
       </form>
     )

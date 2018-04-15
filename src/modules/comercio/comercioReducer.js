@@ -2,6 +2,7 @@ import axios from 'axios'
 import { getConfig, getNullConfig, getErrorResponse } from '../../utils/utils'
 import { push } from 'react-router-redux'
 // import _ from 'lodash'
+import { generarContrasenia } from  '../../utils/utils'
 import api from '../../config/api'
 
 const HYDRATE_COMERCIOS = 'HYDRATE_COMERCIOS'
@@ -74,8 +75,17 @@ export const clearComercios = () => dispatch => {
   dispatch(clearComercioResult())
 }
 
+const filtarById = (data,id) => {
+  let returnValue = null
+  data.forEach(element => {
+    if(element.id == id)
+      returnValue =  element
+  })
+  return returnValue
+}
+
 export const getComercioById = (id) => dispatch => {
-  // let config = getConfig()
+  let config = getNullConfig()
   // let queryStringTipoComercios = '?sort_by=nombre'
 
   // axios.all([
@@ -96,47 +106,77 @@ export const getComercioById = (id) => dispatch => {
   //       dispatch(internalError(err))
   //     }
   //   })
-  let comercios = [{
-    id: 1, nombre: 'nicolas',
-    razonSocial: 'razon 1',
-    calle: 'calle falsa',
-    numero: '1234',
-    codigoPostal: '1000',
-    email: 'email@example.com',
-    tipoComercio: { id: 3, nombre: 'pastas' },
-    habilitado: 1
-  }, {
-    id: 2, nombre: 'un nombre',
-    razonSocial: 'razon 2',
-    calle: 'calle falsa',
-    numero: '1235',
-    codigoPostal: '1001',
-    email: 'email2@example.com',
-    tipoComercio: { id: 3, nombre: 'pastas' },
-    habilitado: 1
-  }, {
-    id: 3, nombre: 'la dehabilitada',
-    razonSocial: 'razon 3',
-    calle: 'calle falsa',
-    numero: '1236',
-    codigoPostal: '1002',
-    email: 'email3@example.com',
-    tipoComercio: { id: 3, nombre: 'pastas' },
-    habilitado: 0
-  }, {
-    id: 4, nombre: 'nicolas',
-    razonSocial: 'razon 4',
-    calle: 'calle falsa',
-    numero: '1237',
-    codigoPostal: '1003',
-    email: 'email4@example.com',
-    tipoComercio: { id: 1, nombre: 'pastas' },
-    habilitado: 1
-  }]
-  let data = {}
-  data.comercio = comercios[id - 1]
-  data.tipoComercios = [{id: 1, nombre: 'parrillada'}, {id: 2, nombre: 'sushis'}, {id: 3, nombre: 'pastas'}, {id: 4, nombre: 'chino'}]
-  dispatch(comercioById(data))
+
+  let tipoComercios = [  
+    { value: 'Chino', label: 'Chino' },
+    { value: 'Parrilla', label: 'Parrilla' },
+    { value: 'Pastas', label: 'Pastas' },
+    { value: 'Sushi', label: 'Sushi' },
+    { value: 'Pizzería', label: 'Pizzería' }]
+  let queryString = ''
+  axios.get(api.comercios + queryString, config)
+  axios.all([
+    axios.get(api.comercios + queryString, config),
+  ])
+    .then(axios.spread(function (comercios) {
+      return { comercio: filtarById(comercios.data,id) , tipoComercios: tipoComercios}
+    }))
+    .then(data => {
+      dispatch(comercioById(data))
+    })
+    .catch(err => {
+      if (err.response && err.response.status) {
+        dispatch(queryError(getErrorResponse(err)))
+      } else {
+        dispatch(internalError(err))
+      }
+    })
+  // let comercios = [{
+  //   id: 1, nombre: 'nicolas',
+  //   razonSocial: 'razon 1',
+  //   calle: 'calle falsa',
+  //   numero: '1234',
+  //   codigoPostal: '1000',
+  //   email: 'email@example.com',
+  //   tipoComercio: { id: 3, nombre: 'pastas' },
+  //   estado: pendiente
+  // }, {
+  //   id: 2, nombre: 'un nombre',
+  //   razonSocial: 'razon 2',
+  //   calle: 'calle falsa',
+  //   numero: '1235',
+  //   codigoPostal: '1001',
+  //   email: 'email2@example.com',
+  //   tipoComercio: { id: 3, nombre: 'pastas' },
+  //   estado: pendiente
+  // }, {
+  //   id: 3, nombre: 'la dehabilitada',
+  //   razonSocial: 'razon 3',
+  //   calle: 'calle falsa',
+  //   numero: '1236',
+  //   codigoPostal: '1002',
+  //   email: 'email3@example.com',
+  //   tipoComercio: { id: 3, nombre: 'pastas' },
+  //   estado: pendiente
+  // }, {
+  //   id: 4, nombre: 'nicolas',
+  //   razonSocial: 'razon 4',
+  //   calle: 'calle falsa',
+  //   numero: '1237',
+  //   codigoPostal: '1003',
+  //   email: 'email4@example.com',
+  //   tipoComercio: { id: 1, nombre: 'pastas' },
+  //   estado: pendiente
+  // }]
+  // let data = {}
+  // data.comercio = comercios[id - 1]
+  // data.tipoComercios = [  
+  //   { value: 'Chino', label: 'Chino' },
+  //   { value: 'Parrilla', label: 'Parrilla' },
+  //   { value: 'Pastas', label: 'Pastas' },
+  //   { value: 'Sushi', label: 'Sushi' },
+  //   { value: 'Pizzería', label: 'Pizzería' }]
+  // dispatch(comercioById(data))
 }
 
 export const getComercios = (/*nombre, email, tipoComercio*/) => dispatch => {
@@ -170,7 +210,7 @@ export const getComercios = (/*nombre, email, tipoComercio*/) => dispatch => {
   //     codigoPostal:'1000', 
   //     email: 'email@example.com',
   //     tipoComercio: {id:3, nombre:'pastas'}, 
-  //     habilitado: 1
+  //     estado: pendiente
   //   },{ id: 2, nombre: 'un nombre', 
   //     razonSocial: 'razon 2',
   //     calle: 'calle falsa',
@@ -178,7 +218,7 @@ export const getComercios = (/*nombre, email, tipoComercio*/) => dispatch => {
   //     codigoPostal:'1001', 
   //     email: 'email2@example.com',
   //     tipoComercio: {id:3, nombre:'pastas'}, 
-  //     habilitado: 1
+  //     estado: pendiente
   //   },{ id: 3, nombre: 'la dehabilitada', 
   //     razonSocial: 'razon 3',
   //     calle: 'calle falsa',
@@ -186,7 +226,7 @@ export const getComercios = (/*nombre, email, tipoComercio*/) => dispatch => {
   //     codigoPostal:'1002', 
   //     email: 'email3@example.com',
   //     tipoComercio: {id:3, nombre:'pastas'}, 
-  //     habilitado: 0
+  //     estado: pendiente
   //   },{ id: 4, nombre: 'nicolas', 
   //     razonSocial: 'razon 4',
   //     calle: 'calle falsa',
@@ -194,7 +234,7 @@ export const getComercios = (/*nombre, email, tipoComercio*/) => dispatch => {
   //     codigoPostal:'1003', 
   //     email: 'email4@example.com',
   //     tipoComercio: {id:1, nombre:'pastas'}, 
-  //     habilitado: 1
+  //     estado: pendiente
   //   }
   // ] , tipoComercios: [{id: 1, nombre: 'parrillada'}, {id: 2, nombre: 'sushis'}, {id: 3, nombre: 'pastas'}, {id: 4, nombre: 'chino'}] }))
 }
@@ -224,26 +264,30 @@ export const updateComercio = (idComercio, nombre, tipoComercio_id, password, ve
     })
 }
 
-export const createComercio = (nombre, razonSocial, calle, numero, codigoPostal, email, verificacion_email, tipo_comercio_id) => dispatch => {
+export const createComercio = (nombre, razonSocial, calle, numero, codigoPostal, email, verificacion_email, tipo) => dispatch => {
 
   let config = getNullConfig()
+  let newPass = generarContrasenia()
   let body = {
     email: email,
     nombre: nombre,
     razonSocial: razonSocial,
-    calle: calle,
-    numero: numero,
-    codigoPostal: codigoPostal,
-    tipo: 'parrilla',
-    tipo_comercio_id: tipo_comercio_id,
-    password: 'aaaa',
-    token: 'token'
+    tipo: tipo,
+    password: newPass,
+    addressDto: {
+      street: calle +' '+numero,
+      postalCode: codigoPostal,
+      floor: '',
+      department: ''
+    }
   }
 
   axios.post(api.comercios, body, config)
-    .then(res => res.data)
-    .then(data => {
-      dispatch(push('/' + api.claveComercios + '/' + data.id))
+    .then(res => {
+      res.data 
+    })
+    .then(() => {
+      dispatch(push('/' + api.claveComercios))
     })
     .catch(err => {
       if (err.response && err.response.status) {
@@ -311,8 +355,8 @@ export const obtenerTipoComercios = () => dispatch => {
 const fetchComerciosTable = (data) => {
   let returnValue = []
   data.map(function (rowObject) {
-    returnValue.push({ id: rowObject.id, nombre: rowObject.nombre, email: rowObject.email, tipoComercio:  rowObject.tipo /* rowObject.tipoComercio.nombre*/,
-      domicilio: rowObject.calle + ' ' + rowObject.numero + ', cp: ' + rowObject.codigoPostal, habilitado: rowObject.habilitado  })
+    returnValue.push({ id: rowObject.id, nombre: rowObject.nombre, email: rowObject.email, tipoComercio:  rowObject.tipo,
+      domicilio: rowObject.addressDto.street + ', cp: ' + rowObject.addressDto.postalCode, estado: rowObject.estado  })
   })
   return returnValue
 }
@@ -353,15 +397,18 @@ const fetchComercio = (data) => {
   // data.Roles.map(function (rowObject) {
   //   returnValue.push({ id: rowObject.id, nombre: rowObject.nombre, descripcion: rowObject.descripcion })
   // })
-  return { id: data.id, 
+  let number = parseInt(data.addressDto.street.match(/\d+$/)[0], 10)
+  let street = data.addressDto.street.replace(number,'')
+  return { 
+    id: data.id, 
     nombre: data.nombre,
     razonSocial: data.razonSocial,
-    codigoPostal: data.codigoPostal,
-    calle: data.calle,
-    numero: data.numero,
-    habilitado: data.habilitado,
+    codigoPostal: data.addressDto.postalCode,
+    calle: street,
+    numero: number,
+    estado: data.estado,
     email: data.email, /*roles: returnValue,*/ 
-    tipoComercio: data.tipoComercio }
+    tipoComercio: data.tipo }
 }
 
 export default (state = initialState, action) => {
