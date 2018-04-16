@@ -1,17 +1,19 @@
 // En este archivo se guardarian las firmas de la API del sharedServer
 
 // Defaults
-const API_PORT = '3050'
-const API_VERSION = 'v0'
-const ROOT = 'localhost:' + API_PORT + '/' + API_VERSION + '/api/'
-const PROTOCOL = 'http'
-const BASE = PROTOCOL + '://' + ROOT
+const BASE = 'https://hoy-como-backend.herokuapp.com/api/'
 
 // Api routes phrases
 const LOGIN = 'token'
 const comercios = 'comercios'
+const platos = 'platos'
+const bocomercios ='backofficeComercio'
 
 export default {
   base: BASE,
-  login: BASE + LOGIN
+  bocomercios: BASE + bocomercios,
+  comercios: BASE + comercios,
+  login: BASE + LOGIN,
+  claveComercios: comercios,
+  clavePlatos: platos,
 }
