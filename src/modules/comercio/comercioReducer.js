@@ -205,7 +205,7 @@ export const getComercios = (/*nombre, email, tipoComercio*/) => dispatch => {
     })
 }
 
-export const updateComercio = (idComercio,nombre,razonSocial,numero,codigoPostal,calle,email,estado,tipoComercio,imagenLogo) => dispatch => {
+export const updateComercio = (idComercio,nombre,razonSocial,numero,codigoPostal,calle,email,estado,tipoComercio,imagenLogo,password) => dispatch => {
   let config = getNullConfig()
   let body = {}
   body.addressDto = { floor: '', department: ''}
@@ -217,6 +217,8 @@ export const updateComercio = (idComercio,nombre,razonSocial,numero,codigoPostal
   if (imagenLogo) body.imagenLogo = imagenLogo
   if (email) body.email = email
   if (estado) body.estado = estado
+  if (password) body.password = password
+  console.log(body)
   axios.put(api.comercios + '/' + idComercio, body, config)
     .then(res => {
       return res.data.data
@@ -380,6 +382,7 @@ const fetchComercio = (data, platos) => {
     calle: street,
     numero: number,
     estado: data.estado,
+    password: data.password,
     imagenLogo: data.imagenLogo,
     email: data.email, /*roles: returnValue,*/ 
     tipoComercio: data.tipo,
@@ -402,7 +405,7 @@ export default (state = initialState, action) => {
       ...state,
       result: fetchComerciosTable(action.data.comercios),
       allTipoComercios: fetchTipoComercios(action.data.tipoComercios),
-      alert: {},
+      alert: { style: 'success', text: 'Se ha creado el comercio correctamente' },
       activeSearch: true
     }
   case HYDRATE_COMERCIO_BY_ID:
@@ -426,7 +429,8 @@ export default (state = initialState, action) => {
     //     alert: {}
     //   }
   case QUERY_ERROR:
-    return { ...state, alert: { style: 'danger', text: action.err.message[0].message } }
+    console.log(action.err)
+    return { ...state, alert: { style: 'danger', text: 'Ocurrió un error inesperado' } }
   case INTERNAL_ERROR:
     return { ...state, alert: { style: 'danger', text: 'Ocurrió un error inesperado' } }
   case SUCCESSFUL:

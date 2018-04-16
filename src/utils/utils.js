@@ -55,7 +55,7 @@ export const validFileType = (file) => {
 }
 
 export const validFileSize = (file) => {
-  let size = file.size
+  let size = file.size.replace(' kB','')
   if (size > fileMaxSize) {
     return false
   }

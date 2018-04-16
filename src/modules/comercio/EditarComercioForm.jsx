@@ -8,6 +8,7 @@ import { Row, Col, FormControl, Panel, Image, FormGroup, HelpBlock } from 'react
 import { CustomFormField } from '../../utils/CustomFormField'
 import EditarPlatosTable from './EditarPlatosTable'
 import Img1 from '../../utils/images/ImageLogoDefault.png'
+import ReactFileBase64 from 'react-file-base64'
 
 const mensajeImagenDefault = 'Puede subir imagenes cuadradas de extensión jpg, jpeg, bmp o png'
 
@@ -31,6 +32,7 @@ export class EditarComercioForm extends React.Component {
         tipoComercio: { seleccionado: props.activeComercio.tipoComercio, error: false, mensaje: '' }
       }
     }
+    this.getFiles = this.getFiles.bind(this)
     this.onImgLoad = this.onImgLoad.bind(this)
     this.handleImageChange = this.handleImageChange.bind(this)
     this.updateEstadoSelect = this.updateEstadoSelect.bind(this)
@@ -176,9 +178,10 @@ export class EditarComercioForm extends React.Component {
       ReactDOM.findDOMNode(this.emailInput).value)) {
       let imagenLogoGuardada = ''
       if(this.state.imageLogo && this.state.imageLogo != Img1){
-        imagenLogoGuardada = this.state.imageLogoBase64
-        
+        imagenLogoGuardada = this.state.imageLogo
       }
+      let pass = this.props.activeComercio.password
+      console.log(pass)
       this.props.updateComercio(
         this.props.activeComercio.id,
         ReactDOM.findDOMNode(this.razonSocialInput).value,
@@ -189,7 +192,8 @@ export class EditarComercioForm extends React.Component {
         ReactDOM.findDOMNode(this.emailInput).value,
         this.state.updateForm.estado.seleccionado,
         this.state.updateForm.tipoComercio.seleccionado,
-        imagenLogoGuardada
+        imagenLogoGuardada,
+        pass        
       )
     }
   }
@@ -213,8 +217,12 @@ export class EditarComercioForm extends React.Component {
   }
 
   handleImageChange(e) {
-    e.preventDefault()
-    let file = e.target.files[0]
+    this.setState({
+      ...this.state,
+    })
+  }
+
+  getFiles(file){  
     let imageLogo = {}
     if (validFileType(file)) {
       if (validFileSize(file)) {
@@ -226,7 +234,7 @@ export class EditarComercioForm extends React.Component {
         this.setState({
           ...this.state,
           file: file,
-          imageLogo: window.URL.createObjectURL(file),
+          imageLogo: file.base64,
           lastImageLogo: lastImageLogo,
           updateForm: updateForm
         })
@@ -339,8 +347,9 @@ export class EditarComercioForm extends React.Component {
                     onLoad={this.onImgLoad}
                     rounded responsive />
                   <br></br>
-                  <FormControl 
-                    onChange={this.handleImageChange}
+                  <ReactFileBase64 
+                    onDone={this.getFiles}
+                    multiple={false}
                     value={this.imageValue}
                     type={'file'} accept={['.jpg', '.jpeg', '.bmp', '.png']} />
                   <HelpBlock>{this.state.updateForm.imageLogo?this.state.updateForm.imageLogo.mensaje:mensajeImagenDefault}</HelpBlock>
@@ -367,7 +376,8 @@ const mapDispatch = (dispatch) => ({
     email,
     estado,
     tipoComercio,
-    imagenLogo) => {
+    imagenLogo,
+    pass) => {
     dispatch(updateComercio(idComercio,
       nombre,
       razonSocial,
@@ -377,7 +387,8 @@ const mapDispatch = (dispatch) => ({
       email,
       estado,
       tipoComercio,
-      imagenLogo))
+      imagenLogo,
+      pass))
   }
 })
 
