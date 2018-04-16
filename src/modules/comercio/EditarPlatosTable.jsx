@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import { Alert } from 'react-bootstrap'
 import { withRouter } from 'react-router-dom'
-import { CustomTable } from '../../utils/CustomTable'
+import { CustomTableWithImage } from '../../utils/CustomTableWithImage'
 import history from '../../history'
 
 export class EditarPlatosTable extends React.Component {
@@ -13,10 +13,9 @@ export class EditarPlatosTable extends React.Component {
   // }
 
   getTablaPlatos() {
-    if (this.props.activePlatos && this.props.activePlatos.length != 0) {
-      return <CustomTable data={this.props.activePlatos} 
-        headers={['Imagen', 'Nombre', 'Precio']}
-        // editAction={this.editarAction} 
+    if (this.props.activeComercio.platos && this.props.activeComercio.platos.length != 0) {
+      return <CustomTableWithImage data={this.props.activeComercio.platos} 
+        headers={['Imagen','Nombre', 'Precio']}
       />
     } else {
       return <Alert bsStyle="info">No se encontraron platos para este comercio</Alert>

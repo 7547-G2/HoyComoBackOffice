@@ -117,9 +117,10 @@ export const getComercioById = (id) => dispatch => {
   axios.get(api.comercios + queryString, config)
   axios.all([
     axios.get(api.comercios + queryString, config),
+    axios.get(api.bocomercios +'/'+id+'/'+ api.clavePlatos + queryString, config),
   ])
-    .then(axios.spread(function (comercios) {
-      return { comercio: filtarById(comercios.data,id) , tipoComercios: tipoComercios}
+    .then(axios.spread(function (comercios,platos) {
+      return { comercio: filtarById(comercios.data,id), platos: platos.data , tipoComercios: tipoComercios}
     }))
     .then(data => {
       dispatch(comercioById(data))
@@ -212,7 +213,7 @@ export const updateComercio = (idComercio,nombre,razonSocial,numero,codigoPostal
   if (tipoComercio) body.tipo = tipoComercio
   if (razonSocial) body.razonSocial = razonSocial
   if (numero && calle) body.addressDto.street = calle.trim() + ' '+ numero
-  if (codigoPostal) body.postalCode = codigoPostal
+  if (codigoPostal) body.addressDto.postalCode = codigoPostal
   if (imagenLogo) body.imagenLogo = imagenLogo
   if (email) body.email = email
   if (estado) body.estado = estado
@@ -362,11 +363,13 @@ const fetchTipoComercios = (/*data*/) => {
   return returnValue
 }
 
-const fetchComercio = (data) => {
-  // let returnValue = []
-  // data.Roles.map(function (rowObject) {
-  //   returnValue.push({ id: rowObject.id, nombre: rowObject.nombre, descripcion: rowObject.descripcion })
-  // })
+const fetchComercio = (data, platos) => {
+  let returnValue = []
+  platos.map(function (rowObject) {
+    if(rowObject.id){
+      returnValue.push({ id: rowObject.id,  imagen: rowObject.imagen, nombre: rowObject.nombre,precio: rowObject.precio })
+    }
+  })
   let number = parseInt(data.addressDto.street.match(/\d+$/)[0], 10)
   let street = data.addressDto.street.replace(number,'')
   return { 
@@ -379,7 +382,9 @@ const fetchComercio = (data) => {
     estado: data.estado,
     imagenLogo: data.imagenLogo,
     email: data.email, /*roles: returnValue,*/ 
-    tipoComercio: data.tipo }
+    tipoComercio: data.tipo,
+    platos: returnValue
+  }
 }
 
 export default (state = initialState, action) => {
@@ -404,7 +409,7 @@ export default (state = initialState, action) => {
     return {
       ...state,
       result: [],
-      activeComercio: fetchComercio(action.data.comercio),
+      activeComercio: fetchComercio(action.data.comercio,action.data.platos),
       // allRoles: fetchRoles(action.data.roles),
       allTipoComercios: fetchTipoComercios(action.data.tipoComercios),
     }

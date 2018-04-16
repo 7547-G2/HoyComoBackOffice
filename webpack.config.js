@@ -5,6 +5,7 @@ var BUILD_DIR = path.resolve(__dirname, './public')
 var APP_DIR = path.resolve(__dirname, './src')
 
 var config = {
+  
   entry: [
     'babel-polyfill',
     './src/index.js'
@@ -47,6 +48,9 @@ var config = {
       },
     ]
   },
+  node: {
+    fs: 'empty'
+  },
   resolve: {
     extensions: ['.js', '.jsx']
   },
@@ -59,6 +63,8 @@ var config = {
     }),
     new webpack.HotModuleReplacementPlugin({multiStep:false}),
   ]
+  
 }
+
 
 module.exports = config

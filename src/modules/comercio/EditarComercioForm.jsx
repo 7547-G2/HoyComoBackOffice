@@ -7,8 +7,9 @@ import Select from 'react-select'
 import { Row, Col, FormControl, Panel, Image, FormGroup, HelpBlock } from 'react-bootstrap'
 import { CustomFormField } from '../../utils/CustomFormField'
 import EditarPlatosTable from './EditarPlatosTable'
-
 import Img1 from '../../utils/images/ImageLogoDefault.png'
+
+const mensajeImagenDefault = 'Puede subir imagenes cuadradas de extensión jpg, jpeg, bmp o png'
 
 export class EditarComercioForm extends React.Component {
   constructor(props) {
@@ -25,7 +26,7 @@ export class EditarComercioForm extends React.Component {
         codigoPostal: { error: false, mensaje: '' },
         calle: { error: false, mensaje: '' },
         email: { error: false, mensaje: '' },
-        imageLogo: { estado: null, mensaje: 'Puede subir imagenes cuadradas de extensión jpg, jpeg, bmp o png' },
+        imageLogo: { estado: null, mensaje: mensajeImagenDefault },
         estado: { seleccionado: props.activeComercio.estado, error: false, mensaje: '' },
         tipoComercio: { seleccionado: props.activeComercio.tipoComercio, error: false, mensaje: '' }
       }
@@ -45,11 +46,15 @@ export class EditarComercioForm extends React.Component {
       codigoPostal: { error: false, mensaje: '' },
       calle: { error: false, mensaje: '' },
       email: { error: false, mensaje: '' },
-      imageLogo: { estado: null, mensaje: 'Puede subir imagenes cuadradas de extensión jpg, jpeg, bmp o png'},
+      imageLogo: { estado: null, mensaje: mensajeImagenDefault},
       estado: { error: false, mensaje: '', seleccionado: this.state.estado.seleccionado },
       tipoComercio: { error: false, mensaje: '', seleccionado: this.state.tipoComercio.seleccionado },
     }
-    this.setState({ ...this.state, updateForm: updateForm })
+    this.setState({ ...this.state, updateForm: updateForm,
+      imageValue: null,
+      imageLogo: this.props.activeComercio.imagenLogo || Img1,
+      lastImageLogo: this.props.activeComercio.imagenLogo || Img1
+    })
   }
 
   validarUpdateForm(nombre, razonSocial, numero, codigoPostal, calle, email) {
@@ -160,7 +165,6 @@ export class EditarComercioForm extends React.Component {
       updateForm: newUpdateForm
     })
   }
-  
 
   editarComercioSubmit() {
     if (this.validarUpdateForm(
@@ -170,6 +174,11 @@ export class EditarComercioForm extends React.Component {
       ReactDOM.findDOMNode(this.codigoPostalInput).value,
       ReactDOM.findDOMNode(this.calleInput).value,
       ReactDOM.findDOMNode(this.emailInput).value)) {
+      let imagenLogoGuardada = ''
+      if(this.state.imageLogo && this.state.imageLogo != Img1){
+        imagenLogoGuardada = this.state.imageLogoBase64
+        
+      }
       this.props.updateComercio(
         this.props.activeComercio.id,
         ReactDOM.findDOMNode(this.razonSocialInput).value,
@@ -179,7 +188,8 @@ export class EditarComercioForm extends React.Component {
         ReactDOM.findDOMNode(this.calleInput).value,
         ReactDOM.findDOMNode(this.emailInput).value,
         this.state.updateForm.estado.seleccionado,
-        this.state.updateForm.tipoComercio.seleccionado
+        this.state.updateForm.tipoComercio.seleccionado,
+        imagenLogoGuardada
       )
     }
   }
@@ -192,7 +202,12 @@ export class EditarComercioForm extends React.Component {
       this.setState({
         ...this.state,
         updateForm: updateForm,
-        imageLogo: this.state.lastImageLogo
+        imageLogo: this.state.lastImageLogo,
+      })
+    } else {
+      this.setState({
+        ...this.state,
+        imageLogoBase64: img.src
       })
     }
   }
@@ -200,12 +215,14 @@ export class EditarComercioForm extends React.Component {
   handleImageChange(e) {
     e.preventDefault()
     let file = e.target.files[0]
+    let imageLogo = {}
     if (validFileType(file)) {
       if (validFileSize(file)) {
         let lastImageLogo = this.state.imageLogo
         let updateForm = this.state.updateForm
-        updateForm.imageLogo.estado = 'success'
-        updateForm.imageLogo.mensaje = 'Se ha subido corectamente'
+        imageLogo.estado = 'success'
+        imageLogo.mensaje = 'Se ha subido corectamente'
+        updateForm.imageLogo = imageLogo
         this.setState({
           ...this.state,
           file: file,
@@ -215,14 +232,16 @@ export class EditarComercioForm extends React.Component {
         })
       } else {
         let updateForm = this.state.updateForm
-        updateForm.imageLogo.estado = 'error'
-        updateForm.imageLogo.mensaje = 'El tamaño del archivo es mayor a 2MB'
+        imageLogo.estado = 'error'
+        imageLogo.mensaje = 'El tamaño del archivo es mayor a 2MB'
+        updateForm.imageLogo = imageLogo
         this.setState({ ...this.state, updateForm: updateForm, imageValue:null })
       }
     } else {
       let updateForm = this.state.updateForm
-      updateForm.imageLogo.estado = 'error'
-      updateForm.imageLogo.mensaje = 'La extesión del archivo es incorrecta'
+      imageLogo.estado = 'error'
+      imageLogo.mensaje = 'La extesión del archivo es incorrecta'
+      updateForm.imageLogo = imageLogo
       this.setState({ ...this.state, updateForm: updateForm, imageValue:null })
     }
   }
@@ -314,9 +333,9 @@ export class EditarComercioForm extends React.Component {
                 </Panel.Title>
               </Panel.Heading>
               <Panel.Body>
-                <FormGroup validationState={this.state.updateForm.imageLogo.estado}
+                <FormGroup validationState={this.state.updateForm.imageLogo ?this.state.updateForm.imageLogo.estado:null}
                   controlId={'formControlsFile'} >
-                  <Image src={this.state.imageLogo} style={{ width: 100, height: 100 }}
+                  <Image id='imagenDeLogo' key='imagenDeLogo' src={this.state.imageLogo} style={{ width: 100, height: 100 }}
                     onLoad={this.onImgLoad}
                     rounded responsive />
                   <br></br>
@@ -324,14 +343,14 @@ export class EditarComercioForm extends React.Component {
                     onChange={this.handleImageChange}
                     value={this.imageValue}
                     type={'file'} accept={['.jpg', '.jpeg', '.bmp', '.png']} />
-                  <HelpBlock>{this.state.updateForm.imageLogo.mensaje}</HelpBlock>
+                  <HelpBlock>{this.state.updateForm.imageLogo?this.state.updateForm.imageLogo.mensaje:mensajeImagenDefault}</HelpBlock>
                 </FormGroup>
               </Panel.Body>
             </Panel>
           </Col>
         </Row>
         <br></br>
-        <EditarPlatosTable />  
+        <EditarPlatosTable activeComercio={this.props.activeComercio}/>  
         <br></br>
       </form>
     )
@@ -347,11 +366,8 @@ const mapDispatch = (dispatch) => ({
     calle,
     email,
     estado,
-    tipoComercio) => {
-    let imagenLogo = ''
-    // if(this.state.imageLogo && this.state.imageLogo != Img1){
-    //   imagenLogo = ''
-    // }
+    tipoComercio,
+    imagenLogo) => {
     dispatch(updateComercio(idComercio,
       nombre,
       razonSocial,
