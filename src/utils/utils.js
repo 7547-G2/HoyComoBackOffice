@@ -20,7 +20,7 @@ export const getNullConfig = () => ({
 })
 
 export const getErrorResponse = (err) => {
-  return { status: err.response.status, message: err.response.data.message.msg }
+  return { status: err.response.status, message: err.response.data }
 }
 
 export const getTipoComerciosSelectOptions = (allTipoComercios) => {

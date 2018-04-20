@@ -132,52 +132,6 @@ export const getComercioById = (id) => dispatch => {
         dispatch(internalError(err))
       }
     })
-  // let comercios = [{
-  //   id: 1, nombre: 'nicolas',
-  //   razonSocial: 'razon 1',
-  //   calle: 'calle falsa',
-  //   numero: '1234',
-  //   codigoPostal: '1000',
-  //   email: 'email@example.com',
-  //   tipoComercio: { id: 3, nombre: 'pastas' },
-  //   estado: pendiente
-  // }, {
-  //   id: 2, nombre: 'un nombre',
-  //   razonSocial: 'razon 2',
-  //   calle: 'calle falsa',
-  //   numero: '1235',
-  //   codigoPostal: '1001',
-  //   email: 'email2@example.com',
-  //   tipoComercio: { id: 3, nombre: 'pastas' },
-  //   estado: pendiente
-  // }, {
-  //   id: 3, nombre: 'la dehabilitada',
-  //   razonSocial: 'razon 3',
-  //   calle: 'calle falsa',
-  //   numero: '1236',
-  //   codigoPostal: '1002',
-  //   email: 'email3@example.com',
-  //   tipoComercio: { id: 3, nombre: 'pastas' },
-  //   estado: pendiente
-  // }, {
-  //   id: 4, nombre: 'nicolas',
-  //   razonSocial: 'razon 4',
-  //   calle: 'calle falsa',
-  //   numero: '1237',
-  //   codigoPostal: '1003',
-  //   email: 'email4@example.com',
-  //   tipoComercio: { id: 1, nombre: 'pastas' },
-  //   estado: pendiente
-  // }]
-  // let data = {}
-  // data.comercio = comercios[id - 1]
-  // data.tipoComercios = [  
-  //   { value: 'Chino', label: 'Chino' },
-  //   { value: 'Parrilla', label: 'Parrilla' },
-  //   { value: 'Pastas', label: 'Pastas' },
-  //   { value: 'Sushi', label: 'Sushi' },
-  //   { value: 'Pizzería', label: 'Pizzería' }]
-  // dispatch(comercioById(data))
 }
 
 export const getComercios = (/*nombre, email, tipoComercio*/) => dispatch => {
@@ -261,6 +215,7 @@ export const createComercio = (nombre, razonSocial, calle, numero, codigoPostal,
     })
     .then(() => {
       dispatch(push('/' + api.claveComercios))
+      dispatch(getComercios())      
     })
     .catch(err => {
       if (err.response && err.response.status) {
@@ -367,11 +322,14 @@ const fetchTipoComercios = (/*data*/) => {
 
 const fetchComercio = (data, platos) => {
   let returnValue = []
+  let cargoUnPlato = false
   platos.map(function (rowObject) {
     if(rowObject.id){
+      cargoUnPlato = true
       returnValue.push({ id: rowObject.id,  imagen: rowObject.imagen, nombre: rowObject.nombre,precio: rowObject.precio })
     }
   })
+  let estado = ((data.estado == 'pendiente menu') && cargoUnPlato)?'pendiente activacion':data.estado
   let number = parseInt(data.addressDto.street.match(/\d+$/)[0], 10)
   let street = data.addressDto.street.replace(number,'')
   return { 
@@ -381,7 +339,7 @@ const fetchComercio = (data, platos) => {
     codigoPostal: data.addressDto.postalCode,
     calle: street,
     numero: number,
-    estado: data.estado,
+    estado: estado,
     password: data.password,
     imagenLogo: data.imagenLogo,
     email: data.email, /*roles: returnValue,*/ 
@@ -429,8 +387,7 @@ export default (state = initialState, action) => {
     //     alert: {}
     //   }
   case QUERY_ERROR:
-    console.log(action.err)
-    return { ...state, alert: { style: 'danger', text: 'Ocurrió un error inesperado' } }
+    return { ...state, alert: { style: 'danger', text: action.err.message } }
   case INTERNAL_ERROR:
     return { ...state, alert: { style: 'danger', text: 'Ocurrió un error inesperado' } }
   case SUCCESSFUL:

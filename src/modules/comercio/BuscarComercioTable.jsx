@@ -1,12 +1,16 @@
 import React from 'react'
 import { connect } from 'react-redux'
-
 import { Alert } from 'react-bootstrap'
 import { withRouter } from 'react-router-dom'
 import { CustomTable } from '../../utils/CustomTable'
 import history from '../../history'
+import { clearAlert } from './comercioReducer'
 
 export class BuscarComercioTable extends React.Component {
+
+  constructor() {
+    super()
+  }
 
   editarAction(id) {
     history.push('/comercios/' + id)
@@ -16,7 +20,7 @@ export class BuscarComercioTable extends React.Component {
     if (this.props.activeSearch && this.props.result.length != 0) {
       // if (permisoEditComercios(this.props.permisosComercio))
       return <CustomTable data={this.props.result} headers={['Nombre', 'Email', 'Tipo De Comercio','Domicilio','Estado']}
-        editAction={this.editarAction} />
+        editAction={this.props.clearAlert && this.editarAction} />
       // else
       //   return <CustomTable data={this.props.result} headers={['Nombre', 'Email', 'Organismo']} />
     } else if (this.props.activeSearch) {
