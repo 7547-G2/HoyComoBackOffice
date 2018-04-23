@@ -132,8 +132,14 @@ export class EditarComercioForm extends React.Component {
       updateForm.estado.mensaje = 'Este campo es obligatorio'
       formOk = false
     } else {
-      updateForm.estado.error = false
-      updateForm.estado.mensaje = ''
+      if(this.state.updateForm.estado.seleccionado  == 'habilitado' && this.props.activeComercio.platos && this.props.activeComercio.platos.length < 5) {
+        updateForm.estado.error = true
+        updateForm.estado.mensaje = 'El comercio debe tener al menos 5 platos cargados para habilitarse'
+        formOk = false
+      } else {
+        updateForm.estado.error = false
+        updateForm.estado.mensaje = ''
+      }
     }
 
     if (this.state.updateForm.tipoComercio.seleccionado == '') {
@@ -181,7 +187,6 @@ export class EditarComercioForm extends React.Component {
         imagenLogoGuardada = this.state.imageLogo
       }
       let pass = this.props.activeComercio.password
-      console.log(pass)
       this.props.updateComercio(
         this.props.activeComercio.id,
         ReactDOM.findDOMNode(this.razonSocialInput).value,
@@ -216,10 +221,7 @@ export class EditarComercioForm extends React.Component {
     }
   }
 
-  handleImageChange(e) {
-    this.setState({
-      ...this.state,
-    })
+  handleImageChange() {
   }
 
   getFiles(file){  
@@ -320,15 +322,17 @@ export class EditarComercioForm extends React.Component {
           <Col lg={2} md={2}>
             <CustomFormField validationState={this.state.updateForm.estado.error ? 'error' : null}
               validationMessage={this.state.updateForm.estado.mensaje} bsSize="small" controlId="estadoSelect"
-              label="Estado" inputComponent={
-                <Select name="estadoSelect" value={this.state.updateForm.estado.seleccionado}
-                  options={[
-                    { value: 'pendiente menu', label: 'pendiente menu' }, 
-                    { value: 'pendiente activacion', label: 'pendiente activacion' },
-                    { value: 'activado', label: 'activado' },
-                    { value: 'desactivado', label: 'desactivado' }
-                  ]} id="estadoSelect"
-                  key="estadoSelect" onChange={this.updateEstadoSelect} placeholder="Selecciona" />
+              label="Estado" disabled={true} inputComponent={
+                (this.state.updateForm.estado.seleccionado != 'pendiente activacion')?
+                  <Select name="estadoSelect" value={this.state.updateForm.estado.seleccionado}
+                    options={[
+                      // { value: 'pendiente activacion', label: 'pendiente activacion' },
+                      { value: 'pendiente menu', label: 'pendiente menu' }, 
+                      { value: 'habilitado', label: 'habilitado' },
+                      { value: 'deshabilitado', label: 'deshabilitado' }
+                    ]} id="estadoSelect"
+                    key="estadoSelect" onChange={this.updateEstadoSelect} placeholder="Selecciona" />
+                  :<FormControl type="text" disabled={'true'} value={this.state.updateForm.estado.seleccionado} />
               } />
           </Col>
         </Row>

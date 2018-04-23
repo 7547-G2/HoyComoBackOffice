@@ -134,12 +134,17 @@ export const getComercioById = (id) => dispatch => {
     })
 }
 
-export const getComercios = (/*nombre, email, tipoComercio*/) => dispatch => {
+export const getComercios = (nombre, email, tipoComercio) => dispatch => {
+  nombre =  nombre && nombre.trim() 
+  email = email &&  email.trim()
+  tipoComercio = tipoComercio &&  tipoComercio.trim()
   let config = getNullConfig()
   let queryString = ''
-  // if (nombre != '') queryString += '?nombre=' + nombre
-  // if (email != '') queryString += (queryString == '') ? '?email=' + email : '&email=' + email
-  // if (organismo != '-1') queryString += (queryString == '') ? '?organismo_id=' + organismo : '&organismo_id=' + organismo
+  if (nombre != '') queryString += 'nombre:' + nombre
+  if (email != '') queryString += (queryString == '') ? 'email:' + email : ',email:' + email
+  if (tipoComercio) queryString += (queryString == '') ? 'tipo:' + tipoComercio : ',tipo:' + tipoComercio
+  queryString = (queryString == '') ? queryString : '?search=' + queryString
+  console.log(api.comercios + queryString)
   axios.get(api.comercios + queryString, config)
   axios.all([
     axios.get(api.comercios + queryString, config),
@@ -206,7 +211,7 @@ export const createComercio = (nombre, razonSocial, calle, numero, codigoPostal,
       floor: '',
       department: ''
     },
-    estado: 'pendiente menu'
+    estado: 'pendiente activacion'
   }
 
   axios.post(api.comercios, body, config)
@@ -322,15 +327,17 @@ const fetchTipoComercios = (/*data*/) => {
 
 const fetchComercio = (data, platos) => {
   let returnValue = []
-  let cargoUnPlato = false
   platos.map(function (rowObject) {
     if(rowObject.id){
-      cargoUnPlato = true
       returnValue.push({ id: rowObject.id,  imagen: rowObject.imagen, nombre: rowObject.nombre,precio: rowObject.precio })
     }
   })
-  let estado = ((data.estado == 'pendiente menu') && cargoUnPlato)?'pendiente activacion':data.estado
-  let number = parseInt(data.addressDto.street.match(/\d+$/)[0], 10)
+  let estado = data.estado
+  let numberStreet = data.addressDto.street.match(/\d+$/)
+  let number = ''
+  if(numberStreet){
+    number = parseInt( numberStreet[0], 10) 
+  }
   let street = data.addressDto.street.replace(number,'')
   return { 
     id: data.id, 
@@ -363,7 +370,7 @@ export default (state = initialState, action) => {
       ...state,
       result: fetchComerciosTable(action.data.comercios),
       allTipoComercios: fetchTipoComercios(action.data.tipoComercios),
-      alert: { style: 'success', text: 'Se ha creado el comercio correctamente' },
+      // alert: { style: 'success', text: 'Se ha creado el comercio correctamente' },
       activeSearch: true
     }
   case HYDRATE_COMERCIO_BY_ID:

@@ -1,4 +1,6 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 import { Alert, Col, Row } from 'react-bootstrap'
 
 export class CustomAlert extends React.Component {
@@ -11,4 +13,15 @@ export class CustomAlert extends React.Component {
       </Row>
     )
   }
+  
 }
+
+const componentWillUnmount = () =>{
+  console.log('entro')
+  this.setState({
+    ...this.state,
+    alert: {}
+  })
+}
+
+export default withRouter(connect(componentWillUnmount)(CustomAlert))

@@ -38,11 +38,11 @@ export class ComercioIndex extends React.Component {
           </Col>
         </Row>
         {(this.props.alert.text != null) &&
-          <CustomAlert onDismiss={this.props.clearAlert} rowKey="alertRow" bsStyle={this.props.alert.style} message={this.props.alert.text} />}
+          <CustomAlert onDismiss={this.props.clearAlert} clear={this.props.clearAlert} rowKey="alertRow" bsStyle={this.props.alert.style} message={this.props.alert.text} />}
  
         <BuscarComercioForm allOrganismos={this.props.allOrganismos} />
 
-        <BuscarComercioTable clearAlert={this.props.clearAlert}/>  
+        <BuscarComercioTable/>  
 
         <CrearComercioModal allTipoComercios={this.props.allTipoComercios} ref={(modal) => { this.crearComercioModal = modal }} />
       </div>
