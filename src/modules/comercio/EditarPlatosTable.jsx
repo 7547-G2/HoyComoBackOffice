@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 import { Alert } from 'react-bootstrap'
 import { withRouter } from 'react-router-dom'
 import { CustomTableWithImage } from '../../utils/CustomTableWithImage'
-import history from '../../history'
 
 export class EditarPlatosTable extends React.Component {
 

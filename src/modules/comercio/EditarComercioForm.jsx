@@ -323,16 +323,17 @@ export class EditarComercioForm extends React.Component {
             <CustomFormField validationState={this.state.updateForm.estado.error ? 'error' : null}
               validationMessage={this.state.updateForm.estado.mensaje} bsSize="small" controlId="estadoSelect"
               label="Estado" disabled={true} inputComponent={
-                (this.state.updateForm.estado.seleccionado != 'pendiente activacion')?
-                  <Select name="estadoSelect" value={this.state.updateForm.estado.seleccionado}
-                    options={[
-                      // { value: 'pendiente activacion', label: 'pendiente activacion' },
-                      { value: 'pendiente menu', label: 'pendiente menu' }, 
-                      { value: 'habilitado', label: 'habilitado' },
-                      { value: 'deshabilitado', label: 'deshabilitado' }
-                    ]} id="estadoSelect"
-                    key="estadoSelect" onChange={this.updateEstadoSelect} placeholder="Selecciona" />
-                  :<FormControl type="text" disabled={'true'} value={this.state.updateForm.estado.seleccionado} />
+                // (this.state.updateForm.estado.seleccionado != 'pendiente activacion')?
+                //   <Select name="estadoSelect" value={this.state.updateForm.estado.seleccionado}
+                //     options={[
+                //       // { value: 'pendiente activacion', label: 'pendiente activacion' },
+                //       { value: 'pendiente menu', label: 'pendiente menu' }, 
+                //       { value: 'habilitado', label: 'habilitado' },
+                //       { value: 'deshabilitado', label: 'deshabilitado' }
+                //     ]} id="estadoSelect"
+                //     key="estadoSelect" onChange={this.updateEstadoSelect} placeholder="Selecciona" />
+                //   :
+                <FormControl type="text" disabled={'true'} value={this.state.updateForm.estado.seleccionado} />
               } />
           </Col>
         </Row>

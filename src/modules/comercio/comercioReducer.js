@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { getConfig, getNullConfig, getErrorResponse } from '../../utils/utils'
+import { getNullConfig, getErrorResponse } from '../../utils/utils'
 import { push } from 'react-router-redux'
 // import _ from 'lodash'
 import { generarContrasenia } from  '../../utils/utils'
@@ -339,6 +339,12 @@ const fetchComercio = (data, platos) => {
     number = parseInt( numberStreet[0], 10) 
   }
   let street = data.addressDto.street.replace(number,'')
+  let mensajeEncabezado = ''
+  if (estado == 'pendiente activacion') {
+    mensajeEncabezado = 'El administrador del comercio debe ingresar por primera vez para comenzar a cargar su menú'
+  } else if (estado == 'pendiente menu') {
+    mensajeEncabezado = 'Deben cargarse al menos 5 platos en el menú para poder habilitar este comercio'
+  }
   return { 
     id: data.id, 
     nombre: data.nombre,
@@ -351,6 +357,7 @@ const fetchComercio = (data, platos) => {
     imagenLogo: data.imagenLogo,
     email: data.email, /*roles: returnValue,*/ 
     tipoComercio: data.tipo,
+    mensajeEncabezado: mensajeEncabezado,
     platos: returnValue
   }
 }
