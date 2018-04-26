@@ -39,12 +39,12 @@ export class EditarComercio extends React.Component {
     this.cambiarPassModal.wrappedInstance.abrirModal()
   }
 
-  habilitar(element) {
-    this.abrirModalHabilitarComercio(element.id)
+  habilitar() {
+    this.abrirModalHabilitarComercio()
   }
 
-  abrirModalHabilitarComercio(id) {
-    this.HabilitarComercioModal.wrappedInstance.abrirModal(id)
+  abrirModalHabilitarComercio() {
+    this.HabilitarComercioModal.wrappedInstance.abrirModal()
   }
 
   render() {
@@ -68,7 +68,7 @@ export class EditarComercio extends React.Component {
             <CustomAlert onDismiss={this.props.clearAlert} rowKey="alertRow" bsStyle={this.props.alert.style} message={this.props.alert.text} />}
 
           <EditarComercioForm ref={(formEdit) => { this.formEdit = formEdit }} allTipoComercios={this.props.allTipoComercios} /*allRoles={this.props.allRoles}*/ activeComercio={this.props.activeComercio} />
-          <HabilitarComercioModal informeId={this.props.activeComercio} ref={(modal) => { this.HabilitarComercioModal = modal }} />
+          <HabilitarComercioModal activeComercio={this.props.activeComercio} ref={(modal) => { this.HabilitarComercioModal = modal }} />
           <Row>
             <Col lg={12}>
               <Button bsStyle="primary" bsSize="small" onClick={this.submitEditForm}>Guardar</Button>&nbsp;

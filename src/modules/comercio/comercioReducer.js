@@ -75,6 +75,28 @@ export const clearComercios = () => dispatch => {
   dispatch(clearComercioResult())
 }
 
+export const habilitarComercio = (activeComercio) => dispatch => {
+  let config = getNullConfig()
+  let body = {}
+  let idComercio = activeComercio.id
+  body.estado = 'habilitado'
+  axios.put(api.comercios + '/' + idComercio, body, config)
+    .then(res => {
+      return res.data.data
+    })
+    .then(() => {
+      dispatch(getComercioById(idComercio))
+      dispatch(successful('El comercio se habilito correctamente'))
+    })
+    .catch(err => {
+      if (err.response && err.response.status) {
+        dispatch(queryError(getErrorResponse(err)))
+      } else {
+        dispatch(internalError(err))
+      }
+    })
+}
+
 const filtarById = (data,id) => {
   let returnValue = null
   data.forEach(element => {

@@ -132,14 +132,14 @@ export class EditarComercioForm extends React.Component {
       updateForm.estado.mensaje = 'Este campo es obligatorio'
       formOk = false
     } else {
-      if(this.state.updateForm.estado.seleccionado  == 'habilitado' && this.props.activeComercio.platos && this.props.activeComercio.platos.length < 5) {
-        updateForm.estado.error = true
-        updateForm.estado.mensaje = 'El comercio debe tener al menos 5 platos cargados para habilitarse'
-        formOk = false
-      } else {
-        updateForm.estado.error = false
-        updateForm.estado.mensaje = ''
-      }
+      // if(this.state.updateForm.estado.seleccionado  == 'habilitado' && this.props.activeComercio.platos && this.props.activeComercio.platos.length < 5) {
+      //   updateForm.estado.error = true
+      //   updateForm.estado.mensaje = 'El comercio debe tener al menos 5 platos cargados para habilitarse'
+      //   formOk = false
+      // } else {
+      updateForm.estado.error = false
+      updateForm.estado.mensaje = ''
+      // }
     }
 
     if (this.state.updateForm.tipoComercio.seleccionado == '') {

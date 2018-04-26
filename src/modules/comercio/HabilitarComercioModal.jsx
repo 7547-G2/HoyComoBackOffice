@@ -11,8 +11,8 @@ export class HabilitarComercioModal extends React.Component {
     this.habilitar = this.habilitar.bind(this)
   }
 
-  abrirModal(id) {
-    this.setState({ ...this.state, preguntaId: id })
+  abrirModal() {
+    this.setState({ ...this.state})
     this.modal.showModal()
   }
 
