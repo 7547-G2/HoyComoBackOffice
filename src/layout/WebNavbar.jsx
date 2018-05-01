@@ -1,9 +1,10 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
-import { Navbar, Nav, NavItem, MenuItem, NavDropdown } from 'react-bootstrap'
+import { Navbar, Nav, NavItem, MenuItem, NavDropdown, Image, Col, Row } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
 import { logout } from '../modules/login/authReducer'
+import imageLogo from '../utils/images/Logo.png'
 
 const navbar = {}//{backgroundColor: '#6262f0'}
 const font = {color: '#ffffff'}
@@ -14,7 +15,12 @@ export class WebNavbar extends React.Component {
       <Navbar style={navbar} inverse collapseOnSelect>
         <Navbar.Header>
           <Navbar.Brand>
-            <a onClick={this.props.home}>Inicio</a>
+            <Row>
+              <a class="pull-left" href="#">
+                <Image src={imageLogo} style={{ width: 45 , height: 30 }}  onClick={this.props.home} rounded responsive  />
+              </a>
+              <a onClick={this.props.home}> Inicio</a>
+            </Row>
           </Navbar.Brand>
           <Navbar.Toggle />
         </Navbar.Header>

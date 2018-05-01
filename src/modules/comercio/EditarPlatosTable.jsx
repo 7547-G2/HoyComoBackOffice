@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import { Alert } from 'react-bootstrap'
 import { withRouter } from 'react-router-dom'
-import { CustomTableWithImage } from '../../utils/CustomTableWithImage'
+import { CustomTableWithImageAndPagination } from '../../utils/CustomTableWithImageAndPagination'
 
 export class EditarPlatosTable extends React.Component {
 
@@ -13,7 +13,7 @@ export class EditarPlatosTable extends React.Component {
 
   getTablaPlatos() {
     if (this.props.activeComercio.platos && this.props.activeComercio.platos.length != 0) {
-      return <CustomTableWithImage data={this.props.activeComercio.platos} 
+      return <CustomTableWithImageAndPagination data={this.props.activeComercio.platos} 
         headers={['Imagen','Nombre', 'Precio']}
       />
     } else {

@@ -49,7 +49,7 @@ export class HabilitarComercioModal extends React.Component {
 
   render() {
     return (
-      <CustomModalPregunta bsSize="" key={'habilitarComercioModal'} title={'Habilitar comercio'} body={this.getCrearModalBody()}
+      <CustomModalPregunta key={'habilitarComercioModal'} title={'Habilitar comercio'} body={this.getCrearModalBody()}
         buttons={this.getCrearModalButtons()} ref={(modal) => { this.modal = modal }} />
     )
   }

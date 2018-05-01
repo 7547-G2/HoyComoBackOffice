@@ -17,7 +17,6 @@ export class CustomAlert extends React.Component {
 }
 
 const componentWillUnmount = () =>{
-  console.log('entro')
   this.setState({
     ...this.state,
     alert: {}

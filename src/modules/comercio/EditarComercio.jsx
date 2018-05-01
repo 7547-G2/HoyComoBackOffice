@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import history from '../../history'
 import { getComercioById, clearAlert } from './comercioReducer'
-import { Row, Col, Grid, Button, HelpBlock } from 'react-bootstrap'
+import { Row, Col, Grid, Button } from 'react-bootstrap'
 import { CustomCargando } from '../../utils/CustomCargando'
 import { CustomAlert } from '../../utils/CustomAlert'
 // import EditarRolesUsuario from './EditarRolesUsuario'
@@ -60,7 +60,7 @@ export class EditarComercio extends React.Component {
             </Col>
             { this.props.activeComercio.estado == 'pendiente menu' && <Col md={1}>
               <Button bsStyle="success" 
-                className="pull-right" bsSize="small"
+                className="pull-right" bsSize="sm"
                 onClick={this.habilitar.bind(this)}>Habilitar</Button> 
             </Col> }
           </Row>

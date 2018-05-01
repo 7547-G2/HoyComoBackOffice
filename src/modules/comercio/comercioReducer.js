@@ -423,7 +423,7 @@ export default (state = initialState, action) => {
     //     alert: {}
     //   }
   case QUERY_ERROR:
-    return { ...state, alert: { style: 'danger', text: action.err.message } }
+    return { ...state, alert: { style: 'danger', text: action.err.message.message } }
   case INTERNAL_ERROR:
     return { ...state, alert: { style: 'danger', text: 'Ocurrió un error inesperado' } }
   case SUCCESSFUL:
