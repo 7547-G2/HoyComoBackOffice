@@ -315,7 +315,7 @@ export class EditarComercioForm extends React.Component {
               validationMessage={this.state.updateForm.tipoComercio.mensaje} bsSize="small" controlId="tipoComercioSelect" label="Tipo comercio"
               inputComponent={
                 <Select name="tipoComercioSelect" value={this.state.updateForm.tipoComercio.seleccionado}
-                  options={getTipoComerciosSelectOptions(this.props.allTipoComercios, true)} id="tipoComercioSelect"
+                  options={getTipoComerciosSelectOptions(this.props.allTipoComercios)} id="tipoComercioSelect"
                   key="tipoComercioSelect" onChange={this.updateTipoComercioSelect} placeholder="Seleccioná un tipo comerico" />
               } />
           </Col>

@@ -108,41 +108,15 @@ const filtarById = (data,id) => {
 
 export const getComercioById = (id) => dispatch => {
   let config = getNullConfig()
-  // let queryStringTipoComercios = '?sort_by=nombre'
-
-  // axios.all([
-  //   axios.get(api.comercios + '/' + id, config),
-  //   axios.get(api.roles, config),
-  //   axios.get(api.tipoComercios + queryStringTipoComercios, config)
-  // ])
-  //   .then(axios.spread(function (usuario, roles, organismos) {
-  //     return { usuario: usuario.data.data, roles: roles.data.data, organismos: organismos.data.data }
-  //   }))
-  //   .then(data => {
-  //     dispatch(comercioById(data))
-  //   })
-  //   .catch(err => {
-  //     if (err.response && err.response.status) {
-  //       dispatch(queryError(getErrorResponse(err)))
-  //     } else {
-  //       dispatch(internalError(err))
-  //     }
-  //   })
-
-  let tipoComercios = [  
-    { value: 'Chino', label: 'Chino' },
-    { value: 'Parrilla', label: 'Parrilla' },
-    { value: 'Pastas', label: 'Pastas' },
-    { value: 'Sushi', label: 'Sushi' },
-    { value: 'Pizzería', label: 'Pizzería' }]
   let queryString = ''
   axios.get(api.comercios + queryString, config)
   axios.all([
+    axios.get(api.base + api.clavetipoComercios),
     axios.get(api.comercios + queryString, config),
     axios.get(api.bocomercios +'/'+id+'/'+ api.clavePlatos + queryString, config),
   ])
-    .then(axios.spread(function (comercios,platos) {
-      return { comercio: filtarById(comercios.data,id), platos: platos.data , tipoComercios: tipoComercios}
+    .then(axios.spread(function (tipoComercios, comercios,platos) {
+      return { comercio: filtarById(comercios.data,id), platos: platos.data , tipoComercios: tipoComercios.data}
     }))
     .then(data => {
       dispatch(comercioById(data))
@@ -169,10 +143,11 @@ export const getComercios = (nombre, email, tipoComercio) => dispatch => {
   console.log(api.comercios + queryString)
   axios.get(api.comercios + queryString, config)
   axios.all([
+    axios.get(api.base + api.clavetipoComercios),
     axios.get(api.comercios + queryString, config),
   ])
-    .then(axios.spread(function (comercios) {
-      return { comercios: comercios.data }
+    .then(axios.spread(function (tipoComercios, comercios) {
+      return { comercios: comercios.data, tipoComercios: tipoComercios.data }
     }))
     .then(data => {
       dispatch(comercios(data))
@@ -254,22 +229,19 @@ export const createComercio = (nombre, razonSocial, calle, numero, codigoPostal,
 }
 
 export const obtenerTipoComercios = () => dispatch => {
-  // let config = getConfig()
-  // let queryStringOrganismos = '?sort_by=nombre'
-  // axios.get(api.organismos + queryStringOrganismos, config)
-  //   .then(res => res.data.data)
-  //   .then(data => {
-  //     dispatch(organismosTodos(data))
-  //   })
-  //   .catch(err => {
-  //     if (err.response && err.response.status){
-  //       dispatch(queryError(getErrorResponse(err)))
-  //     } else {
-  //       dispatch(internalError(err))
-  //     }
-  //   })
-  let data = {}
-  dispatch(tipoComerciosTodos(data))
+  let config = getNullConfig()
+  axios.get(api.base + api.clavetipoComercios, config)
+    .then(res => res.data)
+    .then(data => {
+      dispatch(tipoComerciosTodos(data))
+    })
+    .catch(err => {
+      if (err.response && err.response.status){
+        dispatch(queryError(getErrorResponse(err)))
+      } else {
+        dispatch(internalError(err))
+      }
+    })
 }
 
 // export const deleteRol = (idUsuario, idRol) => dispatch => {
@@ -338,12 +310,11 @@ const fetchComerciosTable = (data) => {
 //   return returnValue
 // }
 
-const fetchTipoComercios = (/*data*/) => {
+const fetchTipoComercios = (data) => {
   let returnValue = []
-  // data.map(function (rowObject) {
-  //   returnValue.push({ id: rowObject.id, nombre: rowObject.nombre, sigla: rowObject.sigla })
-  // })
-  returnValue.push({ id: '1', nombre: 'parrilla' })
+  data.map(function (rowObject) {
+    returnValue.push({ id: rowObject.id, tipo: rowObject.tipo })
+  })
   return returnValue
 }
 
@@ -367,6 +338,7 @@ const fetchComercio = (data, platos) => {
   } else if (estado == 'pendiente menu') {
     mensajeEncabezado = 'Deben cargarse al menos 5 platos en el menú para poder habilitar este comercio'
   }
+  console.log(data)
   return { 
     id: data.id, 
     nombre: data.nombre,

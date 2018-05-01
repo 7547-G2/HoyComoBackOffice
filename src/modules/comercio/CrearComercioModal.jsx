@@ -155,7 +155,7 @@ export class CrearComercioModal extends React.Component {
   }
 
   getTipoComercios() {
-    return getTipoComerciosSelectOptions(this.props.allTipoComercios, true)
+    return getTipoComerciosSelectOptions(this.props.allTipoComercios)
   }
 
   updateTipoComercioSelect(newValue) {

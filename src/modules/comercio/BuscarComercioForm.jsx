@@ -19,7 +19,7 @@ export class BuscarComercioForm extends React.Component {
   }
 
   getTipoComerciosSearch() {
-    return getTipoComerciosSelectOptions(this.props.allTipoComercios,true)
+    return getTipoComerciosSelectOptions(this.props.allTipoComercios)
   }
 
   updateTipoComercioSearch (newValue) {

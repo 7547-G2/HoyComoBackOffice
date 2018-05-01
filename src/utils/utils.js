@@ -1,5 +1,5 @@
 import store from '../app/store'
-import _ from 'lodash'
+// import _ from 'lodash'
 
 //Constantes
 const fileMaxSize = 0.3 * 1000 * 1000 // 0.5MB
@@ -25,17 +25,9 @@ export const getErrorResponse = (err) => {
 
 export const getTipoComerciosSelectOptions = (allTipoComercios) => {
   let tipoComerciosOptions = []
-  // allOrganismos.forEach(function (organismo) {
-  //   if (organismo.nombre !==JgmReferences.NOMBRE_JGM ||with_jgm){
-  //     organismoOptions.push({ value: organismo.id, label: organismo.nombre })
-  //   }
-
-  // }, this)
-  tipoComerciosOptions.push({ value: 'Chino', label: 'Chino' })
-  tipoComerciosOptions.push({ value: 'Parrilla', label: 'Parrilla' })
-  tipoComerciosOptions.push({ value: 'Pastas', label: 'Pastas' })
-  tipoComerciosOptions.push({ value: 'Sushi', label: 'Sushi' })
-  tipoComerciosOptions.push({ value: 'Pizzería', label: 'Pizzería' })
+  allTipoComercios.forEach(function (tipo) {
+    tipoComerciosOptions.push({ value: tipo.id, label: tipo.tipo })
+  }, this)
   return tipoComerciosOptions
 }
 
