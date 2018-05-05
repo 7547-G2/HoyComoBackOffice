@@ -20,6 +20,7 @@ export class EditarComercio extends React.Component {
     this.abrirModalCambiarPass = this.abrirModalCambiarPass.bind(this)
     this.submitEditForm = this.submitEditForm.bind(this)
     this.abrirModalHabilitarComercio = this.abrirModalHabilitarComercio.bind(this)
+    this.habilitar = this.habilitar.bind(this)
   }
 
   componentDidMount() {
@@ -61,7 +62,7 @@ export class EditarComercio extends React.Component {
             { this.props.activeComercio.estado == 'pendiente menu' && <Col md={1}>
               <Button bsStyle="success" 
                 className="pull-right" bsSize="sm"
-                onClick={this.habilitar.bind(this)}>Habilitar</Button> 
+                onClick={this.habilitar}>Habilitar</Button> 
             </Col> }
           </Row>
           {(this.props.alert.text != null) &&

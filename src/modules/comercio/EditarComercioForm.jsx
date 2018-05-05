@@ -127,6 +127,15 @@ export class EditarComercioForm extends React.Component {
       updateForm.email.mensaje = ''
     }
 
+    if (this.state.updateForm.tipoComercio.seleccionado == '') {
+      updateForm.tipoComercio.error = true
+      updateForm.tipoComercio.mensaje = 'Este campo es obligatorio'
+      formOk = false
+    } else {
+      updateForm.tipoComercio.error = false
+      updateForm.tipoComercio.mensaje = ''
+    }
+
     if (this.state.updateForm.estado.seleccionado == '') {
       updateForm.estado.error = true
       updateForm.estado.mensaje = 'Este campo es obligatorio'
@@ -140,15 +149,6 @@ export class EditarComercioForm extends React.Component {
       updateForm.estado.error = false
       updateForm.estado.mensaje = ''
       // }
-    }
-
-    if (this.state.updateForm.tipoComercio.seleccionado == '') {
-      updateForm.tipoComercio.error = true
-      updateForm.tipoComercio.mensaje = 'Este campo es obligatorio'
-      formOk = false
-    } else {
-      updateForm.tipoComercio.error = false
-      updateForm.tipoComercio.mensaje = ''
     }
 
     this.setState({ ...this.state, updateForm: updateForm })

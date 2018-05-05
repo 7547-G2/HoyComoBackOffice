@@ -85,7 +85,7 @@ export const habilitarComercio = (activeComercio) => dispatch => {
       return res.data.data
     })
     .then(() => {
-      dispatch(getComercioById(idComercio))
+      dispatch(getComercioById(idComercio,true))
       dispatch(successful('El comercio se habilito correctamente'))
     })
     .catch(err => {
@@ -97,16 +97,20 @@ export const habilitarComercio = (activeComercio) => dispatch => {
     })
 }
 
-const filtarById = (data,id) => {
+const filtarById = (data,id, pasarHabilitado) => {
   let returnValue = null
   data.forEach(element => {
-    if(element.id == id)
+    if(element.id == id){
+      if (pasarHabilitado){
+        element.estado = 'habilitado'
+      }
       returnValue =  element
+    }
   })
   return returnValue
 }
 
-export const getComercioById = (id) => dispatch => {
+export const getComercioById = (id,pasarHabilitado) => dispatch => {
   let config = getNullConfig()
   let queryString = ''
   axios.get(api.comercios + queryString, config)
@@ -116,7 +120,7 @@ export const getComercioById = (id) => dispatch => {
     axios.get(api.bocomercios +'/'+id+'/'+ api.clavePlatos + queryString, config),
   ])
     .then(axios.spread(function (tipoComercios, comercios,platos) {
-      return { comercio: filtarById(comercios.data,id), platos: platos.data , tipoComercios: tipoComercios.data}
+      return { comercio: filtarById(comercios.data,id,pasarHabilitado), platos: platos.data , tipoComercios: tipoComercios.data}
     }))
     .then(data => {
       dispatch(comercioById(data))
@@ -166,7 +170,7 @@ export const updateComercio = (idComercio,nombre,razonSocial,numero,codigoPostal
   let body = {}
   body.addressDto = { floor: '', department: ''}
   if (nombre) body.nombre = nombre
-  if (tipoComercio) body.tipo = tipoComercio
+  if (tipoComercio) body.tipoComercio = tipoComercio
   if (razonSocial) body.razonSocial = razonSocial
   if (numero && calle) body.addressDto.street = calle.trim() + ' '+ numero
   if (codigoPostal) body.addressDto.postalCode = codigoPostal
@@ -180,8 +184,8 @@ export const updateComercio = (idComercio,nombre,razonSocial,numero,codigoPostal
       return res.data.data
     })
     .then(() => {
-      dispatch(getComercioById(idComercio))
       dispatch(successful('El comercio se actualizó correctamente'))
+      dispatch(getComercioById(idComercio))
     })
     .catch(err => {
       if (err.response && err.response.status) {
@@ -192,7 +196,7 @@ export const updateComercio = (idComercio,nombre,razonSocial,numero,codigoPostal
     })
 }
 
-export const createComercio = (nombre, razonSocial, calle, numero, codigoPostal, email, verificacion_email, tipo) => dispatch => {
+export const createComercio = (nombre, razonSocial, calle, numero, codigoPostal, email, verificacion_email, tipoComercio) => dispatch => {
 
   let config = getNullConfig()
   let newPass = generarContrasenia()
@@ -200,7 +204,7 @@ export const createComercio = (nombre, razonSocial, calle, numero, codigoPostal,
     email: email,
     nombre: nombre,
     razonSocial: razonSocial,
-    tipo: tipo,
+    tipo_comida_id: tipoComercio,
     password: newPass,
     addressDto: {
       street: calle +' '+numero,
@@ -216,7 +220,7 @@ export const createComercio = (nombre, razonSocial, calle, numero, codigoPostal,
       res.data 
     })
     .then(() => {
-      dispatch(push('/' + api.claveComercios))
+      dispatch(successful('El comercio se creo correctamente'))
       dispatch(getComercios())      
     })
     .catch(err => {
@@ -282,7 +286,8 @@ export const obtenerTipoComercios = () => dispatch => {
 const fetchComerciosTable = (data) => {
   let returnValue = []
   data.map(function (rowObject) {
-    returnValue.push({ id: rowObject.id, nombre: rowObject.nombre, email: rowObject.email, tipoComercio:  rowObject.tipo,
+    console.log(rowObject)
+    returnValue.push({ id: rowObject.id, nombre: rowObject.nombre, email: rowObject.email, tipoComercio:  rowObject.tipoComercio,
       domicilio: rowObject.addressDto.street + ', cp: ' + rowObject.addressDto.postalCode, estado: rowObject.estado  })
   })
   return returnValue
@@ -350,7 +355,7 @@ const fetchComercio = (data, platos) => {
     password: data.password,
     imagenLogo: data.imagenLogo,
     email: data.email, /*roles: returnValue,*/ 
-    tipoComercio: data.tipo,
+    tipoComercio: data.tipoComercio,
     mensajeEncabezado: mensajeEncabezado,
     platos: returnValue
   }
@@ -364,14 +369,12 @@ export default (state = initialState, action) => {
       result: [],
       allTipoComercios: fetchTipoComercios(action.data),
       alert: {},
-      activeSearch: true
     }
   case HYDRATE_COMERCIOS:
     return {
       ...state,
       result: fetchComerciosTable(action.data.comercios),
       allTipoComercios: fetchTipoComercios(action.data.tipoComercios),
-      // alert: { style: 'success', text: 'Se ha creado el comercio correctamente' },
       activeSearch: true
     }
   case HYDRATE_COMERCIO_BY_ID:
@@ -395,7 +398,7 @@ export default (state = initialState, action) => {
     //     alert: {}
     //   }
   case QUERY_ERROR:
-    return { ...state, alert: { style: 'danger', text: action.err.message.message } }
+    return { ...state, alert: { style: 'danger', text: action.err.message } }
   case INTERNAL_ERROR:
     return { ...state, alert: { style: 'danger', text: 'Ocurrió un error inesperado' } }
   case SUCCESSFUL:

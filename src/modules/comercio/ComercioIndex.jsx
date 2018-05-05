@@ -41,7 +41,7 @@ export class ComercioIndex extends React.Component {
           <CustomAlert onDismiss={this.props.clearAlert} clear={this.props.clearAlert} rowKey="alertRow" bsStyle={this.props.alert.style} message={this.props.alert.text} />}
  
         <BuscarComercioForm allTipoComercios={this.props.allTipoComercios} />
-
+        <br/>
         <BuscarComercioTable/>  
 
         <CrearComercioModal allTipoComercios={this.props.allTipoComercios} ref={(modal) => { this.crearComercioModal = modal }} />
