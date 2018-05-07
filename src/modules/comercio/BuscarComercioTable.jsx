@@ -4,6 +4,7 @@ import { Alert } from 'react-bootstrap'
 import { withRouter } from 'react-router-dom'
 import { CustomTableWithPagination } from '../../utils/CustomTableWithPagination'
 import history from '../../history'
+import { ordenarPorId } from  '../../utils/utils'
 
 export class BuscarComercioTable extends React.Component {
 
@@ -18,7 +19,7 @@ export class BuscarComercioTable extends React.Component {
   getTablaComercios() {
     if (this.props.activeSearch && this.props.result.length != 0) {
       // if (permisoEditComercios(this.props.permisosComercio))
-      return <CustomTableWithPagination data={this.props.result} headers={['Nombre', 'Email', 'Tipo De Comercio','Domicilio','Estado']}
+      return <CustomTableWithPagination data={ordenarPorId(this.props.result)} headers={['Nombre', 'Email', 'Tipo De Comercio','Domicilio','Estado']}
         editAction={this.editarAction} />
     } else if (this.props.activeSearch) {
       return <Alert bsStyle="info">La búsqueda no trajo resultados</Alert>

@@ -77,3 +77,18 @@ export const ordenarPorCategoriaOrden = (array) => {
   })
   return array
 }
+
+
+export const ordenarPorId = (array) => {
+  array.sort(function (a, b) {
+    var aSize = a.id
+    var bSize = b.id
+    if (aSize == bSize) {
+      return 0
+    }
+    else {
+      return (aSize < bSize) ? 1 : -1
+    }
+  })
+  return array
+}

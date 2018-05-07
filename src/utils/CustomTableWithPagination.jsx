@@ -33,7 +33,7 @@ export class CustomTableWithPagination extends React.Component {
 
   getTableRows() {
     let data = this.props.data, editAction = this.props.editAction, deleteAction = this.props.deleteAction
-    const perPage = this.props.perPage || 10
+    const perPage = this.props.perPage || 5
     const activePage = this.state.activePage
     data = data.slice((activePage-1)*perPage,(activePage-1)*perPage + perPage)
     var tableRow = data.map(function (rowObject) {
