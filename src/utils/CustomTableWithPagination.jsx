@@ -80,7 +80,7 @@ export class CustomTableWithPagination extends React.Component {
   }
 
   getPagination() {
-    const PER_PAGE = this.props.perPage || 10
+    const PER_PAGE = this.props.perPage || 5
     const TOTAL_COUNT = this.props.data.length
     if(TOTAL_COUNT <= PER_PAGE){
       return(null)

@@ -131,6 +131,16 @@ const filtarById = (data,id, pasarHabilitado) => {
   return returnValue
 }
 
+const filtarCategoriaById = (data,id) => {
+  let returnValue = null
+  data.forEach(element => {
+    if(element.id == id){
+      returnValue =  element.tipo
+    }
+  })
+  return returnValue
+}
+
 export const getComercioById = (id,pasarHabilitado) => dispatch => {
   let config = getNullConfig()
   let queryString = ''
@@ -139,10 +149,11 @@ export const getComercioById = (id,pasarHabilitado) => dispatch => {
     axios.get(api.base + api.clavetipoComercios),
     axios.get(api.comercios + queryString, config),
     axios.get(api.bocomercios +'/'+id+'/'+ api.clavePlatos + queryString, config),
+    axios.get(api.bocomercios +'/'+ api.claveCategorias, config),
   ])
-    .then(axios.spread(function (tipoComercios, comercios,platos) {
+    .then(axios.spread(function (tipoComercios, comercios,platos, categorias) {
       console.log(platos.data)
-      return { comercio: filtarById(comercios.data,id,pasarHabilitado), platos: platos.data , tipoComercios: tipoComercios.data}
+      return { comercio: filtarById(comercios.data,id,pasarHabilitado), platos: platos.data , tipoComercios: tipoComercios.data, categorias: categorias.data}
     }))
     .then(data => {
       dispatch(comercioById(data))
@@ -288,12 +299,12 @@ const fetchTipoComercios = (data) => {
   return returnValue
 }
 
-const fetchComercio = (data, platos) => {
+const fetchComercio = (data, platos, categorias) => {
   let returnValue = []
   platos.map(function (rowObject) {
     if(rowObject.id){
       returnValue.push({ id: rowObject.id,  imagen: rowObject.imagen, nombre: rowObject.nombre,precio: rowObject.precio,
-        categoria: rowObject.categoria, orden: rowObject.orden, state: rowObject.state })
+        categoria: filtarCategoriaById(categorias,rowObject.categoria), orden: rowObject.orden, state: rowObject.state })
     }
   })
   returnValue = ordenarPorCategoriaOrden(returnValue)
@@ -351,7 +362,7 @@ export default (state = initialState, action) => {
     return {
       ...state,
       result: [],
-      activeComercio: fetchComercio(action.data.comercio,action.data.platos),
+      activeComercio: fetchComercio(action.data.comercio,action.data.platos, action.data.categorias),
       // allRoles: fetchRoles(action.data.roles),
       allTipoComercios: fetchTipoComercios(action.data.tipoComercios),
     }
