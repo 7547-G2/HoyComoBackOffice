@@ -13,9 +13,11 @@ export class BuscarComercioForm extends React.Component {
   constructor() {
     super()
     this.state = {
-      tipoComerciosFiltro: '-1'
+      tipoComerciosFiltro: '-1',
+      estadoFiltro: '-1'
     }
     this.updateTipoComercioSearch = this.updateTipoComercioSearch.bind(this)
+    this.updateEstadoSearch = this.updateEstadoSearch.bind(this)
   }
 
   getTipoComerciosSearch() {
@@ -29,6 +31,13 @@ export class BuscarComercioForm extends React.Component {
     })
   }
 
+  updateEstadoSearch (newValue) {
+    this.setState({
+      ...this.state, 
+      estadoFiltro: (newValue != null) ? newValue.value : -1
+    })
+  }
+
   render() {
     return (
       <form onSubmit={event => {
@@ -36,7 +45,8 @@ export class BuscarComercioForm extends React.Component {
         let nombreSearch = ReactDOM.findDOMNode(this.nombreSearch).value
         let emailSearch = ReactDOM.findDOMNode(this.emailSearch).value
         let tipoComercioSearch = this.state.tipoComercioFiltro
-        this.props.comercios(nombreSearch, emailSearch, tipoComercioSearch)
+        let estadoSearch = this.state.estadoFiltro
+        this.props.comercios(nombreSearch, emailSearch, tipoComercioSearch, estadoSearch)
       }}>
         <Row>
           <Col lg={4}>
@@ -51,7 +61,7 @@ export class BuscarComercioForm extends React.Component {
                 bsSize="small" type="text"></FormControl>
             }/>
           </Col>
-          <Col lg={4}>
+          <Col lg={2}>
             <CustomFormField key="tipoComercioSearch" bsSize="small" controlId="tipoComercioSearch" label="Tipo Comercio" 
               inputComponent={
                 <Select name="tipoComercioSelect" value={this.state.tipoComercioFiltro}
@@ -59,6 +69,15 @@ export class BuscarComercioForm extends React.Component {
                   key="tipoComercioSearchControl" onChange={this.updateTipoComercioSearch} placeholder="Búsqueda por tipo comercio"/>
               }/>
           </Col>
+          <Col lg={2}>
+            <CustomFormField key="estadoSearch" bsSize="small" controlId="estadoSearch" label="Estado" 
+              inputComponent={
+                <Select name="estadoSelect" value={this.state.estadoFiltro}
+                  options={[{ value: 'activacion', label: 'pendiente activación' },{ value: 'menu', label: 'pendiente menu' }
+                    ,{ value: 'habilitado', label: 'habilitado' },{ value: 'deshabilitado', label: 'deshabilitado'}]} id="estadoSearch" 
+                  key="estadoSearchControl" onChange={this.updateEstadoSearch} placeholder="Búsqueda por estado"/>
+              }/>
+          </Col>  
         </Row>
         <Row>
           <Col lg={12} md={12}>
@@ -73,8 +92,8 @@ export class BuscarComercioForm extends React.Component {
 }
 
 const mapDispatch = (dispatch) => ({
-  comercios: (nombre, email, tipoComercio) => {
-    dispatch(getComercios(nombre, email, tipoComercio))
+  comercios: (nombre, email, tipoComercio, estado) => {
+    dispatch(getComercios(nombre, email, tipoComercio, estado))
   }
 })
 

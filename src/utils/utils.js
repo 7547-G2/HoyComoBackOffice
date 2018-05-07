@@ -61,3 +61,19 @@ export const generarContrasenia = (longitud) => {
   for (let i=0; i<longitud; i++) contraseña += caracteres.charAt(Math.floor(Math.random()*caracteres.length))
   return contraseña
 }
+
+export const ordenarPorCategoriaOrden = (array) => {
+  array.sort(function (a, b) {
+    var aSize = a.categoria
+    var bSize = b.categoria
+    var aLow = a.orden
+    var bLow = b.orden
+    if (aSize == bSize) {
+      return (aLow < bLow) ? -1 : (aLow > bLow) ? 1 : 0
+    }
+    else {
+      return (aSize < bSize) ? -1 : 1
+    }
+  })
+  return array
+}

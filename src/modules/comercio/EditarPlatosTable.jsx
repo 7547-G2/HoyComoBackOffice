@@ -14,7 +14,7 @@ export class EditarPlatosTable extends React.Component {
   getTablaPlatos() {
     if (this.props.activeComercio.platos && this.props.activeComercio.platos.length != 0) {
       return <CustomTableWithImageAndPagination data={this.props.activeComercio.platos} 
-        headers={['Imagen','Nombre', 'Precio']}
+        headers={['Imagen','Nombre', 'Precio', 'Categoria', 'Orden', 'Estado']}
       />
     } else {
       return <Alert bsStyle="info">No se encontraron platos para este comercio</Alert>

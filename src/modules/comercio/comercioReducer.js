@@ -1,8 +1,7 @@
 import axios from 'axios'
 import { getNullConfig, getErrorResponse } from '../../utils/utils'
 import { push } from 'react-router-redux'
-// import _ from 'lodash'
-import { generarContrasenia } from  '../../utils/utils'
+import { generarContrasenia , ordenarPorCategoriaOrden } from  '../../utils/utils'
 import api from '../../config/api'
 
 const HYDRATE_COMERCIOS = 'HYDRATE_COMERCIOS'
@@ -97,6 +96,28 @@ export const habilitarComercio = (activeComercio) => dispatch => {
     })
 }
 
+export const deshabilitarComercio = (activeComercio) => dispatch => {
+  let config = getNullConfig()
+  let body = {}
+  let idComercio = activeComercio.id
+  body.estado = 'deshabilitado'
+  axios.put(api.comercios + '/' + idComercio, body, config)
+    .then(res => {
+      return res.data.data
+    })
+    .then(() => {
+      dispatch(getComercioById(idComercio,true))
+      dispatch(successful('El comercio se deshabilito correctamente'))
+    })
+    .catch(err => {
+      if (err.response && err.response.status) {
+        dispatch(queryError(getErrorResponse(err)))
+      } else {
+        dispatch(internalError(err))
+      }
+    })
+}
+
 const filtarById = (data,id, pasarHabilitado) => {
   let returnValue = null
   data.forEach(element => {
@@ -120,6 +141,7 @@ export const getComercioById = (id,pasarHabilitado) => dispatch => {
     axios.get(api.bocomercios +'/'+id+'/'+ api.clavePlatos + queryString, config),
   ])
     .then(axios.spread(function (tipoComercios, comercios,platos) {
+      console.log(platos.data)
       return { comercio: filtarById(comercios.data,id,pasarHabilitado), platos: platos.data , tipoComercios: tipoComercios.data}
     }))
     .then(data => {
@@ -134,17 +156,16 @@ export const getComercioById = (id,pasarHabilitado) => dispatch => {
     })
 }
 
-export const getComercios = (nombre, email, tipoComercio) => dispatch => {
+export const getComercios = (nombre, email, tipoComercio,estado) => dispatch => {
   nombre =  nombre && nombre.trim() 
   email = email &&  email.trim()
-  tipoComercio = tipoComercio &&  tipoComercio.trim()
   let config = getNullConfig()
   let queryString = ''
   if (nombre != '') queryString += 'nombre:' + nombre
   if (email != '') queryString += (queryString == '') ? 'email:' + email : ',email:' + email
-  if (tipoComercio) queryString += (queryString == '') ? 'tipo:' + tipoComercio : ',tipo:' + tipoComercio
+  if (tipoComercio) queryString += (queryString == '') ? 'tipoId:' + tipoComercio : ',tipoId:' + tipoComercio
+  if (estado) queryString += (queryString == '') ? 'estado:' + estado : ',estado:' + estado 
   queryString = (queryString == '') ? queryString : '?search=' + queryString
-  console.log(api.comercios + queryString)
   axios.get(api.comercios + queryString, config)
   axios.all([
     axios.get(api.base + api.clavetipoComercios),
@@ -170,7 +191,7 @@ export const updateComercio = (idComercio,nombre,razonSocial,numero,codigoPostal
   let body = {}
   body.addressDto = { floor: '', department: ''}
   if (nombre) body.nombre = nombre
-  if (tipoComercio) body.tipoComercio = tipoComercio
+  if (tipoComercio) body.tipoComidaId = tipoComercio
   if (razonSocial) body.razonSocial = razonSocial
   if (numero && calle) body.addressDto.street = calle.trim() + ' '+ numero
   if (codigoPostal) body.addressDto.postalCode = codigoPostal
@@ -197,14 +218,13 @@ export const updateComercio = (idComercio,nombre,razonSocial,numero,codigoPostal
 }
 
 export const createComercio = (nombre, razonSocial, calle, numero, codigoPostal, email, verificacion_email, tipoComercio) => dispatch => {
-
   let config = getNullConfig()
   let newPass = generarContrasenia()
   let body = {
     email: email,
     nombre: nombre,
     razonSocial: razonSocial,
-    tipo_comida_id: tipoComercio,
+    tipoComidaId: tipoComercio,
     password: newPass,
     addressDto: {
       street: calle +' '+numero,
@@ -221,7 +241,7 @@ export const createComercio = (nombre, razonSocial, calle, numero, codigoPostal,
     })
     .then(() => {
       dispatch(successful('El comercio se creo correctamente'))
-      dispatch(getComercios())      
+      // dispatch(getComercios())
     })
     .catch(err => {
       if (err.response && err.response.status) {
@@ -248,72 +268,17 @@ export const obtenerTipoComercios = () => dispatch => {
     })
 }
 
-// export const deleteRol = (idUsuario, idRol) => dispatch => {
-//   let config = getConfig()
-//   axios.delete(api.usuarios + '/' + idUsuario + '/' + api.claveRoles + '/' + idRol, config)
-//     .then(res => res.data.data)
-//     .then(() => {
-//       dispatch(removerRol(idRol))
-//       dispatch(successful('El rol se eliminó correctamente'))
-//     })
-//     .catch(err => {
-//       if (err.response && err.response.status) {
-//         dispatch(queryError(getErrorResponse(err)))
-//       } else {
-//         dispatch(internalError(err))
-//       }
-//     })
-// }
-
-// export const addRol = (idUsuario, idRol) => dispatch => {
-//   let config = getConfig()
-//   let body = { rol_id: idRol }
-//   axios.post(api.usuarios + '/' + idUsuario + '/' + api.claveRoles, body, config)
-//     .then(res => res.data.data)
-//     .then(() => {
-//       dispatch(agregarRol(idRol))
-//       dispatch(successful('El rol se agregó correctamente'))
-//     })
-//     .catch(err => {
-//       if (err.response && err.response.status) {
-//         dispatch(queryError(getErrorResponse(err)))
-//       } else {
-//         dispatch(internalError(err))
-//       }
-//     })
-// }
-
 const fetchComerciosTable = (data) => {
   let returnValue = []
   data.map(function (rowObject) {
-    console.log(rowObject)
-    returnValue.push({ id: rowObject.id, nombre: rowObject.nombre, email: rowObject.email, tipoComercio:  rowObject.tipoComercio,
+    let tipoComida = ''
+    if(rowObject.tipoComida)
+      tipoComida = rowObject.tipoComida.tipo
+    returnValue.push({ id: rowObject.id, nombre: rowObject.nombre, email: rowObject.email, tipoComercio: tipoComida,
       domicilio: rowObject.addressDto.street + ', cp: ' + rowObject.addressDto.postalCode, estado: rowObject.estado  })
   })
   return returnValue
 }
-
-// Auxiliares
-
-// const getRolRemover = (rolId, activeUsuario) => {
-//   let rolesActuales = activeUsuario.roles
-//   let nuevosRoles = _.differenceBy(rolesActuales, [{ id: rolId }], 'id')
-//   return nuevosRoles
-// }
-
-// const getRolAdd = (nuevoRolId, roles, allRoles) => {
-//   let nuevoRol = _.find(allRoles, { 'id': parseInt(nuevoRolId) })
-//   roles.push(nuevoRol)
-//   return roles
-// }
-
-// const fetchRoles = (data) => {
-//   let returnValue = []
-//   data.map(function (rowObject) {
-//     returnValue.push({ id: rowObject.id, nombre: rowObject.nombre, descripcion: rowObject.descripcion })
-//   })
-//   return returnValue
-// }
 
 const fetchTipoComercios = (data) => {
   let returnValue = []
@@ -327,9 +292,11 @@ const fetchComercio = (data, platos) => {
   let returnValue = []
   platos.map(function (rowObject) {
     if(rowObject.id){
-      returnValue.push({ id: rowObject.id,  imagen: rowObject.imagen, nombre: rowObject.nombre,precio: rowObject.precio })
+      returnValue.push({ id: rowObject.id,  imagen: rowObject.imagen, nombre: rowObject.nombre,precio: rowObject.precio,
+        categoria: rowObject.categoria, orden: rowObject.orden, state: rowObject.state })
     }
   })
+  returnValue = ordenarPorCategoriaOrden(returnValue)
   let estado = data.estado
   let numberStreet = data.addressDto.street.match(/\d+$/)
   let number = ''
@@ -340,10 +307,13 @@ const fetchComercio = (data, platos) => {
   let mensajeEncabezado = ''
   if (estado == 'pendiente activacion') {
     mensajeEncabezado = 'El administrador del comercio debe ingresar por primera vez para comenzar a cargar su menú'
-  } else if (estado == 'pendiente menu') {
+  } else if (estado == 'pendiente menu' || estado == 'deshabilitado') {
     mensajeEncabezado = 'Deben cargarse al menos 5 platos en el menú para poder habilitar este comercio'
+  } else if (estado == 'habilitado') {
+    mensajeEncabezado = 'Para evitar que un comercio siga visible en la aplicación'
   }
-  console.log(data)
+  let tipoComida = ''
+  if (data.tipoComida) tipoComida = data.tipoComida.id
   return { 
     id: data.id, 
     nombre: data.nombre,
@@ -355,7 +325,7 @@ const fetchComercio = (data, platos) => {
     password: data.password,
     imagenLogo: data.imagenLogo,
     email: data.email, /*roles: returnValue,*/ 
-    tipoComercio: data.tipoComercio,
+    tipoComercio: tipoComida,
     mensajeEncabezado: mensajeEncabezado,
     platos: returnValue
   }

@@ -8,7 +8,6 @@ import { CustomCargando } from '../../utils/CustomCargando'
 import { CustomAlert } from '../../utils/CustomAlert'
 // import EditarRolesUsuario from './EditarRolesUsuario'
 import EditarComercioForm from './EditarComercioForm'
-import HabilitarComercioModal from './HabilitarComercioModal'
 
 export class EditarComercio extends React.Component {
 
@@ -19,8 +18,6 @@ export class EditarComercio extends React.Component {
     }
     this.abrirModalCambiarPass = this.abrirModalCambiarPass.bind(this)
     this.submitEditForm = this.submitEditForm.bind(this)
-    this.abrirModalHabilitarComercio = this.abrirModalHabilitarComercio.bind(this)
-    this.habilitar = this.habilitar.bind(this)
   }
 
   componentDidMount() {
@@ -40,36 +37,16 @@ export class EditarComercio extends React.Component {
     this.cambiarPassModal.wrappedInstance.abrirModal()
   }
 
-  habilitar() {
-    this.abrirModalHabilitarComercio()
-  }
-
-  abrirModalHabilitarComercio() {
-    this.HabilitarComercioModal.wrappedInstance.abrirModal()
-  }
-
   render() {
     if (this.state.ready) {
       return (
         <Grid fluid={true}>
-          <Row>
-            <Col md={2}>
-              <h4>Editar comercio</h4>
-            </Col>
-            <Col md={ (this.props.activeComercio.estado != 'pendiente menu')?10:9 }>
-              <h5 className="pull-right"><i> { this.props.activeComercio.mensajeEncabezado }  </i></h5>
-            </Col>
-            { this.props.activeComercio.estado == 'pendiente menu' && <Col md={1}>
-              <Button bsStyle="success" 
-                className="pull-right" bsSize="sm"
-                onClick={this.habilitar}>Habilitar</Button> 
-            </Col> }
-          </Row>
           {(this.props.alert.text != null) &&
             <CustomAlert onDismiss={this.props.clearAlert} rowKey="alertRow" bsStyle={this.props.alert.style} message={this.props.alert.text} />}
 
-          <EditarComercioForm ref={(formEdit) => { this.formEdit = formEdit }} allTipoComercios={this.props.allTipoComercios} /*allRoles={this.props.allRoles}*/ activeComercio={this.props.activeComercio} />
-          <HabilitarComercioModal activeComercio={this.props.activeComercio} ref={(modal) => { this.HabilitarComercioModal = modal }} />
+          <EditarComercioForm ref={(formEdit) => { this.formEdit = formEdit }} allTipoComercios={this.props.allTipoComercios} 
+            activeComercio={this.props.activeComercio}  />
+
           <Row>
             <Col lg={12}>
               <Button bsStyle="primary" bsSize="small" onClick={this.submitEditForm}>Guardar</Button>&nbsp;

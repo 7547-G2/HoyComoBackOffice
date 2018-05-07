@@ -4,11 +4,13 @@ import { connect } from 'react-redux'
 import { updateComercio } from './comercioReducer'
 import { getTipoComerciosSelectOptions, validFileSize, validFileType } from '../../utils/utils'
 import Select from 'react-select'
-import { Row, Col, FormControl, Panel, Image, FormGroup, HelpBlock } from 'react-bootstrap'
+import { Row, Col, FormControl, Panel, Image, FormGroup, HelpBlock, Button } from 'react-bootstrap'
 import { CustomFormField } from '../../utils/CustomFormField'
 import EditarPlatosTable from './EditarPlatosTable'
 import Img1 from '../../utils/images/ImageLogoDefault.png'
 import ReactFileBase64 from 'react-file-base64'
+import HabilitarComercioModal from './HabilitarComercioModal'
+import DeshabilitarComercioModal from './DeshabilitarComercioModal'
 
 const mensajeImagenDefault = 'Puede subir imagenes cuadradas de extensión jpg, jpeg, bmp o png'
 
@@ -38,6 +40,26 @@ export class EditarComercioForm extends React.Component {
     this.updateEstadoSelect = this.updateEstadoSelect.bind(this)
     this.updateTipoComercioSelect = this.updateTipoComercioSelect.bind(this)
     this.editarComercioSubmit = this.editarComercioSubmit.bind(this)
+    this.abrirModalHabilitarComercio = this.abrirModalHabilitarComercio.bind(this)
+    this.habilitar = this.habilitar.bind(this)
+    this.abrirModalDeshabilitarComercio = this.abrirModalDeshabilitarComercio.bind(this)
+    this.deshabilitar = this.deshabilitar.bind(this)
+  }
+
+  habilitar() {
+    this.abrirModalHabilitarComercio()
+  }
+
+  abrirModalHabilitarComercio() {
+    this.HabilitarComercioModal.wrappedInstance.abrirModal()
+  }
+
+  deshabilitar() {
+    this.abrirModalDeshabilitarComercio()
+  }
+
+  abrirModalDeshabilitarComercio() {
+    this.DeshabilitarComercioModal.wrappedInstance.abrirModal()
   }
 
   resetUpdateForm() {
@@ -260,6 +282,24 @@ export class EditarComercioForm extends React.Component {
     return (
       <form>
         <Row>
+          <Col md={2}>
+            <h4>Editar comercio</h4>
+          </Col>
+          <Col md={(this.props.activeComercio.estado == 'pendiente activacion') ? 10 : 9}>
+            <h5 className="pull-right"><i> {this.props.activeComercio.mensajeEncabezado}  </i></h5>
+          </Col>
+          {(this.props.activeComercio.estado == 'pendiente menu' || this.props.activeComercio.estado == 'deshabilitado' )&& <Col md={1}>
+            <Button bsStyle="success"
+              className="pull-right" bsSize="sm"
+              onClick={this.habilitar}>Habilitar</Button>
+          </Col>}
+          {this.props.activeComercio.estado == 'habilitado' && <Col md={1}>
+            <Button bsStyle="danger"
+              className="pull-right" bsSize="sm"
+              onClick={this.deshabilitar}>Deshabilitar</Button>
+          </Col> }
+        </Row>
+        <Row>
           <Col lg={4} md={4}>
             <CustomFormField validationState={this.state.updateForm.nombre.error ? 'error' : null}
               validationMessage={this.state.updateForm.nombre.mensaje} bsSize="small" controlId="nombre"
@@ -366,6 +406,8 @@ export class EditarComercioForm extends React.Component {
         <br></br>
         <EditarPlatosTable activeComercio={this.props.activeComercio}/>  
         <br></br>
+        <HabilitarComercioModal activeComercio={this.props.activeComercio} ref={(modal) => { this.HabilitarComercioModal = modal }} />
+        <DeshabilitarComercioModal activeComercio={this.props.activeComercio} ref={(modal) => { this.DeshabilitarComercioModal = modal }} />
       </form>
     )
   }
