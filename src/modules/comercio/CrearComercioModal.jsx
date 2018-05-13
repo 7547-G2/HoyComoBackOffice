@@ -1,13 +1,13 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { connect } from 'react-redux'
-import { Row, Col, Button, FormControl, Well } from 'react-bootstrap'
+import { Row, Col, Button, FormControl, Well, Image } from 'react-bootstrap'
 import { createComercio } from './comercioReducer'
 import { getTipoComerciosSelectOptions } from '../../utils/utils'
 import { CustomModal } from '../../utils/CustomModal'
 import { CustomFormField } from '../../utils/CustomFormField'
 import Select from 'react-select'
-import GoogleMapReact from 'google-map-react'
+import MapContainer from '../../utils/MapContainer'
 
 export class CrearComercioModal extends React.Component {
 
@@ -22,8 +22,10 @@ export class CrearComercioModal extends React.Component {
         numero: { error: false, mensaje: '' },
         codigoPostal: { error: false, mensaje: '' },
         email2: { error: false, mensaje: '' },
-        tipoComercio: { seleccionado: '', error: false, mensaje: '' }
-      }
+        tipoComercio: { seleccionado: '', error: false, mensaje: '' },
+      },
+      lat: -34.59378080536352,
+      lng: -58.44440356103553
     }
     this.updateTipoComercioSelect = this.updateTipoComercioSelect.bind(this)
     this.abrirModal = this.abrirModal.bind(this)
@@ -225,9 +227,9 @@ export class CrearComercioModal extends React.Component {
     </Row>)
     body.push(<Row key={'formCreateRow6'}>
       <Col lg={12}>
-        <Well bsSize="small">
-          <div style={{ height: '30vh', width: '100%' }}>
-            <GoogleMapReact
+        <h5 key="posicionGeografica"><b>Posición Geográfica</b><i> (seleccione la ubicación en el mapa de su comercio dentro de capital federal)</i></h5>
+        <div style={{ height: '40vh', width: '100%' }}>
+          {/* <GoogleMapReact
               bootstrapURLKeys={{
                 key: 'AIzaSyC_rDpCs7Wgs5-qpnfx70_-LgvO89-zIDA',
               }}
@@ -237,15 +239,22 @@ export class CrearComercioModal extends React.Component {
                   lng: -58.44440356103553
                 }}
               defaultZoom={12}
+              onClick={this.clickDeMapa}
             >
-              {/* <AnyReactComponent
+              <Marker
+                id='marcador'
+                name='marcador'
                 lat={-34.59378080536352}
                 lng={-58.44440356103553}
-                text={'Kreyser Avrora'}
-              /> */}
-            </GoogleMapReact>
-          </div>
-        </Well>
+              />
+            </GoogleMapReact> */}
+
+          <MapContainer key="mapInput" ref={(mapInput) => { this.mapInput = mapInput }}
+            lat={this.state.lat}
+            lng={this.state.lng}
+            draggable={true}
+          />
+        </div>
       </Col>
     </Row>)
     body.push(<hr key="division"/>)
@@ -281,6 +290,14 @@ export class CrearComercioModal extends React.Component {
       let codigoPostal = ReactDOM.findDOMNode(this.codigoPostalInput).value
       let email = ReactDOM.findDOMNode(this.emailInput).value
       let email2 = ReactDOM.findDOMNode(this.verificarEmailInput).value
+      let lat = document.getElementById('latitudSpan').outerHTML
+      lat = lat.replace('<span id="latitudSpan" name="latitudSpan">','')
+      lat = lat.replace('</span>','')
+      console.log(lat)
+      let lng = document.getElementById('longitudSpan').outerHTML
+      lng = lng.replace('<span id="longitudSpan" name="longitudSpan">','')
+      lng = lng.replace('</span>','')
+      console.log(lng)
       if (this.validarCreateForm(nombre, razonSocial, calle, numero, codigoPostal, email, email2)) {
         this.props.createComercio(nombre, razonSocial, calle, numero, codigoPostal, email, email2, this.state.createForm.tipoComercio.seleccionado)
         this.modal.hideModal()

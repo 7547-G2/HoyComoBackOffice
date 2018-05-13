@@ -11,6 +11,7 @@ import Img1 from '../../utils/images/ImageLogoDefault.png'
 import ReactFileBase64 from 'react-file-base64'
 import HabilitarComercioModal from './HabilitarComercioModal'
 import DeshabilitarComercioModal from './DeshabilitarComercioModal'
+import MapContainer from '../../utils/MapContainer'
 
 const mensajeImagenDefault = 'Puede subir imagenes cuadradas de extensión jpg, jpeg, bmp o png'
 
@@ -31,7 +32,9 @@ export class EditarComercioForm extends React.Component {
         email: { error: false, mensaje: '' },
         imageLogo: { estado: null, mensaje: mensajeImagenDefault },
         estado: { seleccionado: props.activeComercio.estado, error: false, mensaje: '' },
-        tipoComercio: { seleccionado: props.activeComercio.tipoComercio, error: false, mensaje: '' }
+        tipoComercio: { seleccionado: props.activeComercio.tipoComercio, error: false, mensaje: '' },
+        lat: -34.59378080536352,
+        lng: -58.44440356103553
       }
     }
     this.getFiles = this.getFiles.bind(this)
@@ -363,16 +366,6 @@ export class EditarComercioForm extends React.Component {
             <CustomFormField validationState={this.state.updateForm.estado.error ? 'error' : null}
               validationMessage={this.state.updateForm.estado.mensaje} bsSize="small" controlId="estadoSelect"
               label="Estado" disabled={true} inputComponent={
-                // (this.state.updateForm.estado.seleccionado != 'pendiente activacion')?
-                //   <Select name="estadoSelect" value={this.state.updateForm.estado.seleccionado}
-                //     options={[
-                //       // { value: 'pendiente activacion', label: 'pendiente activacion' },
-                //       { value: 'pendiente menu', label: 'pendiente menu' }, 
-                //       { value: 'habilitado', label: 'habilitado' },
-                //       { value: 'deshabilitado', label: 'deshabilitado' }
-                //     ]} id="estadoSelect"
-                //     key="estadoSelect" onChange={this.updateEstadoSelect} placeholder="Selecciona" />
-                //   :
                 <FormControl type="text" disabled={'true'} value={this.state.updateForm.estado.seleccionado} />
               } />
           </Col>
@@ -399,6 +392,24 @@ export class EditarComercioForm extends React.Component {
                     type={'file'} accept={['.jpg', '.jpeg', '.bmp', '.png']} />
                   <HelpBlock>{this.state.updateForm.imageLogo?this.state.updateForm.imageLogo.mensaje:mensajeImagenDefault}</HelpBlock>
                 </FormGroup>
+              </Panel.Body>
+            </Panel>
+          </Col>
+          <Col lg={8}>
+            <Panel>
+              <Panel.Heading>
+                <Panel.Title componentClass="h3">
+                  Posición Geográfica
+                </Panel.Title>
+              </Panel.Heading>
+              <Panel.Body style={{ height: 232 }}>
+                <MapContainer key="mapInput" ref={(mapInput) => { this.mapInput = mapInput }}
+                  lat={this.state.updateForm.lat}
+                  lng={this.state.updateForm.lng}
+                  width={'700px'}
+                  height={'205px'}
+                  draggable={false}
+                />
               </Panel.Body>
             </Panel>
           </Col>
