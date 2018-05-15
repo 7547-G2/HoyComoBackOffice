@@ -1,7 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
-import { Image , Input } from 'react-bootstrap'
+import ReactDOM from 'react-dom'
+import { Button, Glyphicon } from 'react-bootstrap'
 import marcadorImage from './images/marcador.png'
 import { Map, InfoWindow, Marker, GoogleApiWrapper } from 'google-maps-react'
 
@@ -17,6 +18,9 @@ export class MapContainer extends React.Component {
       lat: props.lat,
       lng: props.lng,
       draggable: draggable,
+      calleInput:props.calleInput,
+      numeroInput:props.numeroInput,
+      codigoPostalInput:props.codigoPostalInput,
     }
     this.mapClicked = this.mapClicked.bind(this)
     this.getLatLng = this.getLatLng.bind(this)
@@ -25,7 +29,12 @@ export class MapContainer extends React.Component {
   onMarkerClick(event, other){
     console.log(event)
     console.log(other)
-    
+  }
+
+  obtenerPosicionSegunParametros(){
+    let calle = ReactDOM.findDOMNode(this.calleInput).value
+    let numero = ReactDOM.findDOMNode(this.numeroInput).value
+    let codigoPostal = ReactDOM.findDOMNode(this.codigoPostalInput).value
   }
 
   mapClicked(mapProps, map, clickEvent) {
@@ -56,29 +65,35 @@ export class MapContainer extends React.Component {
   render() {
     return (
       <div>
-        <Map
-          draggable={this.state.draggable}
-          style={{  width: this.state.width,
-            height: this.state.height}}
-          google={this.props.google} zoom={14}
-          initialCenter={{
-            lat: this.state.lat,
-            lng: this.state.lng
-          }}
-          disableDefaultUI={true}
-          onClick={this.mapClicked}
-        >
-          <Marker onClick={this.onMarkerClick}
-            position={{
-              lat:this.state.lat,
-              lng:this.state.lng
+        <h5 key="posicionGeografica"><b>Posición Geográfica</b><i> (seleccione la ubicación en el mapa de su comercio dentro de capital federal)</i>            
+          <Button bsStyle="success" bsSize="xsmall" className="pull-right" onClick={this.obtenerPosicionSegunParametros}>
+            <Glyphicon glyph="repeat" />Actualizar Posición
+          </Button></h5>
+        <div style={{ height: '40vh', width: '100%' }}>
+          <Map
+            draggable={this.state.draggable}
+            style={{  width: this.state.width,
+              height: this.state.height}}
+            google={this.props.google} zoom={14}
+            initialCenter={{
+              lat: this.state.lat,
+              lng: this.state.lng
             }}
             disableDefaultUI={true}
-            id='CurrentLocation'
-            name='CurrentLocation' />
-        </Map>
-        <span  ref={(latitudSpan) => { this.latitudSpan = latitudSpan }} id='latitudSpan' name='latitudSpan'>{this.state.lat}</span>
-        <span ref={(longitudSpan) => { this.longitudSpan = longitudSpan }} id='longitudSpan' name='longitudSpan'>{this.state.lng}</span>
+            onClick={this.mapClicked}
+          >
+            <Marker onClick={this.onMarkerClick}
+              position={{
+                lat:this.state.lat,
+                lng:this.state.lng
+              }}
+              disableDefaultUI={true}
+              id='CurrentLocation'
+              name='CurrentLocation' />
+          </Map>
+          <span  ref={(latitudSpan) => { this.latitudSpan = latitudSpan }} id='latitudSpan' name='latitudSpan'>{this.state.lat}</span>
+          <span ref={(longitudSpan) => { this.longitudSpan = longitudSpan }} id='longitudSpan' name='longitudSpan'>{this.state.lng}</span>
+        </div>
       </div>
     )
   }

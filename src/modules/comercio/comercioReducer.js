@@ -6,6 +6,7 @@ import api from '../../config/api'
 
 const HYDRATE_COMERCIOS = 'HYDRATE_COMERCIOS'
 const HYDRATE_COMERCIO_BY_ID = 'HYDRATE_COMERCIO_BY_ID'
+const HYDRATE_POSICION = 'HYDRATE_POSICION'
 const HYDRATE_TIPO_COMERCIOS = 'HYDRATE_TIPO_COMERCIOS'
 const QUERY_ERROR = 'QUERY_ERROR'
 const INTERNAL_ERROR = 'INTERNAL_ERROR'
@@ -55,6 +56,10 @@ export const comercios = data => ({
 
 export const comercioById = data => ({
   type: HYDRATE_COMERCIO_BY_ID, data
+})
+
+export const posicion = data => ({
+  type: HYDRATE_POSICION, data
 })
 
 export const removerRol = data => ({
@@ -154,6 +159,27 @@ export const getComercioById = (id,pasarHabilitado) => dispatch => {
     .then(axios.spread(function (tipoComercios, comercios,platos, categorias) {
       console.log(platos.data)
       return { comercio: filtarById(comercios.data,id,pasarHabilitado), platos: platos.data , tipoComercios: tipoComercios.data, categorias: categorias.data}
+    }))
+    .then(data => {
+      dispatch(comercioById(data))
+    })
+    .catch(err => {
+      if (err.response && err.response.status) {
+        dispatch(queryError(getErrorResponse(err)))
+      } else {
+        dispatch(internalError(err))
+      }
+    })
+}
+
+export const getPosicion = (calle) => dispatch => {
+  let config = getNullConfig()
+  axios.all([
+    axios.get(api.googleApi + calle + api.apiKey, config)
+  ])
+    .then(axios.spread(function (data) {
+      return { lat: data.results.geometry.location.lat,
+        lng: data.results.geometry.location.lng}
     }))
     .then(data => {
       dispatch(comercioById(data))
@@ -365,6 +391,11 @@ export default (state = initialState, action) => {
       activeComercio: fetchComercio(action.data.comercio,action.data.platos, action.data.categorias),
       // allRoles: fetchRoles(action.data.roles),
       allTipoComercios: fetchTipoComercios(action.data.tipoComercios),
+    }
+  case HYDRATE_POSICION:
+    return {
+      ...state,
+      posicion: { lat: action.data.lat, lng: action.data.lng },
     }
     // case REMOVE_ROL:
     //   return {

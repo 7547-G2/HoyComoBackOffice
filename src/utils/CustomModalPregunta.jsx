@@ -40,3 +40,4 @@ export class CustomModalPregunta extends React.Component {
     )
   }
 }
+ 

@@ -6,7 +6,7 @@ import { LinkContainer } from 'react-router-bootstrap'
 import { logout } from '../modules/login/authReducer'
 import imageLogo from '../utils/images/Logo.png'
 
-const navbar = {}//{backgroundColor: '#6262f0'}
+const navbar = {backgroundColor: '#3f51b5', borderColor: '#3f51b5'}
 const font = {color: '#ffffff'}
 
 export class WebNavbar extends React.Component {

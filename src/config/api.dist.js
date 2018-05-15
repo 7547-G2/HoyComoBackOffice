@@ -2,6 +2,8 @@
 
 // Defaults
 const BASE = 'https://hoy-como-backend.herokuapp.com/api/'
+const googleApi = 'https://maps.google.com/maps/api/geocode/json?address='
+const apiKey = '&key=AIzaSyCxw77azFkwYOs_QYt-1HqKSwZcbrvEyrE'
 
 // Api routes phrases
 const LOGIN = 'token'
@@ -20,4 +22,6 @@ export default {
   clavePlatos: platos,
   clavetipoComercios: tipoComercios,
   claveCategorias: categorias,
+  googleApi: googleApi,
+  apiKey: apiKey,
 }

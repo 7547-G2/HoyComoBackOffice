@@ -227,34 +227,35 @@ export class CrearComercioModal extends React.Component {
     </Row>)
     body.push(<Row key={'formCreateRow6'}>
       <Col lg={12}>
-        <h5 key="posicionGeografica"><b>Posición Geográfica</b><i> (seleccione la ubicación en el mapa de su comercio dentro de capital federal)</i></h5>
-        <div style={{ height: '40vh', width: '100%' }}>
-          {/* <GoogleMapReact
-              bootstrapURLKeys={{
-                key: 'AIzaSyC_rDpCs7Wgs5-qpnfx70_-LgvO89-zIDA',
+        {/* <GoogleMapReact
+            bootstrapURLKeys={{
+              key: 'AIzaSyC_rDpCs7Wgs5-qpnfx70_-LgvO89-zIDA',
+            }}
+            center={
+              {
+                lat: -34.59378080536352,
+                lng: -58.44440356103553
               }}
-              center={
-                {
-                  lat: -34.59378080536352,
-                  lng: -58.44440356103553
-                }}
-              defaultZoom={12}
-              onClick={this.clickDeMapa}
-            >
-              <Marker
-                id='marcador'
-                name='marcador'
-                lat={-34.59378080536352}
-                lng={-58.44440356103553}
-              />
-            </GoogleMapReact> */}
+            defaultZoom={12}
+            onClick={this.clickDeMapa}
+          >
+            <Marker
+              id='marcador'
+              name='marcador'
+              lat={-34.59378080536352}
+              lng={-58.44440356103553}
+            />
+          </GoogleMapReact> */}
 
-          <MapContainer key="mapInput" ref={(mapInput) => { this.mapInput = mapInput }}
-            lat={this.state.lat}
-            lng={this.state.lng}
-            draggable={true}
-          />
-        </div>
+        <MapContainer key="mapInput" ref={(mapInput) => { this.mapInput = mapInput }}
+          lat={this.state.lat}
+          lng={this.state.lng}
+          draggable={true}
+          width={'870px'}
+          calleInput={this.calleInput}
+          numeroInput={this.numeroInput}
+          codigoPostalInput={this.codigoPostalInput}
+        />
       </Col>
     </Row>)
     body.push(<hr key="division"/>)
