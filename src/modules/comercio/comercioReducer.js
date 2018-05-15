@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { getNullConfig, getErrorResponse } from '../../utils/utils'
+import { getNullConfig, getGoogleConfig, getErrorResponse } from '../../utils/utils'
 import { push } from 'react-router-redux'
 import { generarContrasenia , ordenarPorCategoriaOrden } from  '../../utils/utils'
 import api from '../../config/api'
@@ -173,13 +173,14 @@ export const getComercioById = (id,pasarHabilitado) => dispatch => {
 }
 
 export const getPosicion = (calle) => dispatch => {
-  let config = getNullConfig()
+  let config = getGoogleConfig()
   axios.all([
     axios.get(api.googleApi + calle + api.apiKey, config)
   ])
     .then(axios.spread(function (data) {
-      return { lat: data.results.geometry.location.lat,
-        lng: data.results.geometry.location.lng}
+      console.log(data.data)
+      return { lat: data.data.results[0].geometry.location.lat,
+        lng: data.data.results[0].geometry.location.lng}
     }))
     .then(data => {
       dispatch(comercioById(data))

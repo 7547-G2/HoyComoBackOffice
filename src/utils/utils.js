@@ -19,6 +19,12 @@ export const getNullConfig = () => ({
   }
 })
 
+export const getGoogleConfig = () => ({
+  headers: {
+    'Content-Type': 'application/json',
+  }
+})
+
 export const getErrorResponse = (err) => {
   return { status: err.response.status, message: err.response.data }
 }

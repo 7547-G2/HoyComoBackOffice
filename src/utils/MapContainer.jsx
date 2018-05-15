@@ -21,6 +21,7 @@ export class MapContainer extends React.Component {
       calleInput:props.calleInput,
       numeroInput:props.numeroInput,
       codigoPostalInput:props.codigoPostalInput,
+      onClick: props.onClick
     }
     this.mapClicked = this.mapClicked.bind(this)
     this.getLatLng = this.getLatLng.bind(this)
@@ -31,11 +32,12 @@ export class MapContainer extends React.Component {
     console.log(other)
   }
 
-  obtenerPosicionSegunParametros(){
-    let calle = ReactDOM.findDOMNode(this.calleInput).value
-    let numero = ReactDOM.findDOMNode(this.numeroInput).value
-    let codigoPostal = ReactDOM.findDOMNode(this.codigoPostalInput).value
-  }
+  // obtenerPosicionSegunParametros(){
+  //   let calle = ReactDOM.findDOMNode(this.calleInput).value
+  //   let numero = ReactDOM.findDOMNode(this.numeroInput).value
+  //   let codigoPostal = ReactDOM.findDOMNode(this.codigoPostalInput).value
+  //   this.getPosicion(calle,numero,codigoPostal)
+  // }
 
   mapClicked(mapProps, map, clickEvent) {
     console.log(clickEvent.latLng.lat() + '     ' + clickEvent.latLng.lng())
@@ -66,7 +68,7 @@ export class MapContainer extends React.Component {
     return (
       <div>
         <h5 key="posicionGeografica"><b>Posición Geográfica</b><i> (seleccione la ubicación en el mapa de su comercio dentro de capital federal)</i>            
-          <Button bsStyle="success" bsSize="xsmall" className="pull-right" onClick={this.obtenerPosicionSegunParametros}>
+          <Button bsStyle="success" bsSize="xsmall" className="pull-right" onClick={this.state.onClick}>
             <Glyphicon glyph="repeat" />Actualizar Posición
           </Button></h5>
         <div style={{ height: '40vh', width: '100%' }}>
@@ -98,6 +100,13 @@ export class MapContainer extends React.Component {
     )
   }
 }
+
+
+// const mapDispatch = (dispatch) => ({
+//   getPosicion: (calle,numero,codigoPostal) => {
+//     dispatch(getPosicion(nombreComercio, razonSocial, calle, numero, codigoPostal, email, verificarEmail, tipoComercio))
+//   }
+// })
 
 const WrappedContainer = GoogleApiWrapper({
   apiKey: ('AIzaSyC_rDpCs7Wgs5-qpnfx70_-LgvO89-zIDA')

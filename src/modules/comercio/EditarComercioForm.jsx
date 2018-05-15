@@ -403,13 +403,13 @@ export class EditarComercioForm extends React.Component {
                 </Panel.Title>
               </Panel.Heading>
               <Panel.Body style={{ height: 232 }}>
-                <MapContainer key="mapInput" ref={(mapInput) => { this.mapInput = mapInput }}
+                {/* <MapContainer key="mapInput" ref={(mapInput) => { this.mapInput = mapInput }}
                   lat={this.state.updateForm.lat}
                   lng={this.state.updateForm.lng}
                   width={'700px'}
                   height={'205px'}
                   draggable={false}
-                />
+                /> */}
               </Panel.Body>
             </Panel>
           </Col>

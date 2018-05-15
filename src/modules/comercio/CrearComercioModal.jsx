@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { connect } from 'react-redux'
 import { Row, Col, Button, FormControl, Well, Image } from 'react-bootstrap'
-import { createComercio } from './comercioReducer'
+import { createComercio, getPosicion } from './comercioReducer'
 import { getTipoComerciosSelectOptions } from '../../utils/utils'
 import { CustomModal } from '../../utils/CustomModal'
 import { CustomFormField } from '../../utils/CustomFormField'
@@ -43,6 +43,24 @@ export class CrearComercioModal extends React.Component {
       tipoComercio: { seleccionado: '', error: false, mensaje: '' }
     }
     this.setState({ ...this.state, createForm: createForm })
+  }
+
+  validarGetPosicion(calle, numero) {
+    let formOk = true
+
+    if (calle == null || calle == '') {
+      formOk = false
+    }
+
+    if (numero == null || numero == '') {
+      formOk = false
+    } else {
+      if((!Number.isInteger(Number(numero))) || (numero < 0)){
+        formOk = false
+      }
+    }
+
+    return formOk
   }
 
   validarCreateForm(nombre, razonSocial, calle, numero, codigoPostal, email, email2) {
@@ -255,6 +273,14 @@ export class CrearComercioModal extends React.Component {
           calleInput={this.calleInput}
           numeroInput={this.numeroInput}
           codigoPostalInput={this.codigoPostalInput}
+          onClick={() => {
+            let calle = ReactDOM.findDOMNode(this.calleInput).value
+            let numero = ReactDOM.findDOMNode(this.numeroInput).value
+            // let codigoPostal = ReactDOM.findDOMNode(this.codigoPostalInput).value
+            if (this.validarGetPosicion( calle, numero)) {
+              this.props.getPosicion(calle +' '+ numero +' CABA Argentina')
+            }
+          }}
         />
       </Col>
     </Row>)
@@ -319,7 +345,17 @@ export class CrearComercioModal extends React.Component {
 const mapDispatch = (dispatch) => ({
   createComercio: (nombreComercio, razonSocial, calle, numero, codigoPostal, email, verificarEmail, tipoComercio) => {
     dispatch(createComercio(nombreComercio, razonSocial, calle, numero, codigoPostal, email, verificarEmail, tipoComercio))
+  },
+  getPosicion: (calle, numero, codigoPostal) => {
+    dispatch(getPosicion(calle, numero, codigoPostal))
   }
 })
 
-export default connect(null, mapDispatch, null, { withRef: true })(CrearComercioModal)
+const mapStateToProps = (state) => {
+  return {
+    lat: state.comercioReducer.lat,
+    lng: state.comercioReducer.lng,
+  }
+}
+
+export default connect(mapStateToProps, mapDispatch, null, { withRef: true })(CrearComercioModal)
