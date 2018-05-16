@@ -32,6 +32,14 @@ export class MapContainer extends React.Component {
     console.log(other)
   }
 
+  componentWillReceiveProps(newProps){
+    this.setState({...this.state,
+      lat: newProps.lat,
+      lng: newProps.lng,
+    })
+  }
+
+
   // obtenerPosicionSegunParametros(){
   //   let calle = ReactDOM.findDOMNode(this.calleInput).value
   //   let numero = ReactDOM.findDOMNode(this.numeroInput).value

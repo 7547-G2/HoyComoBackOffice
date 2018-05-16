@@ -10,9 +10,8 @@ import Select from 'react-select'
 import MapContainer from '../../utils/MapContainer'
 
 export class CrearComercioModal extends React.Component {
-
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.state = {
       createForm: {
         nombre: { error: false, mensaje: '' },
@@ -24,11 +23,18 @@ export class CrearComercioModal extends React.Component {
         email2: { error: false, mensaje: '' },
         tipoComercio: { seleccionado: '', error: false, mensaje: '' },
       },
-      lat: -34.59378080536352,
-      lng: -58.44440356103553
+      lat: props.lat || -34.59378080536352,
+      lng: props.lng || -58.44440356103553,
     }
     this.updateTipoComercioSelect = this.updateTipoComercioSelect.bind(this)
     this.abrirModal = this.abrirModal.bind(this)
+  }
+
+  componentWillReceiveProps(newProps){
+    this.setState({...this.state,
+      lat: newProps.lat,
+      lng: newProps.lng,
+    })
   }
 
   resetCreateForm() {
@@ -353,8 +359,8 @@ const mapDispatch = (dispatch) => ({
 
 const mapStateToProps = (state) => {
   return {
-    lat: state.comercioReducer.lat,
-    lng: state.comercioReducer.lng,
+    lat: state.comercioReducer.posicion.lat,
+    lng: state.comercioReducer.posicion.lng,
   }
 }
 

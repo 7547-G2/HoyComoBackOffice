@@ -183,7 +183,7 @@ export const getPosicion = (calle) => dispatch => {
         lng: data.data.results[0].geometry.location.lng}
     }))
     .then(data => {
-      dispatch(comercioById(data))
+      dispatch(posicion(data))
     })
     .catch(err => {
       if (err.response && err.response.status) {
