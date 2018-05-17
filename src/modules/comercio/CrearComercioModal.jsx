@@ -23,8 +23,8 @@ export class CrearComercioModal extends React.Component {
         email2: { error: false, mensaje: '' },
         tipoComercio: { seleccionado: '', error: false, mensaje: '' },
       },
-      lat: props.lat || -34.59378080536352,
-      lng: props.lng || -58.44440356103553,
+      lat: 0,
+      lng: 0,
     }
     this.updateTipoComercioSelect = this.updateTipoComercioSelect.bind(this)
     this.abrirModal = this.abrirModal.bind(this)
@@ -48,23 +48,48 @@ export class CrearComercioModal extends React.Component {
       email2: { error: false, mensaje: '' },
       tipoComercio: { seleccionado: '', error: false, mensaje: '' }
     }
-    this.setState({ ...this.state, createForm: createForm })
+    this.setState({ ...this.state, createForm: createForm, lat: 0, lng: 0 })
   }
 
   validarGetPosicion(calle, numero) {
     let formOk = true
 
+    let createForm = {
+      nombre: { error: false, mensaje: '' },
+      email: { error: false, mensaje: '' },
+      razonSocial: { error: false, mensaje: '' },
+      calle: { error: false, mensaje: '' },
+      numero: { error: false, mensaje: '' },
+      codigoPostal: { error: false, mensaje: '' },
+      email2: { error: false, mensaje: '' },
+      tipoComercio: { seleccionado: this.state.createForm.tipoComercio.seleccionado, error: false, mensaje: '' }
+    }
+
     if (calle == null || calle == '') {
+      createForm.calle.error = true
+      createForm.calle.mensaje = 'Este campo es obligatorio'
       formOk = false
+    } else {
+      createForm.calle.error = false
+      createForm.calle.mensaje = ''
     }
 
     if (numero == null || numero == '') {
+      createForm.numero.error = true
+      createForm.numero.mensaje = 'Este campo es obligatorio'
       formOk = false
     } else {
       if((!Number.isInteger(Number(numero))) || (numero < 0)){
+        createForm.numero.error = true
+        createForm.numero.mensaje = 'Debe ser un entero'
         formOk = false
+      }else{
+        createForm.numero.error = false
+        createForm.numero.mensaje = ''
       }
     }
+
+    this.setState({ ...this.state, createForm: createForm })
 
     return formOk
   }
@@ -283,8 +308,8 @@ export class CrearComercioModal extends React.Component {
             let calle = ReactDOM.findDOMNode(this.calleInput).value
             let numero = ReactDOM.findDOMNode(this.numeroInput).value
             // let codigoPostal = ReactDOM.findDOMNode(this.codigoPostalInput).value
-            if (this.validarGetPosicion( calle, numero)) {
-              this.props.getPosicion(calle +' '+ numero +' CABA Argentina')
+            if (this.validarGetPosicion(calle, numero)) {
+              this.props.getPosicion(calle.trim() +' '+ numero.trim() +' CABA Argentina')
             }
           }}
         />
@@ -352,15 +377,21 @@ const mapDispatch = (dispatch) => ({
   createComercio: (nombreComercio, razonSocial, calle, numero, codigoPostal, email, verificarEmail, tipoComercio) => {
     dispatch(createComercio(nombreComercio, razonSocial, calle, numero, codigoPostal, email, verificarEmail, tipoComercio))
   },
-  getPosicion: (calle, numero, codigoPostal) => {
-    dispatch(getPosicion(calle, numero, codigoPostal))
+  getPosicion: (calle) => {
+    dispatch(getPosicion(calle))
   }
 })
 
 const mapStateToProps = (state) => {
+  let lat = 0
+  let lng = 0
+  if(state.comercioReducer.posicion){
+    lat = state.comercioReducer.posicion.lat
+    lng = state.comercioReducer.posicion.lng
+  } 
   return {
-    lat: state.comercioReducer.posicion.lat,
-    lng: state.comercioReducer.posicion.lng,
+    lat: lat,
+    lng: lng,
   }
 }
 

@@ -64,7 +64,7 @@ export class MapContainer extends React.Component {
       lng: lng,
     })
   }
-
+  
   getLatLng(){
     return {
       lat:this.state.lat,
@@ -86,16 +86,20 @@ export class MapContainer extends React.Component {
               height: this.state.height}}
             google={this.props.google} zoom={14}
             initialCenter={{
-              lat: this.state.lat,
-              lng: this.state.lng
+              lat:this.state.lat || -34.59378080536352,
+              lng:this.state.lng || -58.44440356103553
+            }}
+            center={{
+              lat:this.state.lat || -34.59378080536352,
+              lng:this.state.lng || -58.44440356103553
             }}
             disableDefaultUI={true}
             onClick={this.mapClicked}
           >
             <Marker onClick={this.onMarkerClick}
               position={{
-                lat:this.state.lat,
-                lng:this.state.lng
+                lat: this.state.lat,
+                lng: this.state.lng
               }}
               disableDefaultUI={true}
               id='CurrentLocation'
