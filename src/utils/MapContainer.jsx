@@ -1,10 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { withRouter } from 'react-router-dom'
-import ReactDOM from 'react-dom'
 import { Button, Glyphicon } from 'react-bootstrap'
-import marcadorImage from './images/marcador.png'
-import { Map, InfoWindow, Marker, GoogleApiWrapper } from 'google-maps-react'
+import { Map, Marker, GoogleApiWrapper } from 'google-maps-react'
 
 export class MapContainer extends React.Component { 
   constructor(props) {
@@ -49,20 +46,20 @@ export class MapContainer extends React.Component {
 
   mapClicked(mapProps, map, clickEvent) {
     console.log(clickEvent.latLng.lat() + '     ' + clickEvent.latLng.lng())
-    let lat = clickEvent.latLng.lat()
-    let lng = clickEvent.latLng.lng()
-    if(lng > -58.36139299426577)
-      lng = -58.36139299426577
-    if(lng < -58.52998543297872)
-      lng = -58.52998543297872
-    if(lat > -34.54287244012082)
-      lat = -34.54287244012082 
-    if(lat < -34.66297379990252)
-      lat = -34.66297379990252
-    this.setState({
-      lat: lat,
-      lng: lng,
-    })
+    // let lat = clickEvent.latLng.lat()
+    // let lng = clickEvent.latLng.lng()
+    // if(lng > -58.36139299426577)
+    //   lng = -58.36139299426577
+    // if(lng < -58.52998543297872)
+    //   lng = -58.52998543297872
+    // if(lat > -34.54287244012082)
+    //   lat = -34.54287244012082 
+    // if(lat < -34.66297379990252)
+    //   lat = -34.66297379990252
+    // this.setState({
+    //   lat: lat,
+    //   lng: lng,
+    // })
   }
   
   getLatLng(){

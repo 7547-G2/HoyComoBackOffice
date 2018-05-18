@@ -257,6 +257,7 @@ export const updateComercio = (idComercio,nombre,razonSocial,numero,codigoPostal
 
 export const createComercio = (nombre, razonSocial, calle, numero, codigoPostal, email, verificacion_email, tipoComercio) => dispatch => {
   let config = getNullConfig()
+  let configGoogle = getGoogleConfig()
   let newPass = generarContrasenia()
   let body = {
     email: email,
@@ -272,14 +273,32 @@ export const createComercio = (nombre, razonSocial, calle, numero, codigoPostal,
     },
     estado: 'pendiente activacion'
   }
-
-  axios.post(api.comercios, body, config)
-    .then(res => {
-      res.data 
-    })
-    .then(() => {
-      dispatch(successful('El comercio se creo correctamente'))
-      // dispatch(getComercios())
+  let googleApiSearch = calle.trim() +' '+ numero.trim() +' CABA Argentina'
+  axios.all([
+    axios.get(api.googleApi + googleApiSearch + api.apiKey, configGoogle)
+  ])
+    .then(axios.spread(function (data) {
+      return { lat: data.data.results[0].geometry.location.lat,
+        lng: data.data.results[0].geometry.location.lng}
+    }))
+    .then(data => {
+      body.latitud = data.lat
+      body.longitud = data.lng
+      axios.post(api.comercios, body, config)
+        .then(res => {
+          res.data
+        })
+        .then(() => {
+          dispatch(successful('El comercio se creo correctamente'))
+          // dispatch(getComercios())
+        })
+        .catch(err => {
+          if (err.response && err.response.status) {
+            dispatch(queryError(getErrorResponse(err)))
+          } else {
+            dispatch(internalError(err))
+          }
+        })
     })
     .catch(err => {
       if (err.response && err.response.status) {

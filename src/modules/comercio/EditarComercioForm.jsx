@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { connect } from 'react-redux'
-import { updateComercio } from './comercioReducer'
+import { updateComercio, getPosicion } from './comercioReducer'
 import { getTipoComerciosSelectOptions, validFileSize, validFileType } from '../../utils/utils'
 import Select from 'react-select'
 import { Row, Col, FormControl, Panel, Image, FormGroup, HelpBlock, Button } from 'react-bootstrap'
@@ -33,8 +33,8 @@ export class EditarComercioForm extends React.Component {
         imageLogo: { estado: null, mensaje: mensajeImagenDefault },
         estado: { seleccionado: props.activeComercio.estado, error: false, mensaje: '' },
         tipoComercio: { seleccionado: props.activeComercio.tipoComercio, error: false, mensaje: '' },
-        lat: -34.59378080536352,
-        lng: -58.44440356103553
+        lat: 0,
+        lng: 0,
       }
     }
     this.getFiles = this.getFiles.bind(this)
@@ -174,6 +174,49 @@ export class EditarComercioForm extends React.Component {
       updateForm.estado.error = false
       updateForm.estado.mensaje = ''
       // }
+    }
+
+    this.setState({ ...this.state, updateForm: updateForm })
+
+    return formOk
+  }
+
+  validarGetPosicion(calle, numero) {
+    let formOk = true
+
+    let updateForm = {
+      nombre: { error: false, mensaje: '' },
+      email: { error: false, mensaje: '' },
+      razonSocial: { error: false, mensaje: '' },
+      calle: { error: false, mensaje: '' },
+      numero: { error: false, mensaje: '' },
+      codigoPostal: { error: false, mensaje: '' },
+      email2: { error: false, mensaje: '' },
+      tipoComercio: { seleccionado: this.state.updateForm.tipoComercio.seleccionado, error: false, mensaje: '' }
+    }
+
+    if (calle == null || calle == '') {
+      updateForm.calle.error = true
+      updateForm.calle.mensaje = 'Este campo es obligatorio'
+      formOk = false
+    } else {
+      updateForm.calle.error = false
+      updateForm.calle.mensaje = ''
+    }
+
+    if (numero == null || numero == '') {
+      updateForm.numero.error = true
+      updateForm.numero.mensaje = 'Este campo es obligatorio'
+      formOk = false
+    } else {
+      if((!Number.isInteger(Number(numero))) || (numero < 0)){
+        updateForm.numero.error = true
+        updateForm.numero.mensaje = 'Debe ser un entero'
+        formOk = false
+      }else{
+        updateForm.numero.error = false
+        updateForm.numero.mensaje = ''
+      }
     }
 
     this.setState({ ...this.state, updateForm: updateForm })
@@ -403,13 +446,20 @@ export class EditarComercioForm extends React.Component {
                 </Panel.Title>
               </Panel.Heading>
               <Panel.Body style={{ height: 232 }}>
-                {/* <MapContainer key="mapInput" ref={(mapInput) => { this.mapInput = mapInput }}
-                  lat={this.state.updateForm.lat}
-                  lng={this.state.updateForm.lng}
-                  width={'700px'}
-                  height={'205px'}
+                <MapContainer key="mapInput" ref={(mapInput) => { this.mapInput = mapInput }}
+                  lat={this.state.lat}
+                  lng={this.state.lng}
                   draggable={false}
-                /> */}
+                  width={'870px'}
+                  onClick={() => {
+                    let calle = ReactDOM.findDOMNode(this.calleInput).value
+                    let numero = ReactDOM.findDOMNode(this.numeroInput).value
+                    // let codigoPostal = ReactDOM.findDOMNode(this.codigoPostalInput).value
+                    if (this.validarGetPosicion(calle, numero)) {
+                      this.props.getPosicion(calle.trim() +' '+ numero.trim() +' CABA Argentina')
+                    }
+                  }}
+                />
               </Panel.Body>
             </Panel>
           </Col>
@@ -447,6 +497,9 @@ const mapDispatch = (dispatch) => ({
       tipoComercio,
       imagenLogo,
       pass))
+  },
+  getPosicion: (calle) => {
+    dispatch(getPosicion(calle))
   }
 })
 
