@@ -229,15 +229,15 @@ export const updateComercio = (idComercio,nombre,razonSocial,numero,codigoPostal
   let configGoogle = getGoogleConfig()
   let body = {}
   body.addressDto = { floor: '', department: ''}
-  if (nombre) body.nombre = nombre
-  if (tipoComercio) body.tipoComidaId = tipoComercio
-  if (razonSocial) body.razonSocial = razonSocial
+  // if (nombre) body.nombre = nombre
+  // if (tipoComercio) body.tipoComidaId = tipoComercio
+  // if (razonSocial) body.razonSocial = razonSocial
   if (numero && calle) body.addressDto.street = calle.trim() + ' '+ numero
   if (codigoPostal) body.addressDto.postalCode = codigoPostal
-  if (imagenLogo) body.imagenLogo = imagenLogo
-  if (email) body.email = email
-  if (estado) body.estado = estado
-  if (password) body.password = password
+  // if (imagenLogo) body.imagenLogo = imagenLogo
+  // if (email) body.email = email
+  // if (estado) body.estado = estado
+  // if (password) body.password = password
   let googleApiSearch = calle.trim() +' '+ numero.trim() +' CABA Argentina'
   axios.all([
     axios.get(api.googleApi + googleApiSearch + api.apiKey, configGoogle)
@@ -423,7 +423,6 @@ export default (state = initialState, action) => {
       ...state,
       result: [],
       activeComercio: fetchComercio(action.data.comercio,action.data.platos, action.data.categorias),
-      // allRoles: fetchRoles(action.data.roles),
       allTipoComercios: fetchTipoComercios(action.data.tipoComercios),
     }
   case HYDRATE_POSICION:
@@ -444,7 +443,7 @@ export default (state = initialState, action) => {
     //     alert: {}
     //   }
   case QUERY_ERROR:
-    return { ...state, alert: { style: 'danger', text: action.err.message } }
+    return { ...state, alert: { style: 'danger', text: JSON.stringify(action.err.message) } }
   case INTERNAL_ERROR:
     return { ...state, alert: { style: 'danger', text: 'Ocurrió un error inesperado' } }
   case SUCCESSFUL:
