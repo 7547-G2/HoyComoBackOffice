@@ -226,6 +226,7 @@ export const getComercios = (nombre, email, tipoComercio,estado) => dispatch => 
 
 export const updateComercio = (idComercio,nombre,razonSocial,numero,codigoPostal,calle,email,estado,tipoComercio,imagenLogo,password) => dispatch => {
   let config = getNullConfig()
+  let configGoogle = getGoogleConfig()
   let body = {}
   body.addressDto = { floor: '', department: ''}
   if (nombre) body.nombre = nombre
@@ -237,21 +238,32 @@ export const updateComercio = (idComercio,nombre,razonSocial,numero,codigoPostal
   if (email) body.email = email
   if (estado) body.estado = estado
   if (password) body.password = password
-  console.log(body)
-  axios.put(api.comercios + '/' + idComercio, body, config)
-    .then(res => {
-      return res.data.data
-    })
-    .then(() => {
-      dispatch(successful('El comercio se actualizó correctamente'))
-      dispatch(getComercioById(idComercio))
-    })
-    .catch(err => {
-      if (err.response && err.response.status) {
-        dispatch(queryError(getErrorResponse(err)))
-      } else {
-        dispatch(internalError(err))
-      }
+  let googleApiSearch = calle.trim() +' '+ numero.trim() +' CABA Argentina'
+  axios.all([
+    axios.get(api.googleApi + googleApiSearch + api.apiKey, configGoogle)
+  ])
+    .then(axios.spread(function (data) {
+      return { lat: data.data.results[0].geometry.location.lat,
+        lng: data.data.results[0].geometry.location.lng}
+    }))
+    .then(data => {
+      body.latitud = data.lat
+      body.longitud = data.lng
+      axios.put(api.comercios + '/' + idComercio, body, config)
+        .then(res => {
+          return res.data.data
+        })
+        .then(() => {
+          dispatch(successful('El comercio se actualizó correctamente'))
+          dispatch(getComercioById(idComercio))
+        })
+        .catch(err => {
+          if (err.response && err.response.status) {
+            dispatch(queryError(getErrorResponse(err)))
+          } else {
+            dispatch(internalError(err))
+          }
+        })
     })
 }
 
@@ -380,6 +392,8 @@ const fetchComercio = (data, platos, categorias) => {
     numero: number,
     estado: estado,
     password: data.password,
+    lat: data.latitud,
+    lng: data.longitud,
     imagenLogo: data.imagenLogo,
     email: data.email, /*roles: returnValue,*/ 
     tipoComercio: tipoComida,

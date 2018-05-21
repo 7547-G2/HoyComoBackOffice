@@ -76,6 +76,7 @@ const mapStateToProps = (state, ownProps) => {
     activeComercio: state.comercioReducer.activeComercio,
     idComercio: ownProps.match.params.id,
     allTipoComercios: state.comercioReducer.allTipoComercios,
+    
     // allRoles: state.userReducer.allRoles,
   }
 }

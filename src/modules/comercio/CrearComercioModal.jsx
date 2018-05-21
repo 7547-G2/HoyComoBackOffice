@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { connect } from 'react-redux'
-import { Row, Col, Button, FormControl, Well, Image } from 'react-bootstrap'
+import { Row, Col, Button, FormControl } from 'react-bootstrap'
 import { createComercio, getPosicion } from './comercioReducer'
 import { getTipoComerciosSelectOptions } from '../../utils/utils'
 import { CustomModal } from '../../utils/CustomModal'
@@ -348,14 +348,14 @@ export class CrearComercioModal extends React.Component {
       let codigoPostal = ReactDOM.findDOMNode(this.codigoPostalInput).value
       let email = ReactDOM.findDOMNode(this.emailInput).value
       let email2 = ReactDOM.findDOMNode(this.verificarEmailInput).value
-      let lat = document.getElementById('latitudSpan').outerHTML
-      lat = lat.replace('<span id="latitudSpan" name="latitudSpan">','')
-      lat = lat.replace('</span>','')
-      console.log(lat)
-      let lng = document.getElementById('longitudSpan').outerHTML
-      lng = lng.replace('<span id="longitudSpan" name="longitudSpan">','')
-      lng = lng.replace('</span>','')
-      console.log(lng)
+      // let lat = document.getElementById('latitudSpan').outerHTML
+      // lat = lat.replace('<span id="latitudSpan" name="latitudSpan">','')
+      // lat = lat.replace('</span>','')
+      // console.log(lat)
+      // let lng = document.getElementById('longitudSpan').outerHTML
+      // lng = lng.replace('<span id="longitudSpan" name="longitudSpan">','')
+      // lng = lng.replace('</span>','')
+      // console.log(lng)
       if (this.validarCreateForm(nombre, razonSocial, calle, numero, codigoPostal, email, email2)) {
         this.props.createComercio(nombre, razonSocial, calle, numero, codigoPostal, email, email2, this.state.createForm.tipoComercio.seleccionado)
         this.modal.hideModal()

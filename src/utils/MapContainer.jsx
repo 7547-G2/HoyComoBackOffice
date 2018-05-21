@@ -14,6 +14,7 @@ export class MapContainer extends React.Component {
       height: height,
       lat: props.lat,
       lng: props.lng,
+      ocultarTitulo: props.ocultarTitulo,
       draggable: draggable,
       calleInput:props.calleInput,
       numeroInput:props.numeroInput,
@@ -72,7 +73,7 @@ export class MapContainer extends React.Component {
   render() {
     return (
       <div>
-        <h5 key="posicionGeografica"><b>Posición Geográfica</b><i> (seleccione la ubicación en el mapa de su comercio dentro de capital federal)</i>            
+        <h5 key="posicionGeografica">{(!this.state.ocultarTitulo)?<b>Posición Geográfica </b> :''}<i>(Puede visualizar la posicion del comercio dentro de capital federal)</i>            
           <Button bsStyle="success" bsSize="xsmall" className="pull-right" onClick={this.state.onClick}>
             <Glyphicon glyph="repeat" />Actualizar Posición
           </Button></h5>

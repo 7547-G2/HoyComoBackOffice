@@ -33,9 +33,9 @@ export class EditarComercioForm extends React.Component {
         imageLogo: { estado: null, mensaje: mensajeImagenDefault },
         estado: { seleccionado: props.activeComercio.estado, error: false, mensaje: '' },
         tipoComercio: { seleccionado: props.activeComercio.tipoComercio, error: false, mensaje: '' },
-        lat: 0,
-        lng: 0,
-      }
+      },
+      lat: props.activeComercio.lat,
+      lng: props.activeComercio.lng,
     }
     this.getFiles = this.getFiles.bind(this)
     this.onImgLoad = this.onImgLoad.bind(this)
@@ -47,6 +47,13 @@ export class EditarComercioForm extends React.Component {
     this.habilitar = this.habilitar.bind(this)
     this.abrirModalDeshabilitarComercio = this.abrirModalDeshabilitarComercio.bind(this)
     this.deshabilitar = this.deshabilitar.bind(this)
+  }
+
+  componentWillReceiveProps(newProps){
+    this.setState({...this.state,
+      lat: newProps.lat,
+      lng: newProps.lng,
+    })
   }
 
   habilitar() {
@@ -186,13 +193,13 @@ export class EditarComercioForm extends React.Component {
 
     let updateForm = {
       nombre: { error: false, mensaje: '' },
-      email: { error: false, mensaje: '' },
       razonSocial: { error: false, mensaje: '' },
-      calle: { error: false, mensaje: '' },
       numero: { error: false, mensaje: '' },
       codigoPostal: { error: false, mensaje: '' },
-      email2: { error: false, mensaje: '' },
-      tipoComercio: { seleccionado: this.state.updateForm.tipoComercio.seleccionado, error: false, mensaje: '' }
+      calle: { error: false, mensaje: '' },
+      email: { error: false, mensaje: '' },
+      estado: this.state.updateForm.estado,
+      tipoComercio: this.state.updateForm.tipoComercio
     }
 
     if (calle == null || calle == '') {
@@ -424,7 +431,7 @@ export class EditarComercioForm extends React.Component {
               <Panel.Body>
                 <FormGroup validationState={this.state.updateForm.imageLogo ?this.state.updateForm.imageLogo.estado:null}
                   controlId={'formControlsFile'} >
-                  <Image id='imagenDeLogo' key='imagenDeLogo' src={this.state.imageLogo} style={{ width: 100, height: 100 }}
+                  <Image id='imagenDeLogo' key='imagenDeLogo' src={this.state.imageLogo} style={{ width: 200, height: 200 }}
                     onLoad={this.onImgLoad}
                     rounded responsive />
                   <br></br>
@@ -445,12 +452,14 @@ export class EditarComercioForm extends React.Component {
                   Posición Geográfica
                 </Panel.Title>
               </Panel.Heading>
-              <Panel.Body style={{ height: 232 }}>
+              <Panel.Body style={{ height: 334 }}>
                 <MapContainer key="mapInput" ref={(mapInput) => { this.mapInput = mapInput }}
                   lat={this.state.lat}
                   lng={this.state.lng}
-                  draggable={false}
-                  width={'870px'}
+                  ocultarTitulo={true}
+                  draggable={true}
+                  width={'700px'}
+                  height={'260px'}
                   onClick={() => {
                     let calle = ReactDOM.findDOMNode(this.calleInput).value
                     let numero = ReactDOM.findDOMNode(this.numeroInput).value
@@ -471,6 +480,19 @@ export class EditarComercioForm extends React.Component {
         <DeshabilitarComercioModal activeComercio={this.props.activeComercio} ref={(modal) => { this.DeshabilitarComercioModal = modal }} />
       </form>
     )
+  }
+}
+
+const mapStateToProps = (state) => {
+  let lat = 0
+  let lng = 0
+  if(state.comercioReducer.posicion){
+    lat = state.comercioReducer.posicion.lat
+    lng = state.comercioReducer.posicion.lng
+  } 
+  return {
+    lat: lat,
+    lng: lng,
   }
 }
 
@@ -503,4 +525,4 @@ const mapDispatch = (dispatch) => ({
   }
 })
 
-export default connect(null, mapDispatch, null, { withRef: true })(EditarComercioForm)
+export default connect(mapStateToProps, mapDispatch, null, { withRef: true })(EditarComercioForm)
