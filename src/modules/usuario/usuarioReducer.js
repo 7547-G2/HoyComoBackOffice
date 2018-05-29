@@ -20,12 +20,12 @@ const PATCH_COMERCIO = 'PATCH_COMERCIO'
 const initialState = {
   result: [],
   alert: {},
-  allTipoComercios: [],
-  activeComercio: {},
+  allTipoUsuarios: [],
+  activeUsuario: {},
   activeSearch: false
 }
 
-export const clearComercioResult = () => ({
+export const clearUsuarioResult = () => ({
   type: CLEAR_COMERCIO_RESULT
 })
 
@@ -46,15 +46,15 @@ export const successful = text => ({
 })
 
 // normal action creators
-export const tipoComerciosTodos = data => ({
+export const tipoUsuariosTodos = data => ({
   type: HYDRATE_TIPO_COMERCIOS, data
 })
 
-export const comercios = data => ({
+export const usuarios = data => ({
   type: HYDRATE_COMERCIOS, data
 })
 
-export const comercioById = data => ({
+export const usuarioById = data => ({
   type: HYDRATE_COMERCIO_BY_ID, data
 })
 
@@ -70,27 +70,27 @@ export const agregarRol = data => ({
   type: ADD_ROL, data
 })
 
-export const patchComercio = data => ({
+export const patchUsuario = data => ({
   type: PATCH_COMERCIO, data
 })
 
 // thunks
-export const clearComercios = () => dispatch => {
-  dispatch(clearComercioResult())
+export const clearUsuarios = () => dispatch => {
+  dispatch(clearUsuarioResult())
 }
 
-export const habilitarComercio = (activeComercio) => dispatch => {
+export const habilitarUsuario = (activeUsuario) => dispatch => {
   let config = getNullConfig()
   let body = {}
-  let idComercio = activeComercio.id
+  let idUsuario = activeUsuario.id
   body.estado = 'habilitado'
-  axios.put(api.comercios + '/' + idComercio, body, config)
+  axios.put(api.usuarios + '/' + idUsuario, body, config)
     .then(res => {
       return res.data.data
     })
     .then(() => {
-      dispatch(getComercioById(idComercio,true))
-      dispatch(successful('El comercio se habilito correctamente'))
+      dispatch(getUsuarioById(idUsuario,true))
+      dispatch(successful('El usuario se habilito correctamente'))
     })
     .catch(err => {
       if (err.response && err.response.status) {
@@ -101,18 +101,18 @@ export const habilitarComercio = (activeComercio) => dispatch => {
     })
 }
 
-export const deshabilitarComercio = (activeComercio) => dispatch => {
+export const deshabilitarUsuario = (activeUsuario) => dispatch => {
   let config = getNullConfig()
   let body = {}
-  let idComercio = activeComercio.id
+  let idUsuario = activeUsuario.id
   body.estado = 'deshabilitado'
-  axios.put(api.comercios + '/' + idComercio, body, config)
+  axios.put(api.usuarios + '/' + idUsuario, body, config)
     .then(res => {
       return res.data.data
     })
     .then(() => {
-      dispatch(getComercioById(idComercio,true))
-      dispatch(successful('El comercio se deshabilito correctamente'))
+      dispatch(getUsuarioById(idUsuario,true))
+      dispatch(successful('El usuario se deshabilito correctamente'))
     })
     .catch(err => {
       if (err.response && err.response.status) {
@@ -146,22 +146,22 @@ const filtarCategoriaById = (data,id) => {
   return returnValue
 }
 
-export const getComercioById = (id,pasarHabilitado) => dispatch => {
+export const getUsuarioById = (id,pasarHabilitado) => dispatch => {
   let config = getNullConfig()
   let queryString = ''
-  axios.get(api.comercios + queryString, config)
+  axios.get(api.usuarios + queryString, config)
   axios.all([
-    axios.get(api.base + api.clavetipoComercios),
-    axios.get(api.comercios + queryString, config),
-    axios.get(api.bocomercios +'/'+id+'/'+ api.clavePlatos + queryString, config),
-    axios.get(api.bocomercios +'/'+ api.claveCategorias, config),
+    axios.get(api.base + api.clavetipoUsuarios),
+    axios.get(api.usuarios + queryString, config),
+    axios.get(api.bousuarios +'/'+id+'/'+ api.clavePlatos + queryString, config),
+    axios.get(api.bousuarios +'/'+ api.claveCategorias, config),
   ])
-    .then(axios.spread(function (tipoComercios, comercios,platos, categorias) {
+    .then(axios.spread(function (tipoUsuarios, usuarios,platos, categorias) {
       console.log(platos.data)
-      return { comercio: filtarById(comercios.data,id,pasarHabilitado), platos: platos.data , tipoComercios: tipoComercios.data, categorias: categorias.data}
+      return { usuario: filtarById(usuarios.data,id,pasarHabilitado), platos: platos.data , tipoUsuarios: tipoUsuarios.data, categorias: categorias.data}
     }))
     .then(data => {
-      dispatch(comercioById(data))
+      dispatch(usuarioById(data))
     })
     .catch(err => {
       if (err.response && err.response.status) {
@@ -194,26 +194,26 @@ export const getPosicion = (calle) => dispatch => {
     })
 }
 
-export const getComercios = (nombre, email, tipoComercio,estado) => dispatch => {
+export const getUsuarios = (nombre, email, tipoUsuario,estado) => dispatch => {
   nombre =  nombre && nombre.trim() 
   email = email &&  email.trim()
   let config = getNullConfig()
   let queryString = ''
   if (nombre != '') queryString += 'nombre:' + nombre
   if (email != '') queryString += (queryString == '') ? 'email:' + email : ',email:' + email
-  if (tipoComercio) queryString += (queryString == '') ? 'tipoId:' + tipoComercio : ',tipoId:' + tipoComercio
+  if (tipoUsuario) queryString += (queryString == '') ? 'tipoId:' + tipoUsuario : ',tipoId:' + tipoUsuario
   if (estado) queryString += (queryString == '') ? 'estado:' + estado : ',estado:' + estado 
   queryString = (queryString == '') ? queryString : '?search=' + queryString
-  axios.get(api.comercios + queryString, config)
+  axios.get(api.usuarios + queryString, config)
   axios.all([
-    axios.get(api.base + api.clavetipoComercios),
-    axios.get(api.comercios + queryString, config),
+    axios.get(api.base + api.clavetipoUsuarios),
+    axios.get(api.usuarios + queryString, config),
   ])
-    .then(axios.spread(function (tipoComercios, comercios) {
-      return { comercios: comercios.data, tipoComercios: tipoComercios.data }
+    .then(axios.spread(function (tipoUsuarios, usuarios) {
+      return { usuarios: usuarios.data, tipoUsuarios: tipoUsuarios.data }
     }))
     .then(data => {
-      dispatch(comercios(data))
+      dispatch(usuarios(data))
     })
     .catch(err => {
       if (err.response && err.response.status) {
@@ -224,14 +224,14 @@ export const getComercios = (nombre, email, tipoComercio,estado) => dispatch => 
     })
 }
 
-export const updateComercio = (idComercio,nombre,razonSocial,numero,codigoPostal,calle,email,estado,tipoComercio,imagenLogo
+export const updateUsuario = (idUsuario,nombre,razonSocial,numero,codigoPostal,calle,email,estado,tipoUsuario,imagenLogo
   , password, dniEncargado,telefonoEncargado, nombreEncargado) => dispatch => {
   let config = getNullConfig()
   let configGoogle = getGoogleConfig()
   let body = {}
   body.addressDto = { floor: '', department: ''}
   if (nombre) body.nombre = nombre
-  if (tipoComercio) body.tipoComidaId = tipoComercio
+  if (tipoUsuario) body.tipoComidaId = tipoUsuario
   if (razonSocial) body.razonSocial = razonSocial
   if (numero && calle) body.addressDto.street = calle.trim() + ' '+ numero
   if (codigoPostal) body.addressDto.postalCode = codigoPostal
@@ -253,13 +253,13 @@ export const updateComercio = (idComercio,nombre,razonSocial,numero,codigoPostal
     .then(data => {
       body.latitud = data.lat
       body.longitud = data.lng
-      axios.put(api.comercios + '/' + idComercio, body, config)
+      axios.put(api.usuarios + '/' + idUsuario, body, config)
         .then(res => {
           return res.data.data
         })
         .then(() => {
-          dispatch(successful('El comercio se actualizó correctamente'))
-          dispatch(getComercioById(idComercio))
+          dispatch(successful('El usuario se actualizó correctamente'))
+          dispatch(getUsuarioById(idUsuario))
         })
         .catch(err => {
           if (err.response && err.response.status) {
@@ -271,7 +271,7 @@ export const updateComercio = (idComercio,nombre,razonSocial,numero,codigoPostal
     })
 }
 
-export const createComercio = (nombre, razonSocial, calle, numero, codigoPostal, email, verificacion_email, tipoComercio, nombreEncargado, dniEncargado, telefonoEncargado) => dispatch => {
+export const createUsuario = (nombre, razonSocial, calle, numero, codigoPostal, email, verificacion_email, tipoUsuario, nombreEncargado, dniEncargado, telefonoEncargado) => dispatch => {
   let config = getNullConfig()
   let configGoogle = getGoogleConfig()
   let newPass = generarContrasenia()
@@ -279,7 +279,7 @@ export const createComercio = (nombre, razonSocial, calle, numero, codigoPostal,
     email: email,
     nombre: nombre,
     razonSocial: razonSocial,
-    tipoComidaId: tipoComercio,
+    tipoComidaId: tipoUsuario,
     password: newPass,
     addressDto: {
       street: calle +' '+numero,
@@ -303,13 +303,13 @@ export const createComercio = (nombre, razonSocial, calle, numero, codigoPostal,
     .then(data => {
       body.latitud = data.lat
       body.longitud = data.lng
-      axios.post(api.comercios, body, config)
+      axios.post(api.usuarios, body, config)
         .then(res => {
           res.data
         })
         .then(() => {
-          dispatch(successful('El comercio se creo correctamente'))
-          // dispatch(getComercios())
+          dispatch(successful('El usuario se creo correctamente'))
+          // dispatch(getUsuarios())
         })
         .catch(err => {
           if (err.response && err.response.status) {
@@ -328,12 +328,12 @@ export const createComercio = (nombre, razonSocial, calle, numero, codigoPostal,
     })
 }
 
-export const obtenerTipoComercios = () => dispatch => {
+export const obtenerTipoUsuarios = () => dispatch => {
   let config = getNullConfig()
-  axios.get(api.base + api.clavetipoComercios, config)
+  axios.get(api.base + api.clavetipoUsuarios, config)
     .then(res => res.data)
     .then(data => {
-      dispatch(tipoComerciosTodos(data))
+      dispatch(tipoUsuariosTodos(data))
     })
     .catch(err => {
       if (err.response && err.response.status){
@@ -344,19 +344,19 @@ export const obtenerTipoComercios = () => dispatch => {
     })
 }
 
-const fetchComerciosTable = (data) => {
+const fetchUsuariosTable = (data) => {
   let returnValue = []
   data.map(function (rowObject) {
     let tipoComida = ''
     if(rowObject.tipoComida)
       tipoComida = rowObject.tipoComida.tipo
-    returnValue.push({ id: rowObject.id, nombre: rowObject.nombre, email: rowObject.email, tipoComercio: tipoComida,
+    returnValue.push({ id: rowObject.id, nombre: rowObject.nombre, email: rowObject.email, tipoUsuario: tipoComida,
       domicilio: rowObject.addressDto.street + ', cp: ' + rowObject.addressDto.postalCode, estado: rowObject.estado  })
   })
   return returnValue
 }
 
-const fetchTipoComercios = (data) => {
+const fetchTipoUsuarios = (data) => {
   let returnValue = []
   data.map(function (rowObject) {
     returnValue.push({ id: rowObject.id, tipo: rowObject.tipo })
@@ -364,7 +364,7 @@ const fetchTipoComercios = (data) => {
   return returnValue
 }
 
-const fetchComercio = (data, platos, categorias) => {
+const fetchUsuario = (data, platos, categorias) => {
   let returnValue = []
   platos.map(function (rowObject) {
     if(rowObject.id){
@@ -382,11 +382,11 @@ const fetchComercio = (data, platos, categorias) => {
   let street = data.addressDto.street.replace(number,'')
   let mensajeEncabezado = ''
   if (estado == 'pendiente activacion') {
-    mensajeEncabezado = 'El administrador del comercio debe ingresar por primera vez para comenzar a cargar su menú'
+    mensajeEncabezado = 'El administrador del usuario debe ingresar por primera vez para comenzar a cargar su menú'
   } else if (estado == 'pendiente menu' || estado == 'deshabilitado') {
-    mensajeEncabezado = 'Deben cargarse al menos 5 platos en el menú para poder habilitar este comercio'
+    mensajeEncabezado = 'Deben cargarse al menos 5 platos en el menú para poder habilitar este usuario'
   } else if (estado == 'habilitado') {
-    mensajeEncabezado = 'Para evitar que un comercio siga visible en la aplicación'
+    mensajeEncabezado = 'Para evitar que un usuario siga visible en la aplicación'
   }
   let tipoComida = ''
   if (data.tipoComida) tipoComida = data.tipoComida.id
@@ -406,7 +406,7 @@ const fetchComercio = (data, platos, categorias) => {
     lng: data.longitud,
     imagenLogo: data.imagenLogo,
     email: data.email, /*roles: returnValue,*/ 
-    tipoComercio: tipoComida,
+    tipoUsuario: tipoComida,
     mensajeEncabezado: mensajeEncabezado,
     platos: returnValue
   }
@@ -418,22 +418,22 @@ export default (state = initialState, action) => {
     return {
       ...state,
       result: [],
-      allTipoComercios: fetchTipoComercios(action.data),
+      allTipoUsuarios: fetchTipoUsuarios(action.data),
       alert: {},
     }
   case HYDRATE_COMERCIOS:
     return {
       ...state,
-      result: fetchComerciosTable(action.data.comercios),
-      allTipoComercios: fetchTipoComercios(action.data.tipoComercios),
+      result: fetchUsuariosTable(action.data.usuarios),
+      allTipoUsuarios: fetchTipoUsuarios(action.data.tipoUsuarios),
       activeSearch: true
     }
   case HYDRATE_COMERCIO_BY_ID:
     return {
       ...state,
       result: [],
-      activeComercio: fetchComercio(action.data.comercio,action.data.platos, action.data.categorias),
-      allTipoComercios: fetchTipoComercios(action.data.tipoComercios),
+      activeUsuario: fetchUsuario(action.data.usuario,action.data.platos, action.data.categorias),
+      allTipoUsuarios: fetchTipoUsuarios(action.data.tipoUsuarios),
     }
   case HYDRATE_POSICION:
     return {

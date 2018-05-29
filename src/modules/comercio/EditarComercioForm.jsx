@@ -30,6 +30,9 @@ export class EditarComercioForm extends React.Component {
         codigoPostal: { error: false, mensaje: '' },
         calle: { error: false, mensaje: '' },
         email: { error: false, mensaje: '' },
+        nombreEncargado: { error: false, mensaje: '' },
+        dniEncargado: { error: false, mensaje: '' },
+        telefonoEncargado: { error: false, mensaje: '' },
         imageLogo: { estado: null, mensaje: mensajeImagenDefault },
         estado: { seleccionado: props.activeComercio.estado, error: false, mensaje: '' },
         tipoComercio: { seleccionado: props.activeComercio.tipoComercio, error: false, mensaje: '' },
@@ -80,6 +83,9 @@ export class EditarComercioForm extends React.Component {
       codigoPostal: { error: false, mensaje: '' },
       calle: { error: false, mensaje: '' },
       email: { error: false, mensaje: '' },
+      nombreEncargado: { error: false, mensaje: '' },
+      dniEncargado: { error: false, mensaje: '' },
+      telefonoEncargado: { error: false, mensaje: '' },
       imageLogo: { estado: null, mensaje: mensajeImagenDefault},
       estado: { error: false, mensaje: '', seleccionado: this.state.estado.seleccionado },
       tipoComercio: { error: false, mensaje: '', seleccionado: this.state.tipoComercio.seleccionado },
@@ -91,7 +97,7 @@ export class EditarComercioForm extends React.Component {
     })
   }
 
-  validarUpdateForm(nombre, razonSocial, numero, codigoPostal, calle, email) {
+  validarUpdateForm(nombre, razonSocial, numero, codigoPostal, calle, email, dniEncargado, telefonoEncargado, nombreEncargado) {
     let formOk = true
 
     let updateForm = {
@@ -102,7 +108,10 @@ export class EditarComercioForm extends React.Component {
       calle: { error: false, mensaje: '' },
       email: { error: false, mensaje: '' },
       estado: this.state.updateForm.estado,
-      tipoComercio: this.state.updateForm.tipoComercio
+      tipoComercio: this.state.updateForm.tipoComercio,
+      telefonoEncargado: { error: false, mensaje: '' },
+      dniEncargado: { error: false, mensaje: '' },
+      nombreEncargado: { error: false, mensaje: '' },
     }
 
     if (razonSocial == null || razonSocial == '') {
@@ -121,6 +130,33 @@ export class EditarComercioForm extends React.Component {
     } else {
       updateForm.numero.error = false
       updateForm.numero.mensaje = ''
+    }
+
+    if (nombreEncargado == null || nombreEncargado == '') {
+      updateForm.nombreEncargado.error = true
+      updateForm.nombreEncargado.mensaje = 'Este campo es obligatorio'
+      formOk = false
+    } else {
+      updateForm.nombreEncargado.error = false
+      updateForm.nombreEncargado.mensaje = ''
+    }
+
+    if (dniEncargado == null || dniEncargado == '') {
+      updateForm.dniEncargado.error = true
+      updateForm.dniEncargado.mensaje = 'Este campo es obligatorio'
+      formOk = false
+    } else {
+      updateForm.dniEncargado.error = false
+      updateForm.dniEncargado.mensaje = ''
+    }
+
+    if (telefonoEncargado == null || telefonoEncargado == '') {
+      updateForm.telefonoEncargado.error = true
+      updateForm.telefonoEncargado.mensaje = 'Este campo es obligatorio'
+      formOk = false
+    } else {
+      updateForm.telefonoEncargado.error = false
+      updateForm.telefonoEncargado.mensaje = ''
     }
 
     if (codigoPostal == null || codigoPostal == '') {
@@ -256,7 +292,10 @@ export class EditarComercioForm extends React.Component {
       ReactDOM.findDOMNode(this.numeroInput).value,
       ReactDOM.findDOMNode(this.codigoPostalInput).value,
       ReactDOM.findDOMNode(this.calleInput).value,
-      ReactDOM.findDOMNode(this.emailInput).value)) {
+      ReactDOM.findDOMNode(this.emailInput).value,
+      ReactDOM.findDOMNode(this.dniEncargadoInput).value,
+      ReactDOM.findDOMNode(this.telefonoEncargadoInput).value,
+      ReactDOM.findDOMNode(this.nombreEncargadoInput).value)) {
       let imagenLogoGuardada = ''
       if(this.state.imageLogo && this.state.imageLogo != Img1){
         imagenLogoGuardada = this.state.imageLogo
@@ -273,7 +312,10 @@ export class EditarComercioForm extends React.Component {
         this.state.updateForm.estado.seleccionado,
         this.state.updateForm.tipoComercio.seleccionado,
         imagenLogoGuardada,
-        pass        
+        pass,
+        ReactDOM.findDOMNode(this.dniEncargadoInput).value,
+        ReactDOM.findDOMNode(this.telefonoEncargadoInput).value,
+        ReactDOM.findDOMNode(this.nombreEncargadoInput).value
       )
     }
   }
@@ -421,6 +463,32 @@ export class EditarComercioForm extends React.Component {
           </Col>
         </Row>
         <Row>
+          <Col lg={4} md={4}>
+            <CustomFormField validationState={this.state.updateForm.nombreEncargado.error ? 'error' : null}
+              validationMessage={this.state.updateForm.nombreEncargado.mensaje} bsSize="small" controlId="nombreEncargado"
+              label="Nombre Encargado" inputComponent={
+                <FormControl defaultValue={this.props.activeComercio.nombreEncargado} key="nombreEncargadoInput" bsSize="small"
+                  ref={nombreEncargadoInput => { this.nombreEncargadoInput = nombreEncargadoInput }} type="text"></FormControl>
+              } />
+          </Col>
+          <Col lg={4} md={4}>
+            <CustomFormField validationState={this.state.updateForm.dniEncargado.error ? 'error' : null}
+              validationMessage={this.state.updateForm.dniEncargado.mensaje} bsSize="small" controlId="dniEncargado"
+              label="Dni Encargado" inputComponent={
+                <FormControl defaultValue={this.props.activeComercio.dniEncargado} key="dniEncargadoInput" bsSize="small"
+                  ref={dniEncargadoInput => { this.dniEncargadoInput = dniEncargadoInput }} type="text"></FormControl>
+              } />
+          </Col>
+          <Col lg={4} md={4}>
+            <CustomFormField validationState={this.state.updateForm.telefonoEncargado.error ? 'error' : null}
+              validationMessage={this.state.updateForm.telefonoEncargado.mensaje} bsSize="small" controlId="telefonoEncargado"
+              label="Telefono Encargado" inputComponent={
+                <FormControl defaultValue={this.props.activeComercio.telefonoEncargado} key="telefonoEncargadoInput" bsSize="small"
+                  ref={telefonoEncargadoInput => { this.telefonoEncargadoInput = telefonoEncargadoInput }} type="text"></FormControl>
+              } />
+          </Col>
+        </Row>
+        <Row>
           <Col lg={4}>
             <Panel>
               <Panel.Heading>
@@ -507,7 +575,10 @@ const mapDispatch = (dispatch) => ({
     estado,
     tipoComercio,
     imagenLogo,
-    pass) => {
+    pass,
+    dniEncargado,
+    telefonoEncargado,
+    nombreEncargado) => {
     dispatch(updateComercio(idComercio,
       nombre,
       razonSocial,
@@ -518,7 +589,10 @@ const mapDispatch = (dispatch) => ({
       estado,
       tipoComercio,
       imagenLogo,
-      pass))
+      pass,
+      dniEncargado,
+      telefonoEncargado,
+      nombreEncargado))
   },
   getPosicion: (calle) => {
     dispatch(getPosicion(calle))

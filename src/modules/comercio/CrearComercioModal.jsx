@@ -21,6 +21,9 @@ export class CrearComercioModal extends React.Component {
         numero: { error: false, mensaje: '' },
         codigoPostal: { error: false, mensaje: '' },
         email2: { error: false, mensaje: '' },
+        nombreEncargado: { error: false, mensaje: '' },
+        dniEncargado: { error: false, mensaje: '' },
+        telefonoEncargado: { error: false, mensaje: '' },
         tipoComercio: { seleccionado: '', error: false, mensaje: '' },
       },
       lat: 0,
@@ -46,6 +49,9 @@ export class CrearComercioModal extends React.Component {
       numero: { error: false, mensaje: '' },
       codigoPostal: { error: false, mensaje: '' },
       email2: { error: false, mensaje: '' },
+      nombreEncargado: { error: false, mensaje: '' },
+      dniEncargado: { error: false, mensaje: '' },
+      telefonoEncargado: { error: false, mensaje: '' },
       tipoComercio: { seleccionado: '', error: false, mensaje: '' }
     }
     this.setState({ ...this.state, createForm: createForm, lat: 0, lng: 0 })
@@ -62,6 +68,9 @@ export class CrearComercioModal extends React.Component {
       numero: { error: false, mensaje: '' },
       codigoPostal: { error: false, mensaje: '' },
       email2: { error: false, mensaje: '' },
+      nombreEncargado: { error: false, mensaje: '' },
+      dniEncargado: { error: false, mensaje: '' },
+      telefonoEncargado: { error: false, mensaje: '' },
       tipoComercio: { seleccionado: this.state.createForm.tipoComercio.seleccionado, error: false, mensaje: '' }
     }
 
@@ -94,7 +103,7 @@ export class CrearComercioModal extends React.Component {
     return formOk
   }
 
-  validarCreateForm(nombre, razonSocial, calle, numero, codigoPostal, email, email2) {
+  validarCreateForm(nombre, razonSocial, calle, numero, codigoPostal, email, email2, nombreEncargado, dniEncargado, telefonoEncargado) {
     let formOk = true
 
     let createForm = {
@@ -105,6 +114,9 @@ export class CrearComercioModal extends React.Component {
       numero: { error: false, mensaje: '' },
       codigoPostal: { error: false, mensaje: '' },
       email2: { error: false, mensaje: '' },
+      nombreEncargado: { error: false, mensaje: '' },
+      dniEncargado: { error: false, mensaje: '' },
+      telefonoEncargado: { error: false, mensaje: '' },
       tipoComercio: { seleccionado: this.state.createForm.tipoComercio.seleccionado, error: false, mensaje: '' }
     }
 
@@ -149,7 +161,46 @@ export class CrearComercioModal extends React.Component {
         createForm.numero.mensaje = ''
       }
     }
+
+    if (nombreEncargado == null || nombreEncargado == '') {
+      createForm.nombreEncargado.error = true
+      createForm.nombreEncargado.mensaje = 'Este campo es obligatorio'
+      formOk = false
+    } else {
+      createForm.nombreEncargado.error = false
+      createForm.nombreEncargado.mensaje = ''
+    }
     
+    if (dniEncargado == null || dniEncargado == '') {
+      createForm.dniEncargado.error = true
+      createForm.dniEncargado.mensaje = 'Este campo es obligatorio'
+      formOk = false
+    } else {
+      if((!Number.isInteger(Number(dniEncargado))) || (dniEncargado < 0)){
+        createForm.dniEncargado.error = true
+        createForm.dniEncargado.mensaje = 'Debe ser un entero'
+        formOk = false
+      }else{
+        createForm.dniEncargado.error = false
+        createForm.dniEncargado.mensaje = ''
+      }
+    }
+
+    if (telefonoEncargado == null || telefonoEncargado == '') {
+      createForm.telefonoEncargado.error = true
+      createForm.telefonoEncargado.mensaje = 'Este campo es obligatorio'
+      formOk = false
+    } else {
+      if((!Number.isInteger(Number(telefonoEncargado))) || (telefonoEncargado < 0)){
+        createForm.telefonoEncargado.error = true
+        createForm.telefonoEncargado.mensaje = 'Debe ser un entero'
+        formOk = false
+      }else{
+        createForm.telefonoEncargado.error = false
+        createForm.telefonoEncargado.mensaje = ''
+      }
+    }
+
     if (codigoPostal == null || codigoPostal == '') {
       createForm.codigoPostal.error = true
       createForm.codigoPostal.mensaje = 'Este campo es obligatorio'
@@ -318,6 +369,32 @@ export class CrearComercioModal extends React.Component {
     body.push(<hr key="division"/>)
     body.push(<h5 key="responsable"><b>Datos del responsable</b></h5>)
     body.push(<Row key={'formCreateRow4'}>
+      <Col lg={4}>
+        <CustomFormField key="nombreEncargadoGroup" validationState={this.state.createForm.nombreEncargado.error ? 'error' : null}
+          validationMessage={this.state.createForm.nombreEncargado.mensaje} bsSize="small" controlId="nombreEncargadoInput"
+          label="Nombre Encargado" inputComponent={
+            <FormControl ref={nombreEncargadoInput => { this.nombreEncargadoInput = nombreEncargadoInput }}
+              bsSize="small" type="text" placeholder="nombre del encargado" key="nombreEncargadoInput"></FormControl>}
+        />
+      </Col>
+      <Col lg={4}>
+        <CustomFormField key="dniEncargadoGroup" validationState={this.state.createForm.dniEncargado.error ? 'error' : null}
+          validationMessage={this.state.createForm.dniEncargado.mensaje} bsSize="small" controlId="dniEncargadoInput"
+          label="Dni Encargado" inputComponent={
+            <FormControl ref={dniEncargadoInput => { this.dniEncargadoInput = dniEncargadoInput }} key="emailInput" bsSize="small"
+              type="text" placeholder="dni del encargado"></FormControl>}
+        />
+      </Col>
+      <Col lg={4}>
+        <CustomFormField key="telefonoEncargadoGroup" validationState={this.state.createForm.telefonoEncargado.error ? 'error' : null}
+          validationMessage={this.state.createForm.telefonoEncargado.mensaje} bsSize="small" controlId="telefonoEncargadoInput"
+          label="Teléfono Encargado" inputComponent={
+            <FormControl ref={telefonoEncargadoInput => { this.telefonoEncargadoInput = telefonoEncargadoInput }}
+              bsSize="small" type="text" placeholder="teléfono del encargado" key="telefonoEncargadoInput"></FormControl>}
+        />
+      </Col>
+    </Row>)
+    body.push(<Row key={'formCreateRow5'}>
       <Col lg={6}>
         <CustomFormField key="emailGroup" validationState={this.state.createForm.email.error ? 'error' : null}
           validationMessage={this.state.createForm.email.mensaje} bsSize="small" controlId="emailInput"
@@ -348,6 +425,9 @@ export class CrearComercioModal extends React.Component {
       let codigoPostal = ReactDOM.findDOMNode(this.codigoPostalInput).value
       let email = ReactDOM.findDOMNode(this.emailInput).value
       let email2 = ReactDOM.findDOMNode(this.verificarEmailInput).value
+      let nombreEncargado = ReactDOM.findDOMNode(this.nombreEncargadoInput).value
+      let dniEncargado = ReactDOM.findDOMNode(this.dniEncargadoInput).value
+      let telefonoEncargado = ReactDOM.findDOMNode(this.telefonoEncargadoInput).value
       // let lat = document.getElementById('latitudSpan').outerHTML
       // lat = lat.replace('<span id="latitudSpan" name="latitudSpan">','')
       // lat = lat.replace('</span>','')
@@ -356,8 +436,8 @@ export class CrearComercioModal extends React.Component {
       // lng = lng.replace('<span id="longitudSpan" name="longitudSpan">','')
       // lng = lng.replace('</span>','')
       // console.log(lng)
-      if (this.validarCreateForm(nombre, razonSocial, calle, numero, codigoPostal, email, email2)) {
-        this.props.createComercio(nombre, razonSocial, calle, numero, codigoPostal, email, email2, this.state.createForm.tipoComercio.seleccionado)
+      if (this.validarCreateForm(nombre, razonSocial, calle, numero, codigoPostal, email, email2, nombreEncargado, dniEncargado, telefonoEncargado)) {
+        this.props.createComercio(nombre, razonSocial, calle, numero, codigoPostal, email, email2, this.state.createForm.tipoComercio.seleccionado, nombreEncargado, dniEncargado, telefonoEncargado)
         this.modal.hideModal()
       }
     }}>Guardar</Button>)
@@ -374,8 +454,8 @@ export class CrearComercioModal extends React.Component {
 }
 
 const mapDispatch = (dispatch) => ({
-  createComercio: (nombreComercio, razonSocial, calle, numero, codigoPostal, email, verificarEmail, tipoComercio) => {
-    dispatch(createComercio(nombreComercio, razonSocial, calle, numero, codigoPostal, email, verificarEmail, tipoComercio))
+  createComercio: (nombreComercio, razonSocial, calle, numero, codigoPostal, email, verificarEmail, tipoComercio, nombreEncargado, dniEncargado, telefonoEncargado) => {
+    dispatch(createComercio(nombreComercio, razonSocial, calle, numero, codigoPostal, email, verificarEmail, tipoComercio, nombreEncargado, dniEncargado, telefonoEncargado))
   },
   getPosicion: (calle) => {
     dispatch(getPosicion(calle))

@@ -33,9 +33,11 @@ export class WebNavbar extends React.Component {
                     Comercios
                   </NavItem>
                 </LinkContainer>
-                <NavItem eventKey={2} href="#">
-                  Usuarios
-                </NavItem>
+                <LinkContainer to={'/usuarios'}>
+                  <NavItem style={font} eventKey={2} href="#">
+                    Usuarios
+                  </NavItem>
+                </LinkContainer>
               </Nav>
               <Nav pullRight>
                 <NavDropdown title={this.props.email} id="logged-user-dropdown">
