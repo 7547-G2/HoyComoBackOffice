@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Row, Col, Button } from 'react-bootstrap'
-import { habilitarUsuario } from './comercioReducer'
+import { habilitarUsuario } from './usuarioReducer'
 import { CustomModalPregunta } from '../../utils/CustomModalPregunta'
 
 export class HabilitarUsuarioModal extends React.Component {
@@ -49,7 +49,7 @@ export class HabilitarUsuarioModal extends React.Component {
 
   render() {
     return (
-      <CustomModalPregunta key={'habilitarUsuarioModal'} title={'Habilitar comercio'} body={this.getCrearModalBody()}
+      <CustomModalPregunta key={'habilitarUsuarioModal'} title={'Habilitar usuario'} body={this.getCrearModalBody()}
         buttons={this.getCrearModalButtons()} ref={(modal) => { this.modal = modal }} />
     )
   }

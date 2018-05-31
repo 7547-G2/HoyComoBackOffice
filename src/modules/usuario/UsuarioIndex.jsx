@@ -2,9 +2,11 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Row, Col, Button, Glyphicon } from 'react-bootstrap'
 import { withRouter } from 'react-router-dom'
-import { getUsuarios, clearUsuarios, obtenerTipoUsuarios, clearAlert } from './comercioReducer'
+import { getUsuarios, clearUsuarios, obtenerTipoUsuarios, clearAlert } from './usuarioReducer'
 import BuscarUsuarioForm from './BuscarUsuarioForm'
 import BuscarUsuarioTable from './BuscarUsuarioTable'
+import HabilitarUsuarioModal from './HabilitarUsuarioModal'
+import DeshabilitarUsuarioModal from './DeshabilitarUsuarioModal'
 import { CustomAlert } from '../../utils/CustomAlert'
 
 export class UsuarioIndex extends React.Component {
@@ -48,7 +50,7 @@ export class UsuarioIndex extends React.Component {
 }
 
 const mapDispatch = (dispatch) => ({
-  comercios: (nombre, email, organismo) => {
+  usuarios: (nombre, email, organismo) => {
     dispatch(getUsuarios(nombre, email, organismo))
   },
   clearResult: () => {
@@ -64,7 +66,7 @@ const mapDispatch = (dispatch) => ({
 
 const mapStateToProps = (state) => {
   return {
-    alert: state.comercioReducer.alert,
+    alert: state.usuarioReducer.alert,
   }
 }
 

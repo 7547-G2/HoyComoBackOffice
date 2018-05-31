@@ -50,7 +50,7 @@ export const tipoUsuariosTodos = data => ({
   type: HYDRATE_TIPO_COMERCIOS, data
 })
 
-export const usuarios = data => ({
+export const  s = data => ({
   type: HYDRATE_COMERCIOS, data
 })
 
@@ -136,15 +136,15 @@ const filtarById = (data,id, pasarHabilitado) => {
   return returnValue
 }
 
-const filtarCategoriaById = (data,id) => {
-  let returnValue = null
-  data.forEach(element => {
-    if(element.id == id){
-      returnValue =  element.tipo
-    }
-  })
-  return returnValue
-}
+// const filtarCategoriaById = (data,id) => {
+//   let returnValue = null
+//   data.forEach(element => {
+//     if(element.id == id){
+//       returnValue =  element.tipo
+//     }
+//   })
+//   return returnValue
+// }
 
 export const getUsuarioById = (id,pasarHabilitado) => dispatch => {
   let config = getNullConfig()
@@ -364,53 +364,53 @@ const fetchTipoUsuarios = (data) => {
   return returnValue
 }
 
-const fetchUsuario = (data, platos, categorias) => {
-  let returnValue = []
-  platos.map(function (rowObject) {
-    if(rowObject.id){
-      returnValue.push({ id: rowObject.id,  imagen: rowObject.imagen, nombre: rowObject.nombre,precio: rowObject.precio,
-        categoria: filtarCategoriaById(categorias,rowObject.categoria), orden: rowObject.orden, state: rowObject.state })
-    }
-  })
-  returnValue = ordenarPorCategoriaOrden(returnValue)
-  let estado = data.estado
-  let numberStreet = data.addressDto.street.match(/\d+$/)
-  let number = ''
-  if(numberStreet){
-    number = parseInt( numberStreet[0], 10) 
-  }
-  let street = data.addressDto.street.replace(number,'')
-  let mensajeEncabezado = ''
-  if (estado == 'pendiente activacion') {
-    mensajeEncabezado = 'El administrador del usuario debe ingresar por primera vez para comenzar a cargar su menú'
-  } else if (estado == 'pendiente menu' || estado == 'deshabilitado') {
-    mensajeEncabezado = 'Deben cargarse al menos 5 platos en el menú para poder habilitar este usuario'
-  } else if (estado == 'habilitado') {
-    mensajeEncabezado = 'Para evitar que un usuario siga visible en la aplicación'
-  }
-  let tipoComida = ''
-  if (data.tipoComida) tipoComida = data.tipoComida.id
-  return { 
-    id: data.id, 
-    nombre: data.nombre,
-    razonSocial: data.razonSocial,
-    codigoPostal: data.addressDto.postalCode,
-    calle: street,
-    numero: number,
-    estado: estado,
-    password: data.password,
-    nombreEncargado: data.nombreEncargado,
-    telefonoEncargado: data.telefonoEncargado,
-    dniEncargado: data.dniEncargado,
-    lat: data.latitud,
-    lng: data.longitud,
-    imagenLogo: data.imagenLogo,
-    email: data.email, /*roles: returnValue,*/ 
-    tipoUsuario: tipoComida,
-    mensajeEncabezado: mensajeEncabezado,
-    platos: returnValue
-  }
-}
+// const fetchUsuario = (data, platos, categorias) => {
+//   let returnValue = []
+//   platos.map(function (rowObject) {
+//     if(rowObject.id){
+//       returnValue.push({ id: rowObject.id,  imagen: rowObject.imagen, nombre: rowObject.nombre,precio: rowObject.precio,
+//         categoria: filtarCategoriaById(categorias,rowObject.categoria), orden: rowObject.orden, state: rowObject.state })
+//     }
+//   })
+//   returnValue = ordenarPorCategoriaOrden(returnValue)
+//   let estado = data.estado
+//   let numberStreet = data.addressDto.street.match(/\d+$/)
+//   let number = ''
+//   if(numberStreet){
+//     number = parseInt( numberStreet[0], 10) 
+//   }
+//   let street = data.addressDto.street.replace(number,'')
+//   let mensajeEncabezado = ''
+//   if (estado == 'pendiente activacion') {
+//     mensajeEncabezado = 'El administrador del usuario debe ingresar por primera vez para comenzar a cargar su menú'
+//   } else if (estado == 'pendiente menu' || estado == 'deshabilitado') {
+//     mensajeEncabezado = 'Deben cargarse al menos 5 platos en el menú para poder habilitar este usuario'
+//   } else if (estado == 'habilitado') {
+//     mensajeEncabezado = 'Para evitar que un usuario siga visible en la aplicación'
+//   }
+//   let tipoComida = ''
+//   if (data.tipoComida) tipoComida = data.tipoComida.id
+//   return { 
+//     id: data.id, 
+//     nombre: data.nombre,
+//     razonSocial: data.razonSocial,
+//     codigoPostal: data.addressDto.postalCode,
+//     calle: street,
+//     numero: number,
+//     estado: estado,
+//     password: data.password,
+//     nombreEncargado: data.nombreEncargado,
+//     telefonoEncargado: data.telefonoEncargado,
+//     dniEncargado: data.dniEncargado,
+//     lat: data.latitud,
+//     lng: data.longitud,
+//     imagenLogo: data.imagenLogo,
+//     email: data.email, /*roles: returnValue,*/ 
+//     tipoUsuario: tipoComida,
+//     mensajeEncabezado: mensajeEncabezado,
+//     platos: returnValue
+//   }
+// }
 
 export default (state = initialState, action) => {
   switch (action.type) {
@@ -427,19 +427,20 @@ export default (state = initialState, action) => {
       result: fetchUsuariosTable(action.data.usuarios),
       allTipoUsuarios: fetchTipoUsuarios(action.data.tipoUsuarios),
       activeSearch: true
+      ,alert: {},
     }
-  case HYDRATE_COMERCIO_BY_ID:
-    return {
-      ...state,
-      result: [],
-      activeUsuario: fetchUsuario(action.data.usuario,action.data.platos, action.data.categorias),
-      allTipoUsuarios: fetchTipoUsuarios(action.data.tipoUsuarios),
-    }
-  case HYDRATE_POSICION:
-    return {
-      ...state,
-      posicion: { lat: action.data.lat, lng: action.data.lng },
-    }
+  // case HYDRATE_COMERCIO_BY_ID:
+  //   return {
+  //     ...state,
+  //     result: [],
+  //     activeUsuario: fetchUsuario(action.data.usuario,action.data.platos, action.data.categorias),
+  //     allTipoUsuarios: fetchTipoUsuarios(action.data.tipoUsuarios),
+  //   }
+  // case HYDRATE_POSICION:
+  //   return {
+  //     ...state,
+  //     posicion: { lat: action.data.lat, lng: action.data.lng },
+  //   }
     // case REMOVE_ROL:
     //   return {
     //     ...state,
