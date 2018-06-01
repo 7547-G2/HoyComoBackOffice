@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Alert } from 'react-bootstrap'
 import { withRouter } from 'react-router-dom'
-import { CustomTableWithPagination } from '../../utils/CustomTableWithPagination'
+import { CustomTableWithPaginationAndButtons } from '../../utils/CustomTableWithPaginationAndButtons'
 import history from '../../history'
 import { ordenarPorId } from  '../../utils/utils'
 
@@ -18,9 +18,8 @@ export class BuscarUsuarioTable extends React.Component {
 
   getTablaUsuarios() {
     if (this.props.activeSearch && this.props.result.length != 0) {
-      // if (permisoEditUsuarios(this.props.permisosUsuario))
-      return <CustomTableWithPagination data={ordenarPorId(this.props.result)} headers={['Nombre','Domicilio','Estado']}
-        editAction={this.editarAction} />
+      return <CustomTableWithPaginationAndButtons data={ordenarPorId(this.props.result)} headers={['Nombre','Link','Estado']}
+        habilitarAction={this.props.habilitar} deshabilitarAction={this.props.deshabilitar} />
     } else if (this.props.activeSearch) {
       return <Alert bsStyle="info">La búsqueda no trajo resultados</Alert>
     }

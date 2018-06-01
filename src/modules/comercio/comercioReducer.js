@@ -101,17 +101,18 @@ export const habilitarComercio = (activeComercio) => dispatch => {
     })
 }
 
-export const deshabilitarComercio = (activeComercio) => dispatch => {
+export const deshabilitarComercio = (activeComercio,motivo) => dispatch => {
   let config = getNullConfig()
   let body = {}
   let idComercio = activeComercio.id
   body.estado = 'deshabilitado'
+  body.motivoDehabilitacion = motivo
   axios.put(api.comercios + '/' + idComercio, body, config)
     .then(res => {
       return res.data.data
     })
     .then(() => {
-      dispatch(getComercioById(idComercio,true))
+      dispatch(getComercioById(idComercio,false))
       dispatch(successful('El comercio se deshabilito correctamente'))
     })
     .catch(err => {

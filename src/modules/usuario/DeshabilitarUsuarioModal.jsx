@@ -5,6 +5,7 @@ import { deshabilitarUsuario } from './usuarioReducer'
 import { CustomModalPregunta } from '../../utils/CustomModalPregunta'
 import { CustomFormField } from '../../utils/CustomFormField'
 import { FormControl } from 'react-bootstrap'
+import ReactDOM from 'react-dom'
 
 export class HabilitarUsuarioModal extends React.Component {
   constructor() {
@@ -16,13 +17,15 @@ export class HabilitarUsuarioModal extends React.Component {
     this.deshabilitar = this.deshabilitar.bind(this)
   }
 
-  abrirModal() {
-    this.setState({ ...this.state})
+  abrirModal(id) {
+    this.setState({ ...this.state, idUsuario: id})
     this.modal.showModal()
   }
 
   deshabilitar() {
-    this.props.deshabilitarUsuario(this.props.activeUsuario)
+    console.log(ReactDOM.findDOMNode(this.motivoInput).value)
+    let motivo = ReactDOM.findDOMNode(this.motivoInput).value
+    this.props.deshabilitarUsuario(this.state.idUsuario, motivo)
   }
 
   getCrearModalBody() {
@@ -70,8 +73,8 @@ export class HabilitarUsuarioModal extends React.Component {
 }
 
 const mapDispatch = (dispatch) => ({
-  deshabilitarUsuario: (activeUsuario) => {
-    dispatch(deshabilitarUsuario(activeUsuario))
+  deshabilitarUsuario: (idUsuario, motivo) => {
+    dispatch(deshabilitarUsuario(idUsuario, motivo))
   }
 })
 

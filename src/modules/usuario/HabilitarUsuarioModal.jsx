@@ -11,13 +11,13 @@ export class HabilitarUsuarioModal extends React.Component {
     this.habilitar = this.habilitar.bind(this)
   }
 
-  abrirModal() {
-    this.setState({ ...this.state})
+  abrirModal(id) {
+    this.setState({ ...this.state, idUsuario: id})
     this.modal.showModal()
   }
 
   habilitar() {
-    this.props.habilitarUsuario(this.props.activeUsuario)
+    this.props.habilitarUsuario(this.state.idUsuario)
   }
 
   getCrearModalBody() {

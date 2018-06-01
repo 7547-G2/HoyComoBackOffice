@@ -4,18 +4,18 @@ import { push } from 'react-router-redux'
 import { generarContrasenia , ordenarPorCategoriaOrden } from  '../../utils/utils'
 import api from '../../config/api'
 
-const HYDRATE_COMERCIOS = 'HYDRATE_COMERCIOS'
-const HYDRATE_COMERCIO_BY_ID = 'HYDRATE_COMERCIO_BY_ID'
+const HYDRATE_USUARIOS = 'HYDRATE_USUARIOS'
+const HYDRATE_USUARIO_BY_ID = 'HYDRATE_USUARIO_BY_ID'
 const HYDRATE_POSICION = 'HYDRATE_POSICION'
-const HYDRATE_TIPO_COMERCIOS = 'HYDRATE_TIPO_COMERCIOS'
+const HYDRATE_TIPO_USUARIOS = 'HYDRATE_TIPO_USUARIOS'
 const QUERY_ERROR = 'QUERY_ERROR'
 const INTERNAL_ERROR = 'INTERNAL_ERROR'
 const SUCCESSFUL = 'SUCCESSFUL'
-const CLEAR_COMERCIO_RESULT = 'CLEAR_COMERCIO_RESULT'
+const CLEAR_USUARIO_RESULT = 'CLEAR_USUARIO_RESULT'
 const CLEAR_ALERT = 'CLEAR_ALERT'
 const REMOVE_ROL = 'REMOVE_ROL'
 const ADD_ROL = 'ADD_ROL'
-const PATCH_COMERCIO = 'PATCH_COMERCIO'
+const PATCH_USUARIO = 'PATCH_USUARIO'
 
 const initialState = {
   result: [],
@@ -26,7 +26,7 @@ const initialState = {
 }
 
 export const clearUsuarioResult = () => ({
-  type: CLEAR_COMERCIO_RESULT
+  type: CLEAR_USUARIO_RESULT
 })
 
 export const clearAlert = () => ({
@@ -47,15 +47,15 @@ export const successful = text => ({
 
 // normal action creators
 export const tipoUsuariosTodos = data => ({
-  type: HYDRATE_TIPO_COMERCIOS, data
+  type: HYDRATE_TIPO_USUARIOS, data
 })
 
-export const  s = data => ({
-  type: HYDRATE_COMERCIOS, data
+export const usuarios = data => ({
+  type: HYDRATE_USUARIOS, data
 })
 
 export const usuarioById = data => ({
-  type: HYDRATE_COMERCIO_BY_ID, data
+  type: HYDRATE_USUARIO_BY_ID, data
 })
 
 export const posicion = data => ({
@@ -71,7 +71,7 @@ export const agregarRol = data => ({
 })
 
 export const patchUsuario = data => ({
-  type: PATCH_COMERCIO, data
+  type: PATCH_USUARIO, data
 })
 
 // thunks
@@ -79,17 +79,17 @@ export const clearUsuarios = () => dispatch => {
   dispatch(clearUsuarioResult())
 }
 
-export const habilitarUsuario = (activeUsuario) => dispatch => {
+export const habilitarUsuario = (id) => dispatch => {
   let config = getNullConfig()
   let body = {}
-  let idUsuario = activeUsuario.id
+  let idUsuario = id
   body.estado = 'habilitado'
   axios.put(api.usuarios + '/' + idUsuario, body, config)
     .then(res => {
       return res.data.data
     })
     .then(() => {
-      dispatch(getUsuarioById(idUsuario,true))
+      dispatch(getUsuarios())
       dispatch(successful('El usuario se habilito correctamente'))
     })
     .catch(err => {
@@ -101,17 +101,18 @@ export const habilitarUsuario = (activeUsuario) => dispatch => {
     })
 }
 
-export const deshabilitarUsuario = (activeUsuario) => dispatch => {
+export const deshabilitarUsuario = (id, motivo) => dispatch => {
   let config = getNullConfig()
   let body = {}
-  let idUsuario = activeUsuario.id
+  let idUsuario = id
   body.estado = 'deshabilitado'
+  body.motivoDehabilitacion = motivo
   axios.put(api.usuarios + '/' + idUsuario, body, config)
     .then(res => {
       return res.data.data
     })
     .then(() => {
-      dispatch(getUsuarioById(idUsuario,true))
+      dispatch(getUsuarios())
       dispatch(successful('El usuario se deshabilito correctamente'))
     })
     .catch(err => {
@@ -200,28 +201,27 @@ export const getUsuarios = (nombre, email, tipoUsuario,estado) => dispatch => {
   let config = getNullConfig()
   let queryString = ''
   if (nombre != '') queryString += 'nombre:' + nombre
-  if (email != '') queryString += (queryString == '') ? 'email:' + email : ',email:' + email
-  if (tipoUsuario) queryString += (queryString == '') ? 'tipoId:' + tipoUsuario : ',tipoId:' + tipoUsuario
   if (estado) queryString += (queryString == '') ? 'estado:' + estado : ',estado:' + estado 
   queryString = (queryString == '') ? queryString : '?search=' + queryString
-  axios.get(api.usuarios + queryString, config)
-  axios.all([
-    axios.get(api.base + api.clavetipoUsuarios),
-    axios.get(api.usuarios + queryString, config),
-  ])
-    .then(axios.spread(function (tipoUsuarios, usuarios) {
-      return { usuarios: usuarios.data, tipoUsuarios: tipoUsuarios.data }
-    }))
-    .then(data => {
-      dispatch(usuarios(data))
-    })
-    .catch(err => {
-      if (err.response && err.response.status) {
-        dispatch(queryError(getErrorResponse(err)))
-      } else {
-        dispatch(internalError(err))
-      }
-    })
+  let data = [{id:1 , estado: 'habilitado', link: 'un.link', nombre: 'un nombre'},
+    {id:2 , estado: 'deshabilitado', link: 'un.link2', nombre: 'un nombre2'}]
+  dispatch(usuarios({ usuarios:data}))
+  // axios.all([
+  //   axios.get(api.usuarios + queryString, config),
+  // ])
+  //   .then(axios.spread(function (usuarios) {
+  //     return { usuarios: usuarios.data }
+  //   }))
+  //   .then(data => {
+  //     dispatch(usuarios(data))
+  //   })
+  //   .catch(err => {
+  //     if (err.response && err.response.status) {
+  //       dispatch(queryError(getErrorResponse(err)))
+  //     } else {
+  //       dispatch(internalError(err))
+  //     }
+  //   })
 }
 
 export const updateUsuario = (idUsuario,nombre,razonSocial,numero,codigoPostal,calle,email,estado,tipoUsuario,imagenLogo
@@ -346,23 +346,23 @@ export const obtenerTipoUsuarios = () => dispatch => {
 
 const fetchUsuariosTable = (data) => {
   let returnValue = []
+  console.log(data)
   data.map(function (rowObject) {
-    let tipoComida = ''
-    if(rowObject.tipoComida)
-      tipoComida = rowObject.tipoComida.tipo
-    returnValue.push({ id: rowObject.id, nombre: rowObject.nombre, email: rowObject.email, tipoUsuario: tipoComida,
-      domicilio: rowObject.addressDto.street + ', cp: ' + rowObject.addressDto.postalCode, estado: rowObject.estado  })
+    // let tipoComida = ''
+    // if(rowObject.tipoComida)
+    //   tipoComida = rowObject.tipoComida.tipo
+    returnValue.push({ id: rowObject.id, nombre: rowObject.nombre, link: rowObject.link, estado: rowObject.estado  })
   })
   return returnValue
 }
 
-const fetchTipoUsuarios = (data) => {
-  let returnValue = []
-  data.map(function (rowObject) {
-    returnValue.push({ id: rowObject.id, tipo: rowObject.tipo })
-  })
-  return returnValue
-}
+// const fetchTipoUsuarios = (data) => {
+//   let returnValue = []
+//   data.map(function (rowObject) {
+//     returnValue.push({ id: rowObject.id, tipo: rowObject.tipo })
+//   })
+//   return returnValue
+// }
 
 // const fetchUsuario = (data, platos, categorias) => {
 //   let returnValue = []
@@ -414,22 +414,20 @@ const fetchTipoUsuarios = (data) => {
 
 export default (state = initialState, action) => {
   switch (action.type) {
-  case HYDRATE_TIPO_COMERCIOS:
+  case HYDRATE_TIPO_USUARIOS:
     return {
       ...state,
       result: [],
-      allTipoUsuarios: fetchTipoUsuarios(action.data),
       alert: {},
     }
-  case HYDRATE_COMERCIOS:
+  case HYDRATE_USUARIOS:
     return {
       ...state,
       result: fetchUsuariosTable(action.data.usuarios),
-      allTipoUsuarios: fetchTipoUsuarios(action.data.tipoUsuarios),
       activeSearch: true
       ,alert: {},
     }
-  // case HYDRATE_COMERCIO_BY_ID:
+  // case HYDRATE_USUARIO_BY_ID:
   //   return {
   //     ...state,
   //     result: [],
@@ -461,7 +459,7 @@ export default (state = initialState, action) => {
     return { ...state, alert: { style: 'success', text: action.text } }
   case CLEAR_ALERT:
     return { ...state, alert: {} }
-  case CLEAR_COMERCIO_RESULT:
+  case CLEAR_USUARIO_RESULT:
     return { ...state, result: [], activeSearch: false }
   default:
     return state

@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Row, Col, Button, Glyphicon } from 'react-bootstrap'
+import { Row, Col } from 'react-bootstrap'
 import { withRouter } from 'react-router-dom'
 import { getUsuarios, clearUsuarios, obtenerTipoUsuarios, clearAlert } from './usuarioReducer'
 import BuscarUsuarioForm from './BuscarUsuarioForm'
@@ -13,6 +13,10 @@ export class UsuarioIndex extends React.Component {
   constructor() {
     super()
     this.abrirModalCrearUsuario = this.abrirModalCrearUsuario.bind(this)
+    this.abrirModalHabilitarUsuario = this.abrirModalHabilitarUsuario.bind(this)
+    this.habilitar = this.habilitar.bind(this)
+    this.abrirModalDeshabilitarUsuario = this.abrirModalDeshabilitarUsuario.bind(this)
+    this.deshabilitar = this.deshabilitar.bind(this)
   }
 
   componentDidMount() {
@@ -22,6 +26,22 @@ export class UsuarioIndex extends React.Component {
 
   abrirModalCrearUsuario() {
     this.crearUsuarioModal.wrappedInstance.abrirModal()
+  }
+
+  habilitar(id) {
+    this.abrirModalHabilitarUsuario(id)
+  }
+
+  abrirModalHabilitarUsuario(id) {
+    this.HabilitarUsuarioModal.wrappedInstance.abrirModal(id)
+  }
+
+  deshabilitar(id) {
+    this.abrirModalDeshabilitarUsuario(id)
+  }
+
+  abrirModalDeshabilitarUsuario(id) {
+    this.DeshabilitarUsuarioModal.wrappedInstance.abrirModal(id)
   }
 
   render() {
@@ -40,7 +60,7 @@ export class UsuarioIndex extends React.Component {
  
         <BuscarUsuarioForm />
         <br/>
-        <BuscarUsuarioTable/>  
+        <BuscarUsuarioTable habilitar={this.habilitar}  deshabilitar={this.deshabilitar}/>  
 
         <HabilitarUsuarioModal activeUsuario={this.props.activeUsuario} ref={(modal) => { this.HabilitarUsuarioModal = modal }} />
         <DeshabilitarUsuarioModal activeUsuario={this.props.activeUsuario} ref={(modal) => { this.DeshabilitarUsuarioModal = modal }} /> 

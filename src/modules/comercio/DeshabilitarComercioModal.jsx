@@ -5,6 +5,7 @@ import { deshabilitarComercio } from './comercioReducer'
 import { CustomModalPregunta } from '../../utils/CustomModalPregunta'
 import { CustomFormField } from '../../utils/CustomFormField'
 import { FormControl } from 'react-bootstrap'
+import ReactDOM from 'react-dom'
 
 export class HabilitarComercioModal extends React.Component {
   constructor() {
@@ -22,7 +23,8 @@ export class HabilitarComercioModal extends React.Component {
   }
 
   deshabilitar() {
-    this.props.deshabilitarComercio(this.props.activeComercio)
+    let motivo = ReactDOM.findDOMNode(this.motivoInput).value
+    this.props.deshabilitarComercio(this.props.activeComercio,motivo)
   }
 
   getCrearModalBody() {
@@ -70,8 +72,8 @@ export class HabilitarComercioModal extends React.Component {
 }
 
 const mapDispatch = (dispatch) => ({
-  deshabilitarComercio: (activeComercio) => {
-    dispatch(deshabilitarComercio(activeComercio))
+  deshabilitarComercio: (activeComercio,motivo) => {
+    dispatch(deshabilitarComercio(activeComercio,motivo))
   }
 })
 

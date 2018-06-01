@@ -53,9 +53,14 @@ export class EditarComercioForm extends React.Component {
   }
 
   componentWillReceiveProps(newProps){
+    let updateForm = this.state.updateForm
+    if (newProps.newEstado){
+      updateForm.estado.seleccionado = newProps.newEstado
+    }
     this.setState({...this.state,
       lat: newProps.lat,
       lng: newProps.lng,
+      updateForm: updateForm
     })
   }
 
@@ -557,10 +562,15 @@ const mapStateToProps = (state) => {
   if(state.comercioReducer.posicion){
     lat = state.comercioReducer.posicion.lat
     lng = state.comercioReducer.posicion.lng
-  } 
+  }
+  let newEstado 
+  if(state.updateForm){
+    newEstado = state.updateForm.estado.seleccionado
+  }
   return {
     lat: lat,
     lng: lng,
+    newEstado: newEstado,
   }
 }
 
