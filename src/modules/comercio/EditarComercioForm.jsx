@@ -460,11 +460,26 @@ export class EditarComercioForm extends React.Component {
               } />
           </Col>
           <Col lg={2} md={2}>
-            <CustomFormField validationState={this.state.updateForm.estado.error ? 'error' : null}
+            {this.props.activeComercio.estado == 'pendiente menu' && <CustomFormField validationState={this.state.updateForm.estado.error ? 'error' : null}
               validationMessage={this.state.updateForm.estado.mensaje} bsSize="small" controlId="estadoSelect"
               label="Estado" disabled={true} inputComponent={
-                <FormControl type="text" disabled={'true'} value={this.state.updateForm.estado.seleccionado} />
-              } />
+                <FormControl type="text" disabled={'true'} value={'pendiente menu'} />
+              } />}
+            {this.props.activeComercio.estado == 'pendiente activacion' && <CustomFormField validationState={this.state.updateForm.estado.error ? 'error' : null}
+              validationMessage={this.state.updateForm.estado.mensaje} bsSize="small" controlId="estadoSelect"
+              label="Estado" disabled={true} inputComponent={
+                <FormControl type="text" disabled={'true'} value={'pendiente activacion'} />
+              } />}
+            {this.props.activeComercio.estado == 'deshabilitado' && <CustomFormField validationState={this.state.updateForm.estado.error ? 'error' : null}
+              validationMessage={this.state.updateForm.estado.mensaje} bsSize="small" controlId="estadoSelect"
+              label="Estado" disabled={true} inputComponent={
+                <FormControl type="text" disabled={'true'} value={'deshabilitado'} />
+              } />}          
+            {this.props.activeComercio.estado == 'habilitado' && <CustomFormField validationState={this.state.updateForm.estado.error ? 'error' : null}
+              validationMessage={this.state.updateForm.estado.mensaje} bsSize="small" controlId="estadoSelect"
+              label="Estado" disabled={true} inputComponent={
+                <FormControl type="text" disabled={'true'} value={'habilitado'} />
+              } />}
           </Col>
         </Row>
         <Row>
