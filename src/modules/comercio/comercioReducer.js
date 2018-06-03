@@ -84,6 +84,7 @@ export const habilitarComercio = (activeComercio) => dispatch => {
   let body = {}
   let idComercio = activeComercio.id
   body.estado = 'habilitado'
+  body.motivoDeshabilitacion = ''
   axios.put(api.comercios + '/' + idComercio, body, config)
     .then(res => {
       return res.data.data
@@ -106,7 +107,7 @@ export const deshabilitarComercio = (activeComercio,motivo) => dispatch => {
   let body = {}
   let idComercio = activeComercio.id
   body.estado = 'deshabilitado'
-  body.motivoDehabilitacion = motivo
+  body.motivoDeshabilitacion = motivo
   axios.put(api.comercios + '/' + idComercio, body, config)
     .then(res => {
       return res.data.data
@@ -383,7 +384,7 @@ const fetchComercio = (data, platos, categorias) => {
   let street = data.addressDto.street.replace(number,'')
   let mensajeEncabezado = ''
   if (estado == 'pendiente activacion') {
-    mensajeEncabezado = 'El administrador del comercio debe ingresar por primera vez para comenzar a cargar su menú'
+    mensajeEncabezado = 'El encargado del comercio debe ingresar por primera vez para comenzar a cargar su menú'
   } else if (estado == 'pendiente menu' || estado == 'deshabilitado') {
     mensajeEncabezado = 'Deben cargarse al menos 5 platos en el menú para poder habilitar este comercio'
   } else if (estado == 'habilitado') {

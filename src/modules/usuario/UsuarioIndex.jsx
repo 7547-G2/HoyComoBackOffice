@@ -20,7 +20,6 @@ export class UsuarioIndex extends React.Component {
   }
 
   componentDidMount() {
-    this.props.obtenerTipoUsuarios()
     this.props.clearResult()
   }
 
@@ -70,8 +69,8 @@ export class UsuarioIndex extends React.Component {
 }
 
 const mapDispatch = (dispatch) => ({
-  usuarios: (nombre, email, organismo) => {
-    dispatch(getUsuarios(nombre, email, organismo))
+  usuarios: (nombre, apellido, estado) => {
+    dispatch(getUsuarios(nombre, apellido, estado))
   },
   clearResult: () => {
     dispatch(clearUsuarios())
@@ -79,9 +78,6 @@ const mapDispatch = (dispatch) => ({
   clearAlert: () => {
     dispatch(clearAlert())
   },
-  obtenerTipoUsuarios: () => {
-    dispatch(obtenerTipoUsuarios())
-  }
 })
 
 const mapStateToProps = (state) => {
