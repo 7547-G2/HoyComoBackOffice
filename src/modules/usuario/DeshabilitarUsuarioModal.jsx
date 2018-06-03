@@ -23,9 +23,30 @@ export class HabilitarUsuarioModal extends React.Component {
   }
 
   deshabilitar() {
-    console.log(ReactDOM.findDOMNode(this.motivoInput).value)
     let motivo = ReactDOM.findDOMNode(this.motivoInput).value
-    this.props.deshabilitarUsuario(this.state.idUsuario, motivo)
+    if(this.validarMotivo(motivo)) {
+      this.props.deshabilitarUsuario(this.state.idUsuario, motivo)
+      this.modal.hideModal()
+    }
+  }
+
+  validarMotivo(motivo) {
+    let formOk = true
+
+    let motivoState = { error: false, mensaje: '' }
+
+    if (motivo == null || motivo == '') {
+      motivoState.error = true
+      motivoState.mensaje = 'Este campo es obligatorio'
+      formOk = false
+    } else {
+      motivoState.error = false
+      motivoState.mensaje = ''
+    }
+
+    this.setState({ ...this.state, motivo: motivoState })
+
+    return formOk
   }
 
   getCrearModalBody() {
@@ -58,7 +79,6 @@ export class HabilitarUsuarioModal extends React.Component {
     }}>Cerrar</Button>)
     buttons.push(<Button key={'createButton'} bsSize={'small'} bsStyle={'primary'} onClick={() => {
       this.deshabilitar()
-      this.modal.hideModal()
     }}>Aceptar</Button>)
 
     return buttons

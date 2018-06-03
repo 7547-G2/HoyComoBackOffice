@@ -24,7 +24,29 @@ export class HabilitarComercioModal extends React.Component {
 
   deshabilitar() {
     let motivo = ReactDOM.findDOMNode(this.motivoInput).value
-    this.props.deshabilitarComercio(this.props.activeComercio,motivo)
+    if(this.validarMotivo(motivo)) {
+      this.props.deshabilitarComercio(this.props.activeComercio,motivo)
+      this.modal.hideModal()
+    }
+  }
+
+  validarMotivo(motivo) {
+    let formOk = true
+
+    let motivoState = { error: false, mensaje: '' }
+
+    if (motivo == null || motivo == '') {
+      motivoState.error = true
+      motivoState.mensaje = 'Este campo es obligatorio'
+      formOk = false
+    } else {
+      motivoState.error = false
+      motivoState.mensaje = ''
+    }
+
+    this.setState({ ...this.state, motivo: motivoState })
+
+    return formOk
   }
 
   getCrearModalBody() {
@@ -57,7 +79,6 @@ export class HabilitarComercioModal extends React.Component {
     }}>Cerrar</Button>)
     buttons.push(<Button key={'createButton'} bsSize={'small'} bsStyle={'primary'} onClick={() => {
       this.deshabilitar()
-      this.modal.hideModal()
     }}>Aceptar</Button>)
 
     return buttons
