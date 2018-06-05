@@ -8,6 +8,8 @@ const apiKey = '&key=AIzaSyCxw77azFkwYOs_QYt-1HqKSwZcbrvEyrE'
 // Api routes phrases
 const LOGIN = 'token'
 const comercios = 'comercios'
+const usuarios = 'comercios/mobileUsers'
+const usuario = 'comercios/mobileUser'
 const platos = 'platos'
 const categorias = 'categoriasComida'
 const bocomercios ='backofficeComercio'
@@ -17,6 +19,8 @@ export default {
   base: BASE,
   bocomercios: BASE + bocomercios,
   comercios: BASE + comercios,
+  usuarios: BASE + usuarios,
+  usuario: BASE + usuario,
   login: BASE + LOGIN,
   claveComercios: comercios,
   clavePlatos: platos,

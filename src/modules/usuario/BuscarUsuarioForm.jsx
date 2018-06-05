@@ -13,7 +13,7 @@ export class BuscarUsuarioForm extends React.Component {
   constructor() {
     super()
     this.state = {
-      estadoFiltro: '-1'
+      estadoFiltro: ''
     }
     this.updateTipoUsuarioSearch = this.updateTipoUsuarioSearch.bind(this)
     this.updateEstadoSearch = this.updateEstadoSearch.bind(this)
@@ -26,14 +26,14 @@ export class BuscarUsuarioForm extends React.Component {
   updateTipoUsuarioSearch (newValue) {
     this.setState({
       ...this.state, 
-      tipoUsuarioFiltro: (newValue != null) ? newValue.value : -1
+      tipoUsuarioFiltro: (newValue != null) ? newValue.value : ''
     })
   }
 
   updateEstadoSearch (newValue) {
     this.setState({
       ...this.state, 
-      estadoFiltro: (newValue != null) ? newValue.value : -1
+      estadoFiltro: (newValue != null) ? newValue.value : ''
     })
   }
 
@@ -42,13 +42,20 @@ export class BuscarUsuarioForm extends React.Component {
       <form onSubmit={event => {
         event.preventDefault() // Previene el submit default del form
         let nombreSearch = ReactDOM.findDOMNode(this.nombreSearch).value
+        let apellidoSearch = ReactDOM.findDOMNode(this.apellidoSearch).value
         let estadoSearch = this.state.estadoFiltro
-        this.props.usuarios(nombreSearch, estadoSearch)
+        this.props.usuarios(nombreSearch, apellidoSearch, estadoSearch)
       }}>
         <Row>
           <Col lg={4}>
             <CustomFormField key="nombreSearch" bsSize="small" controlId="nombreSearch" label="Nombre" inputComponent={
               <FormControl ref={nombreSearch => { this.nombreSearch = nombreSearch }} key="nombreSearchControl" 
+                bsSize="small" type="text"></FormControl>
+            }/>
+          </Col>
+          <Col lg={4}>
+            <CustomFormField key="apellidoSearch" bsSize="small" controlId="apellidoSearch" label="Apellido" inputComponent={
+              <FormControl ref={apellidoSearch => { this.apellidoSearch = apellidoSearch }} key="apellidoSearchControl" 
                 bsSize="small" type="text"></FormControl>
             }/>
           </Col>
@@ -74,8 +81,8 @@ export class BuscarUsuarioForm extends React.Component {
 }
 
 const mapDispatch = (dispatch) => ({
-  usuarios: (nombre, estado) => {
-    dispatch(getUsuarios(nombre, estado))
+  usuarios: (nombre, apellido, estado) => {
+    dispatch(getUsuarios(nombre, apellido, estado))
   }
 })
 

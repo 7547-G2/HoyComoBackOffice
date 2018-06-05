@@ -66,6 +66,26 @@ export const validFileSize = (file) => {
   return true
 }
 
+export const getStateByEstado = (estado) => {
+  if (!estado){
+    return null
+  } else if (estado == 'habilitado') {
+    return 'AUTHORIZED'
+  } else {
+    return 'UNAUTHORIZED'
+  }
+}
+
+export const getEstadoByState = (estado) => {
+  if (!estado){
+    return null
+  } else if (estado == 'AUTHORIZED') {
+    return 'habilitado'
+  } else {
+    return 'deshabilitado'
+  }
+}
+
 export const generarContrasenia = (longitud) => {
   longitud = longitud || 10
   var caracteres = 'abcdefghijkmnpqrtuvwxyzABCDEFGHIJKLMNPQRTUVWXYZ123456789'

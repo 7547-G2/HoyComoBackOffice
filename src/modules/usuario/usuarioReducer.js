@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { getNullConfig, getGoogleConfig, getErrorResponse } from '../../utils/utils'
 import { push } from 'react-router-redux'
-import { generarContrasenia , ordenarPorCategoriaOrden } from  '../../utils/utils'
+import { generarContrasenia , getStateByEstado } from  '../../utils/utils'
 import api from '../../config/api'
 
 const HYDRATE_USUARIOS = 'HYDRATE_USUARIOS'
@@ -83,13 +83,14 @@ export const habilitarUsuario = (id) => dispatch => {
   let config = getNullConfig()
   let body = {}
   let idUsuario = id
-  body.estado = 'habilitado'
-  axios.put(api.usuarios + '/' + idUsuario, body, config)
+  body.state = 'habilitado'
+  body.motivoDeshabilitacion = ''
+  axios.put(api.usuario + '/' + idUsuario, body, config)
     .then(res => {
       return res.data.data
     })
     .then(() => {
-      dispatch(getUsuarios())
+      dispatch(clearUsuarioResult())
       dispatch(successful('El usuario se habilito correctamente'))
     })
     .catch(err => {
@@ -105,14 +106,14 @@ export const deshabilitarUsuario = (id, motivo) => dispatch => {
   let config = getNullConfig()
   let body = {}
   let idUsuario = id
-  body.estado = 'deshabilitado'
-  body.motivoDehabilitacion = motivo
-  axios.put(api.usuarios + '/' + idUsuario, body, config)
+  body.state = 'deshabilitado'
+  body.motivoDeshabilitacion = motivo
+  axios.put(api.usuario + '/' + idUsuario, body, config)
     .then(res => {
       return res.data.data
     })
     .then(() => {
-      dispatch(getUsuarios())
+      dispatch(clearUsuarioResult())
       dispatch(successful('El usuario se deshabilito correctamente'))
     })
     .catch(err => {
@@ -158,7 +159,6 @@ export const getUsuarioById = (id,pasarHabilitado) => dispatch => {
     axios.get(api.bousuarios +'/'+ api.claveCategorias, config),
   ])
     .then(axios.spread(function (tipoUsuarios, usuarios,platos, categorias) {
-      console.log(platos.data)
       return { usuario: filtarById(usuarios.data,id,pasarHabilitado), platos: platos.data , tipoUsuarios: tipoUsuarios.data, categorias: categorias.data}
     }))
     .then(data => {
@@ -173,18 +173,26 @@ export const getUsuarioById = (id,pasarHabilitado) => dispatch => {
     })
 }
 
-export const getPosicion = (calle) => dispatch => {
-  let config = getGoogleConfig()
+export const getUsuarios = (nombre, apellido, estado) => dispatch => {
+  nombre =  nombre && nombre.trim()
+  apellido =  apellido && apellido.trim() 
+  let config = getNullConfig()
+  let queryString = ''
+  if (nombre != '') queryString += 'firstName:' + nombre
+  if (apellido != '') queryString += 'lastName:' + apellido
+  if (estado) queryString += (queryString == '') ? 'state:' + estado : ',state:' + estado 
+  queryString = (queryString == '') ? queryString : '?search=' + queryString
+  // let data = [{id:1 , estado: 'habilitado', link: 'un.link', nombre: 'un nombre'},
+  //   {id:2 , estado: 'deshabilitado', link: 'un.link2', nombre: 'un nombre2'}]
+  // dispatch(usuarios({ usuarios:data}))
   axios.all([
-    axios.get(api.googleApi + calle + api.apiKey, config)
+    axios.get(api.usuarios + queryString, config),
   ])
-    .then(axios.spread(function (data) {
-      console.log(data.data)
-      return { lat: data.data.results[0].geometry.location.lat,
-        lng: data.data.results[0].geometry.location.lng}
+    .then(axios.spread(function (usuarios) {
+      return { usuarios: usuarios.data }
     }))
     .then(data => {
-      dispatch(posicion(data))
+      dispatch(usuarios(data))
     })
     .catch(err => {
       if (err.response && err.response.status) {
@@ -193,35 +201,6 @@ export const getPosicion = (calle) => dispatch => {
         dispatch(internalError(err))
       }
     })
-}
-
-export const getUsuarios = (nombre, email, tipoUsuario,estado) => dispatch => {
-  nombre =  nombre && nombre.trim() 
-  email = email &&  email.trim()
-  let config = getNullConfig()
-  let queryString = ''
-  if (nombre != '') queryString += 'nombre:' + nombre
-  if (estado) queryString += (queryString == '') ? 'estado:' + estado : ',estado:' + estado 
-  queryString = (queryString == '') ? queryString : '?search=' + queryString
-  let data = [{id:1 , estado: 'habilitado', link: 'un.link', nombre: 'un nombre'},
-    {id:2 , estado: 'deshabilitado', link: 'un.link2', nombre: 'un nombre2'}]
-  dispatch(usuarios({ usuarios:data}))
-  // axios.all([
-  //   axios.get(api.usuarios + queryString, config),
-  // ])
-  //   .then(axios.spread(function (usuarios) {
-  //     return { usuarios: usuarios.data }
-  //   }))
-  //   .then(data => {
-  //     dispatch(usuarios(data))
-  //   })
-  //   .catch(err => {
-  //     if (err.response && err.response.status) {
-  //       dispatch(queryError(getErrorResponse(err)))
-  //     } else {
-  //       dispatch(internalError(err))
-  //     }
-  //   })
 }
 
 export const updateUsuario = (idUsuario,nombre,razonSocial,numero,codigoPostal,calle,email,estado,tipoUsuario,imagenLogo
@@ -346,12 +325,9 @@ export const obtenerTipoUsuarios = () => dispatch => {
 
 const fetchUsuariosTable = (data) => {
   let returnValue = []
-  console.log(data)
   data.map(function (rowObject) {
-    // let tipoComida = ''
-    // if(rowObject.tipoComida)
-    //   tipoComida = rowObject.tipoComida.tipo
-    returnValue.push({ id: rowObject.id, nombre: rowObject.nombre, link: rowObject.link, estado: rowObject.estado  })
+    returnValue.push({ id: rowObject.facebookId, username: rowObject.username, domicilio: rowObject.address.street + ', piso: ' + rowObject.address.floor
+    + ', dpto: ' + rowObject.address.department + ', cp: ' + rowObject.address.postalCode, facebookId: rowObject.facebookId, estado: rowObject.state })
   })
   return returnValue
 }
