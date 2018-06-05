@@ -385,10 +385,10 @@ export class EditarComercioForm extends React.Component {
           <Col md={2}>
             <h4>Editar comercio</h4>
           </Col>
-          <Col md={(this.props.activeComercio.estado == 'pendiente activacion') ? 10 : 9}>
+          <Col md={(this.props.activeComercio.estado == 'pendiente activación') ? 10 : 9}>
             <h5 className="pull-right"><i> {this.props.activeComercio.mensajeEncabezado}  </i></h5>
           </Col>
-          {(this.props.activeComercio.estado == 'pendiente menu' || this.props.activeComercio.estado == 'deshabilitado' )&& <Col md={1}>
+          {(this.props.activeComercio.estado == 'pendiente menú' || this.props.activeComercio.estado == 'deshabilitado' )&& <Col md={1}>
             <Button bsStyle="success"
               className="pull-right" bsSize="sm"
               onClick={this.habilitar}>Habilitar</Button>
@@ -419,7 +419,7 @@ export class EditarComercioForm extends React.Component {
           <Col lg={2} md={2}>
             <CustomFormField validationState={this.state.updateForm.numero.error ? 'error' : null}
               validationMessage={this.state.updateForm.numero.mensaje} bsSize="small" controlId="numero"
-              label="Numero" inputComponent={
+              label="Número" inputComponent={
                 <FormControl defaultValue={this.props.activeComercio.numero} key="numeroInput" bsSize="small"
                   ref={numeroInput => { this.numeroInput = numeroInput }} type="text"></FormControl>
               } />
@@ -502,7 +502,7 @@ export class EditarComercioForm extends React.Component {
           <Col lg={4} md={4}>
             <CustomFormField validationState={this.state.updateForm.telefonoEncargado.error ? 'error' : null}
               validationMessage={this.state.updateForm.telefonoEncargado.mensaje} bsSize="small" controlId="telefonoEncargado"
-              label="Telefono Encargado" inputComponent={
+              label="Teléfono Encargado" inputComponent={
                 <FormControl defaultValue={this.props.activeComercio.telefonoEncargado} key="telefonoEncargadoInput" bsSize="small"
                   ref={telefonoEncargadoInput => { this.telefonoEncargadoInput = telefonoEncargadoInput }} type="text"></FormControl>
               } />
