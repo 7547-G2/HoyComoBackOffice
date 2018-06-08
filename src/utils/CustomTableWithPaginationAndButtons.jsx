@@ -41,7 +41,12 @@ export class CustomTableWithPaginationAndButtons extends React.Component {
       var returnValue = []
 
       for (i in rowObject) {
-        if (i != 'id')
+        if (i == 'link'){
+          returnValue.push(
+            <td key={i}>
+              <a href={'https://www.facebook.com/'+rowObject[i]}>link</a>
+            </td>)
+        } else if (i != 'id')
           returnValue.push(
             <td key={i}>
               {rowObject[i]}

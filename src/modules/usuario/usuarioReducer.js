@@ -326,8 +326,13 @@ export const obtenerTipoUsuarios = () => dispatch => {
 const fetchUsuariosTable = (data) => {
   let returnValue = []
   data.map(function (rowObject) {
-    returnValue.push({ id: rowObject.facebookId, username: rowObject.username, domicilio: rowObject.address.street + ', piso: ' + rowObject.address.floor
-    + ', dpto: ' + rowObject.address.department + ', cp: ' + rowObject.address.postalCode, facebookId: rowObject.facebookId, estado: rowObject.state })
+    let piso =  (rowObject.address.floor)?', piso: ' + rowObject.address.floor:''
+    let dpto =  (rowObject.address.department)? ', dpto: ' + rowObject.address.department:''
+    let cp =  (rowObject.address.postalCode)? ', cp: ' + rowObject.address.postalCode:''
+    returnValue.push({ id: rowObject.facebookId, username: rowObject.username, domicilio: rowObject.address.street +
+        piso +
+        dpto + 
+        cp, link: rowObject.facebookId, estado: rowObject.state })
   })
   return returnValue
 }
