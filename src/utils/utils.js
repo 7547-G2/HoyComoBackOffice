@@ -31,8 +31,14 @@ export const getErrorResponse = (err) => {
 
 export const getTipoComerciosSelectOptions = (allTipoComercios) => {
   let tipoComerciosOptions = []
-  allTipoComercios.forEach(function (tipo) {
-    tipoComerciosOptions.push({ value: tipo.id, label: tipo.tipo })
+  allTipoComercios.forEach(function (tipoComercio) {
+    let tipo
+    if(tipoComercio.tipo == 'Pizzeria'){
+      tipo = 'Pizzería'
+    } else {
+      tipo = tipoComercio.tipo
+    }
+    tipoComerciosOptions.push({ value: tipoComercio.id, label: tipo })
   }, this)
   return tipoComerciosOptions
 }

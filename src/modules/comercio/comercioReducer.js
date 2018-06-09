@@ -352,8 +352,13 @@ const fetchComerciosTable = (data) => {
     let tipoComida = ''
     if(rowObject.tipoComida)
       tipoComida = rowObject.tipoComida.tipo
+    let estado = rowObject.estado
+    if(rowObject.estado == 'pendiente menu')
+      estado =  'pendiente menú'
+    if(rowObject.estado == 'pendiente activacion')
+      estado =  'pendiente activación'
     returnValue.push({ id: rowObject.id, nombre: rowObject.nombre, email: rowObject.email, tipoComercio: tipoComida,
-      domicilio: rowObject.addressDto.street + ', cp: ' + rowObject.addressDto.postalCode, estado: rowObject.estado  })
+      domicilio: rowObject.addressDto.street + ', cp: ' + rowObject.addressDto.postalCode, estado: estado  })
   })
   return returnValue
 }
