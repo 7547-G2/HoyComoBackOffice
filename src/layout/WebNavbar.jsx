@@ -38,6 +38,11 @@ export class WebNavbar extends React.Component {
                     Usuarios
                   </NavItem>
                 </LinkContainer>
+                <LinkContainer to={'/dashboard'}>
+                  <NavItem style={font} eventKey={3} href="#">
+                    Dashboard
+                  </NavItem>
+                </LinkContainer>
               </Nav>
               <Nav pullRight>
                 <NavDropdown title={this.props.email} id="logged-user-dropdown">
