@@ -1,4 +1,5 @@
 import axios from 'axios'
+import moment from 'moment'
 import { getNullConfig, getGoogleConfig, getErrorResponse } from '../../utils/utils'
 import { push } from 'react-router-redux'
 import { generarContrasenia , getStateByEstado } from  '../../utils/utils'
@@ -75,121 +76,18 @@ export const patchUsuario = data => ({
 })
 
 // thunks
-export const clearDashboard = () => dispatch => {
-  dispatch(clearUsuarioResult())
-}
-
-export const habilitarUsuario = (id) => dispatch => {
+export const resetDashboard = () => dispatch => {
   let config = getNullConfig()
-  let body = {}
-  let idUsuario = id
-  body.state = 'habilitado'
-  body.motivoDeshabilitacion = ''
-  axios.put(api.usuario + '/' + idUsuario, body, config)
-    .then(res => {
-      return res.data.data
-    })
-    .then(() => {
-      dispatch(clearUsuarioResult())
-      dispatch(successful('El usuario se habilito correctamente'))
-    })
-    .catch(err => {
-      if (err.response && err.response.status) {
-        dispatch(queryError(getErrorResponse(err)))
-      } else {
-        dispatch(internalError(err))
-      }
-    })
-}
-
-export const deshabilitarUsuario = (id, motivo) => dispatch => {
-  let config = getNullConfig()
-  let body = {}
-  let idUsuario = id
-  body.state = 'deshabilitado'
-  body.motivoDeshabilitacion = motivo
-  axios.put(api.usuario + '/' + idUsuario, body, config)
-    .then(res => {
-      return res.data.data
-    })
-    .then(() => {
-      dispatch(clearUsuarioResult())
-      dispatch(successful('El usuario se deshabilito correctamente'))
-    })
-    .catch(err => {
-      if (err.response && err.response.status) {
-        dispatch(queryError(getErrorResponse(err)))
-      } else {
-        dispatch(internalError(err))
-      }
-    })
-}
-
-const filtarById = (data,id, pasarHabilitado) => {
-  let returnValue = null
-  data.forEach(element => {
-    if(element.id == id){
-      if (pasarHabilitado){
-        element.estado = 'habilitado'
-      }
-      returnValue =  element
-    }
-  })
-  return returnValue
-}
-
-// const filtarCategoriaById = (data,id) => {
-//   let returnValue = null
-//   data.forEach(element => {
-//     if(element.id == id){
-//       returnValue =  element.tipo
-//     }
-//   })
-//   return returnValue
-// }
-
-export const getUsuarioById = (id,pasarHabilitado) => dispatch => {
-  let config = getNullConfig()
-  let queryString = ''
-  axios.get(api.dashboard + queryString, config)
-  axios.all([
-    axios.get(api.base + api.clavetipoDashboard),
-    axios.get(api.dashboard + queryString, config),
-    axios.get(api.bodashboard +'/'+id+'/'+ api.clavePlatos + queryString, config),
-    axios.get(api.bodashboard +'/'+ api.claveCategorias, config),
-  ])
-    .then(axios.spread(function (tipoDashboard, dashboard,platos, categorias) {
-      return { usuario: filtarById(dashboard.data,id,pasarHabilitado), platos: platos.data , tipoDashboard: tipoDashboard.data, categorias: categorias.data}
-    }))
-    .then(data => {
-      dispatch(usuarioById(data))
-    })
-    .catch(err => {
-      if (err.response && err.response.status) {
-        dispatch(queryError(getErrorResponse(err)))
-      } else {
-        dispatch(internalError(err))
-      }
-    })
-}
-
-export const getDashboard = (nombre, apellido, estado) => dispatch => {
-  nombre =  nombre && nombre.trim()
-  apellido =  apellido && apellido.trim() 
-  let config = getNullConfig()
-  let queryString = ''
-  if (nombre != '') queryString += 'firstName:' + nombre
-  if (apellido != '') queryString += 'lastName:' + apellido
-  if (estado) queryString += (queryString == '') ? 'state:' + estado : ',state:' + estado 
-  queryString = (queryString == '') ? queryString : '?search=' + queryString
   // let data = [{id:1 , estado: 'habilitado', link: 'un.link', nombre: 'un nombre'},
   //   {id:2 , estado: 'deshabilitado', link: 'un.link2', nombre: 'un nombre2'}]
   // dispatch(dashboard({ dashboard:data}))
   axios.all([
-    axios.get(api.dashboard + queryString, config),
+    axios.get(api.usuarios, config),
+    axios.get(api.comercios, config),
+    axios.get(api.pedidos, config),
   ])
-    .then(axios.spread(function (dashboard) {
-      return { dashboard: dashboard.data }
+    .then(axios.spread(function (usuarios, comercios, pedidos) {
+      return { usuarios: usuarios.data, comercios: comercios.data, pedidos: pedidos.data }
     }))
     .then(data => {
       dispatch(dashboard(data))
@@ -201,232 +99,99 @@ export const getDashboard = (nombre, apellido, estado) => dispatch => {
         dispatch(internalError(err))
       }
     })
+  dispatch(clearUsuarioResult())
 }
 
-export const updateUsuario = (idUsuario,nombre,razonSocial,numero,codigoPostal,calle,email,estado,tipoUsuario,imagenLogo
-  , password, dniEncargado,telefonoEncargado, nombreEncargado) => dispatch => {
-  let config = getNullConfig()
-  let configGoogle = getGoogleConfig()
-  let body = {}
-  body.addressDto = { floor: '', department: ''}
-  if (nombre) body.nombre = nombre
-  if (tipoUsuario) body.tipoComidaId = tipoUsuario
-  if (razonSocial) body.razonSocial = razonSocial
-  if (numero && calle) body.addressDto.street = calle.trim() + ' '+ numero
-  if (codigoPostal) body.addressDto.postalCode = codigoPostal
-  if (imagenLogo) body.imagenLogo = imagenLogo
-  if (email) body.email = email
-  if (estado) body.estado = estado
-  if (password) body.password = password
-  if (nombreEncargado) body.nombreEncargado = nombreEncargado
-  if (dniEncargado) body.dniEncargado = dniEncargado
-  if (telefonoEncargado) body.telefonoEncargado = telefonoEncargado
-  let googleApiSearch = calle.trim() +' '+ numero.trim() +' CABA Argentina'
-  axios.all([
-    axios.get(api.googleApi + googleApiSearch + api.apiKey, configGoogle)
-  ])
-    .then(axios.spread(function (data) {
-      return { lat: data.data.results[0].geometry.location.lat,
-        lng: data.data.results[0].geometry.location.lng}
-    }))
-    .then(data => {
-      body.latitud = data.lat
-      body.longitud = data.lng
-      axios.put(api.dashboard + '/' + idUsuario, body, config)
-        .then(res => {
-          return res.data.data
-        })
-        .then(() => {
-          dispatch(successful('El usuario se actualizó correctamente'))
-          dispatch(getUsuarioById(idUsuario))
-        })
-        .catch(err => {
-          if (err.response && err.response.status) {
-            dispatch(queryError(getErrorResponse(err)))
-          } else {
-            dispatch(internalError(err))
-          }
-        })
-    })
-}
-
-export const createUsuario = (nombre, razonSocial, calle, numero, codigoPostal, email, verificacion_email, tipoUsuario, nombreEncargado, dniEncargado, telefonoEncargado) => dispatch => {
-  let config = getNullConfig()
-  let configGoogle = getGoogleConfig()
-  let newPass = generarContrasenia()
-  let body = {
-    email: email,
-    nombre: nombre,
-    razonSocial: razonSocial,
-    tipoComidaId: tipoUsuario,
-    password: newPass,
-    addressDto: {
-      street: calle +' '+numero,
-      postalCode: codigoPostal,
-      floor: '',
-      department: ''
-    },
-    estado: 'pendiente activacion', 
-    nombreEncargado: nombreEncargado,
-    dniEncargado: dniEncargado, 
-    telefonoEncargado: telefonoEncargado
-  }
-  let googleApiSearch = calle.trim() +' '+ numero.trim() +' CABA Argentina'
-  axios.all([
-    axios.get(api.googleApi + googleApiSearch + api.apiKey, configGoogle)
-  ])
-    .then(axios.spread(function (data) {
-      return { lat: data.data.results[0].geometry.location.lat,
-        lng: data.data.results[0].geometry.location.lng}
-    }))
-    .then(data => {
-      body.latitud = data.lat
-      body.longitud = data.lng
-      axios.post(api.dashboard, body, config)
-        .then(res => {
-          res.data
-        })
-        .then(() => {
-          dispatch(successful('El usuario se creo correctamente'))
-          // dispatch(getDashboard())
-        })
-        .catch(err => {
-          if (err.response && err.response.status) {
-            dispatch(queryError(getErrorResponse(err)))
-          } else {
-            dispatch(internalError(err))
-          }
-        })
-    })
-    .catch(err => {
-      if (err.response && err.response.status) {
-        dispatch(queryError(getErrorResponse(err)))
-      } else {
-        dispatch(internalError(err))
-      }
-    })
-}
-
-export const obtenerTipoDashboard = () => dispatch => {
-  let config = getNullConfig()
-  axios.get(api.base + api.clavetipoDashboard, config)
-    .then(res => res.data)
-    .then(data => {
-      dispatch(tipoDashboardTodos(data))
-    })
-    .catch(err => {
-      if (err.response && err.response.status){
-        dispatch(queryError(getErrorResponse(err)))
-      } else {
-        dispatch(internalError(err))
-      }
-    })
-}
-
-const fetchDashboardTable = (data) => {
-  let returnValue = []
-  data.map(function (rowObject) {
-    returnValue.push({ id: rowObject.facebookId, username: rowObject.username, domicilio: rowObject.address.street + ', piso: ' + rowObject.address.floor
-    + ', dpto: ' + rowObject.address.department + ', cp: ' + rowObject.address.postalCode, facebookId: rowObject.facebookId, estado: rowObject.state })
+const fetchUsuarios = (usuarios) => {
+  let returnValue = {habilitados: 0, deshabilitados: 0}
+  console.log(usuarios)
+  usuarios.map(function (usuario) {
+    if(usuario.state === 'habilitado'){
+      returnValue.habilitados += 1
+    } else {
+      returnValue.deshabilitados += 1
+    }
   })
   return returnValue
 }
 
-// const fetchTipoDashboard = (data) => {
-//   let returnValue = []
-//   data.map(function (rowObject) {
-//     returnValue.push({ id: rowObject.id, tipo: rowObject.tipo })
-//   })
-//   return returnValue
-// }
+const fetchComercios = (comercios) => {
+  let returnValue = {habilitados: 0, deshabilitados: 0}
+  console.log(comercios)
+  comercios.map(function (comercio) {
+    if(comercio.estado === 'habilitado'){
+      returnValue.habilitados += 1
+    } else {
+      returnValue.deshabilitados += 1
+    }
+  })
+  return returnValue
+}
 
-// const fetchUsuario = (data, platos, categorias) => {
-//   let returnValue = []
-//   platos.map(function (rowObject) {
-//     if(rowObject.id){
-//       returnValue.push({ id: rowObject.id,  imagen: rowObject.imagen, nombre: rowObject.nombre,precio: rowObject.precio,
-//         categoria: filtarCategoriaById(categorias,rowObject.categoria), orden: rowObject.orden, state: rowObject.state })
-//     }
-//   })
-//   returnValue = ordenarPorCategoriaOrden(returnValue)
-//   let estado = data.estado
-//   let numberStreet = data.addressDto.street.match(/\d+$/)
-//   let number = ''
-//   if(numberStreet){
-//     number = parseInt( numberStreet[0], 10) 
-//   }
-//   let street = data.addressDto.street.replace(number,'')
-//   let mensajeEncabezado = ''
-//   if (estado == 'pendiente activacion') {
-//     mensajeEncabezado = 'El administrador del usuario debe ingresar por primera vez para comenzar a cargar su menú'
-//   } else if (estado == 'pendiente menu' || estado == 'deshabilitado') {
-//     mensajeEncabezado = 'Deben cargarse al menos 5 platos en el menú para poder habilitar este usuario'
-//   } else if (estado == 'habilitado') {
-//     mensajeEncabezado = 'Para evitar que un usuario siga visible en la aplicación'
-//   }
-//   let tipoComida = ''
-//   if (data.tipoComida) tipoComida = data.tipoComida.id
-//   return { 
-//     id: data.id, 
-//     nombre: data.nombre,
-//     razonSocial: data.razonSocial,
-//     codigoPostal: data.addressDto.postalCode,
-//     calle: street,
-//     numero: number,
-//     estado: estado,
-//     password: data.password,
-//     nombreEncargado: data.nombreEncargado,
-//     telefonoEncargado: data.telefonoEncargado,
-//     dniEncargado: data.dniEncargado,
-//     lat: data.latitud,
-//     lng: data.longitud,
-//     imagenLogo: data.imagenLogo,
-//     email: data.email, /*roles: returnValue,*/ 
-//     tipoUsuario: tipoComida,
-//     mensajeEncabezado: mensajeEncabezado,
-//     platos: returnValue
-//   }
-// }
+const fetchPedidos = (pedidos) => {
+  console.log(pedidos)
+  /*   let returnValue = {habilitados: 0, deshabilitados: 0}
+  console.log(pedidos)
+  pedidos.map(function (comercio) {
+    if(comercio.estado === 'habilitado'){
+      returnValue.habilitados += 1
+    } else {
+      returnValue.deshabilitados += 1
+    }
+  }) */
+  let returnValue= {}
+  returnValue.cancelados = [
+    {x: moment('2018-01-01 10:00:00', 'Y-m-d H:m:s').valueOf(), y: 400},
+    {x: moment('2018-01-01 11:00:00', 'Y-m-d H:m:s').valueOf(), y: 300},
+    {x: moment('2018-01-01 12:00:00', 'Y-m-d H:m:s').valueOf(), y: 200},
+    {x: moment('2018-01-01 13:00:00', 'Y-m-d H:m:s').valueOf(), y: 100},
+    {x: moment('2018-01-01 14:00:00', 'Y-m-d H:m:s').valueOf(), y: 100},
+    {x: moment('2018-01-01 15:00:00', 'Y-m-d H:m:s').valueOf(), y: 300},
+    {x: moment('2018-01-01 16:00:00', 'Y-m-d H:m:s').valueOf(), y: 400},
+    {x: moment('2018-01-01 17:00:00', 'Y-m-d H:m:s').valueOf(), y: 300},
+    {x: moment('2018-01-01 18:00:00', 'Y-m-d H:m:s').valueOf(), y: 200},
+    {x: moment('2018-01-01 19:00:00', 'Y-m-d H:m:s').valueOf(), y: 200},
+    {x: moment('2018-01-01 20:00:00', 'Y-m-d H:m:s').valueOf(), y: 100},
+    {x: moment('2018-01-01 21:00:00', 'Y-m-d H:m:s').valueOf(), y: 200},
+    {x: moment('2018-01-01 22:00:00', 'Y-m-d H:m:s').valueOf(), y: 300},
+    {x: moment('2018-01-01 23:00:00', 'Y-m-d H:m:s').valueOf(), y: 400},
+    {x: moment('2018-01-02 00:00:00', 'Y-m-d H:m:s').valueOf(), y: 300},
+    {x: moment('2018-01-02 01:00:00', 'Y-m-d H:m:s').valueOf(), y: 200},
+    {x: moment('2018-01-02 02:00:00', 'Y-m-d H:m:s').valueOf(), y: 100},
+  ]
+  returnValue.entregados = [
+    {x: moment('2018-01-01 10:00:00', 'Y-m-d H:m:s').valueOf(), y: 500},
+    {x: moment('2018-01-01 11:00:00', 'Y-m-d H:m:s').valueOf(), y: 600},
+    {x: moment('2018-01-01 12:00:00', 'Y-m-d H:m:s').valueOf(), y: 700},
+    {x: moment('2018-01-01 13:00:00', 'Y-m-d H:m:s').valueOf(), y: 700},
+    {x: moment('2018-01-01 14:00:00', 'Y-m-d H:m:s').valueOf(), y: 200},
+    {x: moment('2018-01-01 15:00:00', 'Y-m-d H:m:s').valueOf(), y: 400},
+    {x: moment('2018-01-01 16:00:00', 'Y-m-d H:m:s').valueOf(), y: 500},
+    {x: moment('2018-01-01 17:00:00', 'Y-m-d H:m:s').valueOf(), y: 600},
+    {x: moment('2018-01-01 18:00:00', 'Y-m-d H:m:s').valueOf(), y: 600},
+    {x: moment('2018-01-01 19:00:00', 'Y-m-d H:m:s').valueOf(), y: 1000},
+    {x: moment('2018-01-01 20:00:00', 'Y-m-d H:m:s').valueOf(), y: 1000},
+    {x: moment('2018-01-01 21:00:00', 'Y-m-d H:m:s').valueOf(), y: 700},
+    {x: moment('2018-01-01 22:00:00', 'Y-m-d H:m:s').valueOf(), y: 600},
+    {x: moment('2018-01-01 23:00:00', 'Y-m-d H:m:s').valueOf(), y: 500},
+    {x: moment('2018-01-02 00:00:00', 'Y-m-d H:m:s').valueOf(), y: 400},
+    {x: moment('2018-01-02 01:00:00', 'Y-m-d H:m:s').valueOf(), y: 800},
+    {x: moment('2018-01-02 02:00:00', 'Y-m-d H:m:s').valueOf(), y: 900},
+  ]
+  return returnValue
+}
 
 export default (state = initialState, action) => {
   switch (action.type) {
-  case HYDRATE_TIPO_DASHBOARD:
-    return {
-      ...state,
-      result: [],
-      alert: {},
-    }
   case HYDRATE_DASHBOARD:
     return {
       ...state,
-      result: fetchDashboardTable(action.data.dashboard),
+      dashboardUsuarios: fetchUsuarios(action.data.usuarios),
+      dashboardComercios: fetchComercios(action.data.comercios),
+      dashboardPedidos: fetchPedidos(action.data.pedidos),
       activeSearch: true
       ,alert: {},
     }
-  // case HYDRATE_USUARIO_BY_ID:
-  //   return {
-  //     ...state,
-  //     result: [],
-  //     activeUsuario: fetchUsuario(action.data.usuario,action.data.platos, action.data.categorias),
-  //     allTipoDashboard: fetchTipoDashboard(action.data.tipoDashboard),
-  //   }
-  // case HYDRATE_POSICION:
-  //   return {
-  //     ...state,
-  //     posicion: { lat: action.data.lat, lng: action.data.lng },
-  //   }
-    // case REMOVE_ROL:
-    //   return {
-    //     ...state,
-    //     activeUser: { ...state.activeUser, roles: getRolRemover(action.data, state.activeUser) },
-    //     alert: {}
-    //   }
-    // case ADD_ROL:
-    //   return {
-    //     ...state,
-    //     activeUser: { ...state.activeUser, roles: getRolAdd(action.data, state.activeUser.roles, state.allRoles) },
-    //     alert: {}
-    //   }
   case QUERY_ERROR:
     return { ...state, alert: { style: 'danger', text: JSON.stringify(action.err.message) } }
   case INTERNAL_ERROR:

@@ -6,11 +6,13 @@ import { routerReducer } from 'react-router-redux'
 import authReducer from '../modules/login/authReducer'
 import comercioReducer from '../modules/comercio/comercioReducer'
 import usuarioReducer from '../modules/usuario/usuarioReducer'
+import dashboardReducer from '../modules/dashboard/dashboardReducer'
 
 /* Combine & Export Reducers to Store */
 const appReducer = combineReducers({
   comercioReducer,
   usuarioReducer,
+  dashboardReducer,
   authReducer,
   routerReducer
 })
