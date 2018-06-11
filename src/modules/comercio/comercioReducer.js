@@ -379,6 +379,7 @@ const fetchComercio = (data, platos, categorias) => {
         categoria: filtarCategoriaById(categorias,rowObject.categoria), orden: rowObject.orden, state: rowObject.state })
     }
   })
+  console.log(data)
   returnValue = ordenarPorCategoriaOrden(returnValue)
   let estado = data.estado
   let numberStreet = data.addressDto.street.match(/\d+$/)
@@ -390,8 +391,10 @@ const fetchComercio = (data, platos, categorias) => {
   let mensajeEncabezado = ''
   if (estado == 'pendiente activacion') {
     mensajeEncabezado = 'El encargado del comercio debe ingresar por primera vez para comenzar a cargar su menú'
-  } else if (estado == 'pendiente menu' || estado == 'deshabilitado') {
+  } else if (estado == 'pendiente menu') {
     mensajeEncabezado = 'Deben cargarse al menos 5 platos en el menú para poder habilitar este comercio'
+  } else if (estado == 'deshabilitado') {
+    mensajeEncabezado = 'Motivo deshabilitación: '+data.motivoDeshabilitacion+'.Puede habilitar este comercio cuando no existan errores'
   } else if (estado == 'habilitado') {
     mensajeEncabezado = 'Para evitar que un comercio siga visible en la aplicación'
   }
@@ -412,10 +415,11 @@ const fetchComercio = (data, platos, categorias) => {
     lat: data.latitud,
     lng: data.longitud,
     imagenLogo: data.imagenLogo,
-    email: data.email, /*roles: returnValue,*/ 
+    email: data.email, 
     tipoComercio: tipoComida,
     mensajeEncabezado: mensajeEncabezado,
-    platos: returnValue
+    platos: returnValue,
+    leadTime: data.leadTime?data.leadTime:'-'
   }
 }
 

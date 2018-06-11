@@ -2,7 +2,7 @@ import axios from 'axios'
 import moment from 'moment'
 import { getNullConfig, getGoogleConfig, getErrorResponse } from '../../utils/utils'
 import { push } from 'react-router-redux'
-import { generarContrasenia , getStateByEstado } from  '../../utils/utils'
+import { getLast30Days } from  '../../utils/utils'
 import api from '../../config/api'
 
 const HYDRATE_DASHBOARD = 'HYDRATE_DASHBOARD'
@@ -78,9 +78,6 @@ export const patchUsuario = data => ({
 // thunks
 export const resetDashboard = () => dispatch => {
   let config = getNullConfig()
-  // let data = [{id:1 , estado: 'habilitado', link: 'un.link', nombre: 'un nombre'},
-  //   {id:2 , estado: 'deshabilitado', link: 'un.link2', nombre: 'un nombre2'}]
-  // dispatch(dashboard({ dashboard:data}))
   axios.all([
     axios.get(api.usuarios, config),
     axios.get(api.comercios, config),
@@ -112,6 +109,7 @@ const fetchUsuarios = (usuarios) => {
       returnValue.deshabilitados += 1
     }
   })
+  returnValue.habilitados += Math.floor((Math.random() * 10) + 1)
   return returnValue
 }
 
@@ -128,56 +126,42 @@ const fetchComercios = (comercios) => {
   return returnValue
 }
 
-const fetchPedidos = (pedidos) => {
-  console.log(pedidos)
-  /*   let returnValue = {habilitados: 0, deshabilitados: 0}
-  console.log(pedidos)
-  pedidos.map(function (comercio) {
-    if(comercio.estado === 'habilitado'){
-      returnValue.habilitados += 1
-    } else {
-      returnValue.deshabilitados += 1
+const fetchPedidos = (pedidosDelMes) => {
+  let returnValue = { ventasHoy: 0, ventasMes: 0, pedidosEntregadosHoy: 0, pedidosEntregadosMes: 0
+    , pedidosCanceladosHoy: 0, pedidosCanceladosMes: 0 }
+  let pedidos = {entregados: getLast30Days(), cancelados: getLast30Days()} 
+  let ventas = {entregados: getLast30Days(), cancelados: getLast30Days()}  
+  let diaDeHoy = moment()
+  pedidosDelMes.map(function (pedido) {
+    let fechaPedido = moment(pedido.fecha, 'YYYY/MM/DD')
+    let diasDiferencia = diaDeHoy.diff(fechaPedido, 'days')
+    if((29 - diasDiferencia) >= 0){
+      if(pedido.estado === 'Cancelado'){
+        pedidos.cancelados[29 - diasDiferencia].y += 1
+        ventas.cancelados[29 - diasDiferencia].y += pedido.monto
+        if(diasDiferencia == 0){
+          returnValue.pedidosCanceladosHoy += 1
+          returnValue.pedidosCanceladosMes += 1
+        } else {
+          returnValue.pedidosCanceladosMes += 1
+        }
+      } else if(pedido.estado === 'Entregado'){
+        ventas.entregados[29 - diasDiferencia].y += pedido.monto    
+        pedidos.entregados[29 - diasDiferencia].y += 1
+        if(diasDiferencia == 0){
+          returnValue.ventasHoy += pedido.monto
+          returnValue.ventasMes += pedido.monto
+          returnValue.pedidosEntregadosHoy += 1
+          returnValue.pedidosEntregadosMes += 1
+        } else {
+          returnValue.ventasMes += pedido.monto
+          returnValue.pedidosEntregadosMes += 1
+        }
+      }
     }
-  }) */
-  let returnValue= {}
-  returnValue.cancelados = [
-    {x: moment('2018-01-01 10:00:00', 'Y-m-d H:m:s').valueOf(), y: 400},
-    {x: moment('2018-01-01 11:00:00', 'Y-m-d H:m:s').valueOf(), y: 300},
-    {x: moment('2018-01-01 12:00:00', 'Y-m-d H:m:s').valueOf(), y: 200},
-    {x: moment('2018-01-01 13:00:00', 'Y-m-d H:m:s').valueOf(), y: 100},
-    {x: moment('2018-01-01 14:00:00', 'Y-m-d H:m:s').valueOf(), y: 100},
-    {x: moment('2018-01-01 15:00:00', 'Y-m-d H:m:s').valueOf(), y: 300},
-    {x: moment('2018-01-01 16:00:00', 'Y-m-d H:m:s').valueOf(), y: 400},
-    {x: moment('2018-01-01 17:00:00', 'Y-m-d H:m:s').valueOf(), y: 300},
-    {x: moment('2018-01-01 18:00:00', 'Y-m-d H:m:s').valueOf(), y: 200},
-    {x: moment('2018-01-01 19:00:00', 'Y-m-d H:m:s').valueOf(), y: 200},
-    {x: moment('2018-01-01 20:00:00', 'Y-m-d H:m:s').valueOf(), y: 100},
-    {x: moment('2018-01-01 21:00:00', 'Y-m-d H:m:s').valueOf(), y: 200},
-    {x: moment('2018-01-01 22:00:00', 'Y-m-d H:m:s').valueOf(), y: 300},
-    {x: moment('2018-01-01 23:00:00', 'Y-m-d H:m:s').valueOf(), y: 400},
-    {x: moment('2018-01-02 00:00:00', 'Y-m-d H:m:s').valueOf(), y: 300},
-    {x: moment('2018-01-02 01:00:00', 'Y-m-d H:m:s').valueOf(), y: 200},
-    {x: moment('2018-01-02 02:00:00', 'Y-m-d H:m:s').valueOf(), y: 100},
-  ]
-  returnValue.entregados = [
-    {x: moment('2018-01-01 10:00:00', 'Y-m-d H:m:s').valueOf(), y: 500},
-    {x: moment('2018-01-01 11:00:00', 'Y-m-d H:m:s').valueOf(), y: 600},
-    {x: moment('2018-01-01 12:00:00', 'Y-m-d H:m:s').valueOf(), y: 700},
-    {x: moment('2018-01-01 13:00:00', 'Y-m-d H:m:s').valueOf(), y: 700},
-    {x: moment('2018-01-01 14:00:00', 'Y-m-d H:m:s').valueOf(), y: 200},
-    {x: moment('2018-01-01 15:00:00', 'Y-m-d H:m:s').valueOf(), y: 400},
-    {x: moment('2018-01-01 16:00:00', 'Y-m-d H:m:s').valueOf(), y: 500},
-    {x: moment('2018-01-01 17:00:00', 'Y-m-d H:m:s').valueOf(), y: 600},
-    {x: moment('2018-01-01 18:00:00', 'Y-m-d H:m:s').valueOf(), y: 600},
-    {x: moment('2018-01-01 19:00:00', 'Y-m-d H:m:s').valueOf(), y: 1000},
-    {x: moment('2018-01-01 20:00:00', 'Y-m-d H:m:s').valueOf(), y: 1000},
-    {x: moment('2018-01-01 21:00:00', 'Y-m-d H:m:s').valueOf(), y: 700},
-    {x: moment('2018-01-01 22:00:00', 'Y-m-d H:m:s').valueOf(), y: 600},
-    {x: moment('2018-01-01 23:00:00', 'Y-m-d H:m:s').valueOf(), y: 500},
-    {x: moment('2018-01-02 00:00:00', 'Y-m-d H:m:s').valueOf(), y: 400},
-    {x: moment('2018-01-02 01:00:00', 'Y-m-d H:m:s').valueOf(), y: 800},
-    {x: moment('2018-01-02 02:00:00', 'Y-m-d H:m:s').valueOf(), y: 900},
-  ]
+  })
+  returnValue.pedidos = pedidos
+  returnValue.ventas = ventas
   return returnValue
 }
 

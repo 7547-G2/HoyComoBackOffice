@@ -1,4 +1,5 @@
 import store from '../app/store'
+import moment from 'moment'
 // import _ from 'lodash'
 
 //Constantes
@@ -123,4 +124,12 @@ export const ordenarPorId = (array) => {
     }
   })
   return array
+}
+
+export const getLast30Days = () => {
+  let days = []
+  for (let i = 29; i >= 0; i--) { 
+    days.push({x: moment().add(-i, 'days').valueOf(), y: 0})
+  }
+  return days
 }

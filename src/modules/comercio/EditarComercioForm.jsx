@@ -33,6 +33,7 @@ export class EditarComercioForm extends React.Component {
         nombreEncargado: { error: false, mensaje: '' },
         dniEncargado: { error: false, mensaje: '' },
         telefonoEncargado: { error: false, mensaje: '' },
+        leadTime: { error: false, mensaje: '' },
         imageLogo: { estado: null, mensaje: mensajeImagenDefault },
         estado: { seleccionado: props.activeComercio.estado, error: false, mensaje: '' },
         tipoComercio: { seleccionado: props.activeComercio.tipoComercio, error: false, mensaje: '' },
@@ -91,6 +92,7 @@ export class EditarComercioForm extends React.Component {
       nombreEncargado: { error: false, mensaje: '' },
       dniEncargado: { error: false, mensaje: '' },
       telefonoEncargado: { error: false, mensaje: '' },
+      leadTime: { error: false, mensaje: '' },
       imageLogo: { estado: null, mensaje: mensajeImagenDefault},
       estado: { error: false, mensaje: '', seleccionado: this.state.estado.seleccionado },
       tipoComercio: { error: false, mensaje: '', seleccionado: this.state.tipoComercio.seleccionado },
@@ -115,6 +117,7 @@ export class EditarComercioForm extends React.Component {
       estado: this.state.updateForm.estado,
       tipoComercio: this.state.updateForm.tipoComercio,
       telefonoEncargado: { error: false, mensaje: '' },
+      leadTime: { error: false, mensaje: '' },
       dniEncargado: { error: false, mensaje: '' },
       nombreEncargado: { error: false, mensaje: '' },
     }
@@ -499,12 +502,20 @@ export class EditarComercioForm extends React.Component {
                   ref={dniEncargadoInput => { this.dniEncargadoInput = dniEncargadoInput }} type="text"></FormControl>
               } />
           </Col>
-          <Col lg={4} md={4}>
+          <Col lg={2} md={4}>
             <CustomFormField validationState={this.state.updateForm.telefonoEncargado.error ? 'error' : null}
               validationMessage={this.state.updateForm.telefonoEncargado.mensaje} bsSize="small" controlId="telefonoEncargado"
               label="Teléfono Encargado" inputComponent={
                 <FormControl defaultValue={this.props.activeComercio.telefonoEncargado} key="telefonoEncargadoInput" bsSize="small"
                   ref={telefonoEncargadoInput => { this.telefonoEncargadoInput = telefonoEncargadoInput }} type="text"></FormControl>
+              } />
+          </Col>
+          <Col lg={2} md={4}>
+            <CustomFormField validationState={this.state.updateForm.leadTime.error ? 'error' : null}
+              validationMessage={this.state.updateForm.leadTime.mensaje} bsSize="small" controlId="leadTime"
+              label="Lead Time" inputComponent={
+                <FormControl defaultValue={this.props.activeComercio.leadTime} key="leadTimeInput" bsSize="small"
+                  ref={leadTimeInput => { this.leadTimeInput = leadTimeInput }}  disabled={'true'} type="text"></FormControl>
               } />
           </Col>
         </Row>

@@ -1,33 +1,16 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import 'react-vis/dist/style.css'
-import { Row, Col, Button, Glyphicon, Panel, Label } from 'react-bootstrap'
+import { Row, Col, Button, Glyphicon, Panel } from 'react-bootstrap'
 import { withRouter } from 'react-router-dom'
-import { getDashboard, resetDashboard, clearAlert } from './dashboardReducer'
+import { resetDashboard, clearAlert } from './dashboardReducer'
 import { CustomAlert } from '../../utils/CustomAlert'
-import moment from 'moment'
-
-import {
-  FlexibleWidthXYPlot,
-  XAxis,
-  YAxis,
-  HorizontalGridLines,
-  VerticalGridLines,
-  LineSeries,
-  Crosshair
-} from 'react-vis'
-
+import { CustomGraphic } from '../../utils/CustomGraphic'
 
 export class DashboardIndex extends React.Component {
   constructor() {
     super()
-    this.state = { crosshairValues: [], w: null, z: null}
+
     this.recargar = this.recargar.bind(this)
-    this._onMouseLeave = this._onMouseLeave.bind(this)
-    this._onNearestX1 = this._onNearestX1.bind(this)
-    this._onNearestX2 = this._onNearestX2.bind(this)
-    this.w
-    this.z
   }
 
   componentDidMount() {
@@ -35,24 +18,7 @@ export class DashboardIndex extends React.Component {
   }
 
   recargar() {
-    this.props.getDashboard()
-  }
-
-  _onMouseLeave() {
-    this.setState({ crosshairValues: [], w: null, z: null })
-  }
-
-  _onNearestX2(value) {
-    let w = value.x
-    let z = value.y
-    this.setState({ w: w, z: z})
-  }
-
-  _onNearestX1(value) {
-    console.log(value)
-    let x = value.x
-    let y = value.y
-    this.setState({...this.state, crosshairValues: [{ x: x, y: y}] })
+    this.props.clearResult()
   }
 
   render() {
@@ -86,10 +52,10 @@ export class DashboardIndex extends React.Component {
                 </Panel.Title>
               </Panel.Heading>
               <Panel.Body style={{ backgroundColor: '#ABB0D5', borderColor: '#3a46b0' }}>
-                <Col lg={6} style={{ textAlign: 'center', color: '#449d44', fontSize: 100, padding: '0px', margin: '0px', lineHeight: '0.7' }}>
+                <Col lg={6} style={{ textAlign: 'center', color: '#449d44', fontSize: 50, padding: '0px', margin: '0px', lineHeight: '0.7' }}>
                   <b>{this.props.comercios.habilitados}</b>
                 </Col>
-                <Col lg={6} style={{ textAlign: 'center', color: '#d9534f', fontSize: 100, padding: '0px', margin: '0px', lineHeight: '0.7' }}>
+                <Col lg={6} style={{ textAlign: 'center', color: '#d9534f', fontSize: 50, padding: '0px', margin: '0px', lineHeight: '0.7' }}>
                   <b>{this.props.comercios.deshabilitados}</b>
                 </Col>
               </Panel.Body>
@@ -111,11 +77,11 @@ export class DashboardIndex extends React.Component {
                 </Panel.Title>
               </Panel.Heading>
               <Panel.Body style={{ backgroundColor: '#ABB0D5', borderColor: '#3a46b0' }}>
-                <Col lg={6} style={{ textAlign: 'center', color: '#449d44', fontSize: 100, padding: '0px', margin: '0px', lineHeight: '0.7' }}>
+                <Col lg={6} style={{ textAlign: 'center', color: '#449d44', fontSize: 50, padding: '0px', margin: '0px', lineHeight: '0.7' }}>
                   <b>{this.props.usuarios.habilitados}</b>
                 </Col>
-                <Col lg={6} style={{ textAlign: 'center', color: '#d9534f', fontSize: 100, padding: '0px', margin: '0px', lineHeight: '0.7' }}>
-                  <b>{this.props.usuarios.habilitados}</b>
+                <Col lg={6} style={{ textAlign: 'center', color: '#d9534f', fontSize: 50, padding: '0px', margin: '0px', lineHeight: '0.7' }}>
+                  <b>{this.props.usuarios.deshabilitados}</b>
                 </Col>
               </Panel.Body>
               <Panel.Footer style={{ backgroundColor: '#3a46b0', borderColor: '#3a46b0', color: 'white', fontSize: 15 }}>
@@ -124,47 +90,156 @@ export class DashboardIndex extends React.Component {
             </Panel>
           </Col>
         </Row>
+        {/* Pedidos */}
         <Row>
-          <Col lg={12}>
-            <Panel style={{ backgroundColor: '#FFFFFF', borderColor: '#3a46b0' }}>
-              <Panel.Body>
-                <Col lg={12}>
-                  <FlexibleWidthXYPlot
-                    onMouseLeave={this._onMouseLeave}
-                    xType="time"
-                    height={300}>
-                    <HorizontalGridLines />
-                    <VerticalGridLines />
-                    <XAxis title="Hora" position="start" />
-                    <YAxis title="Requests" />
-                    <LineSeries
-                      id="primeros"
-                      name="primeros"
-                      stroke="#449d44"
-                      onNearestX={this._onNearestX1}
-                      className="first-series"
-                      data={this.props.pedidos.entregados} />
-                    <LineSeries
-                      id="segundos"
-                      name="segundos"
-                      stroke="#d9534f"
-                      onNearestX={this._onNearestX2}
-                      className="first-series"
-                      data={this.props.pedidos.cancelados} />
-                    <Crosshair values={this.state.crosshairValues}>
-                      <div >
-                        {this.state.crosshairValues.length > 0 &&
-                          <h4>
-                            <Label>{moment(this.state.crosshairValues[0].x).format('HH:mm') + 'hs'}: {this.state.crosshairValues[0].y} entregados - {this.state.z} cancelados</Label>
-                          </h4>
-                        }
-                      </div>
-                    </Crosshair >
-                  </FlexibleWidthXYPlot >
+          <Col lg={6}>
+            <Panel >
+              <Panel.Heading style={{ textAlign: 'center', backgroundColor: '#3f51b5', borderColor: '#3a46b0', color: 'white', height: 45 }}>
+                <Panel.Title>
+                  <Col lg={6} style={{ textAlign: 'center', color: 'white' }}>
+                    Mes
+                  </Col>
+                  <Col lg={6} style={{ textAlign: 'center', color: 'white' }}>
+                    Día
+                  </Col>
+                </Panel.Title>
+              </Panel.Heading>
+              <Panel.Body style={{ backgroundColor: '#ABB0D5', borderColor: '#3a46b0' }}>
+                <Col lg={6} style={{ textAlign: 'center', color: 'white', fontSize: 50, padding: '0px', margin: '0px', lineHeight: '0.7' }}>
+                  <b>{this.props.pedidos && this.props.pedidos.pedidosEntregadosMes}</b>
+                </Col>
+                <Col lg={6} style={{ textAlign: 'center', color: 'white', fontSize: 50, padding: '0px', margin: '0px', lineHeight: '0.7' }}>
+                  <b>{this.props.pedidos && this.props.pedidos.pedidosEntregadosHoy}</b>
                 </Col>
               </Panel.Body>
               <Panel.Footer style={{ backgroundColor: '#3a46b0', borderColor: '#3a46b0', color: 'white', fontSize: 15 }}>
-                <b><Glyphicon glyph="user" />  PEDIDOS TOTALES EN LOS ÚLTIMOS 30 DIAS</b>
+                <b><Glyphicon glyph="ok" /> PEDIDOS ENTREGADOS</b>
+              </Panel.Footer>
+            </Panel>
+          </Col>
+          <Col lg={6}>
+            <Panel >
+              <Panel.Heading style={{ textAlign: 'center', backgroundColor: '#3f51b5', borderColor: '#3a46b0', color: 'white', height: 45 }}>
+                <Panel.Title>
+                  <Col lg={6} style={{ textAlign: 'center', color: 'white' }}>
+                    Mes
+                  </Col>
+                  <Col lg={6} style={{ textAlign: 'center', color: 'white' }}>
+                    Día
+                  </Col>
+                </Panel.Title>
+              </Panel.Heading>
+              <Panel.Body style={{ backgroundColor: '#ABB0D5', borderColor: '#3a46b0' }}>
+                <Col lg={6} style={{ textAlign: 'center', color: 'white', fontSize: 50, padding: '0px', margin: '0px', lineHeight: '0.7' }}>
+                  <b>{this.props.pedidos && this.props.pedidos.pedidosCanceladosMes}</b>
+                </Col>
+                <Col lg={6} style={{ textAlign: 'center', color: 'white', fontSize: 50, padding: '0px', margin: '0px', lineHeight: '0.7' }}>
+                  <b>{this.props.pedidos && this.props.pedidos.pedidosCanceladosHoy}</b>
+                </Col>
+              </Panel.Body>
+              <Panel.Footer style={{ backgroundColor: '#3a46b0', borderColor: '#3a46b0', color: 'white', fontSize: 15 }}>
+                <b><Glyphicon glyph="remove" />  PEDIDOS CANCELADOS</b>
+              </Panel.Footer>
+            </Panel>
+          </Col>
+        </Row>
+        {/* Facturacion */}
+        <Row>
+          <Col lg={6}>
+            <Panel >
+              <Panel.Heading style={{ textAlign: 'center', backgroundColor: '#3f51b5', borderColor: '#3a46b0', color: 'white', height: 45 }}>
+                <Panel.Title>
+                  <Col lg={6} style={{ textAlign: 'center', color: 'white' }}>
+                    Mes
+                  </Col>
+                  <Col lg={6} style={{ textAlign: 'center', color: 'white' }}>
+                    Día
+                  </Col>
+                </Panel.Title>
+              </Panel.Heading>
+              <Panel.Body style={{ backgroundColor: '#ABB0D5', borderColor: '#3a46b0' }}>
+                <Col lg={6} style={{ textAlign: 'center', color: 'white', fontSize: 50, padding: '0px', margin: '0px', lineHeight: '0.7' }}>
+                  <b>{this.props.pedidos && this.props.pedidos.ventasMes}</b>
+                </Col>
+                <Col lg={6} style={{ textAlign: 'center', color: 'white', fontSize: 50, padding: '0px', margin: '0px', lineHeight: '0.7' }}>
+                  <b>{this.props.pedidos && this.props.pedidos.ventasHoy}</b>
+                </Col>
+              </Panel.Body>
+              <Panel.Footer style={{ backgroundColor: '#3a46b0', borderColor: '#3a46b0', color: 'white', fontSize: 15 }}>
+                <b><Glyphicon glyph="usd" /> FACTURACIÓN</b>
+              </Panel.Footer>
+            </Panel>
+          </Col>
+          <Col lg={6}>
+            <Panel >
+              <Panel.Heading style={{ textAlign: 'center', backgroundColor: '#3f51b5', borderColor: '#3a46b0', color: 'white', height: 45 }}>
+                <Panel.Title>
+                  <Col lg={6} style={{ textAlign: 'center', color: 'white' }}>
+                    Mes
+                  </Col>
+                  <Col lg={6} style={{ textAlign: 'center', color: 'white' }}>
+                    Día
+                  </Col>
+                </Panel.Title>
+              </Panel.Heading>
+              <Panel.Body style={{ backgroundColor: '#ABB0D5', borderColor: '#3a46b0' }}>
+                <Col lg={6} style={{ textAlign: 'center', color: 'white', fontSize: 50, padding: '0px', margin: '0px', lineHeight: '0.7' }}>
+                  <b>{this.props.pedidos && Math.round(this.props.pedidos.ventasMes * 0.01)}</b>
+                </Col>
+                <Col lg={6} style={{ textAlign: 'center', color: 'white', fontSize: 50, padding: '0px', margin: '0px', lineHeight: '0.7' }}>
+                  <b>{this.props.pedidos && Math.round(this.props.pedidos.ventasHoy * 0.01)}</b>
+                </Col>
+              </Panel.Body>
+              <Panel.Footer style={{ backgroundColor: '#3a46b0', borderColor: '#3a46b0', color: 'white', fontSize: 15 }}>
+                <b><Glyphicon glyph="usd" />  FEE HOY COMO</b>
+              </Panel.Footer>
+            </Panel>
+          </Col>
+        </Row>
+        <Row>
+          <Col lg={12}>
+            <Panel style={{ backgroundColor: '#FFFFFF', borderColor: '#3a46b0' }}>
+              <Panel.Heading style={{ textAlign: 'center', backgroundColor: '#3f51b5', borderColor: '#3a46b0', color: 'white', height: 45 }}>
+                <Panel.Title>
+                  <Col lg={6} style={{ textAlign: 'center', color: '#64bd64' }}>
+                    <Glyphicon glyph="ok" /> Entregados
+                  </Col>
+                  <Col lg={6} style={{ textAlign: 'center', color: '#e9635f' }}>
+                    <Glyphicon glyph="remove" /> Cancelados
+                  </Col>
+                </Panel.Title>
+              </Panel.Heading>
+              <Panel.Body>
+                <Col lg={12}>
+                  {this.props.pedidos.pedidos && <CustomGraphic pedidos={this.props.pedidos.pedidos}/>}
+                </Col>
+              </Panel.Body>
+              <Panel.Footer style={{ backgroundColor: '#3a46b0', borderColor: '#3a46b0', color: 'white', fontSize: 15 }}>
+                <b><Glyphicon glyph="phone-alt" />  PEDIDOS TOTALES EN LOS ÚLTIMOS 30 DIAS</b>
+              </Panel.Footer>
+            </Panel>
+          </Col>
+        </Row>
+        <Row>
+          <Col lg={12}>
+            <Panel style={{ backgroundColor: '#FFFFFF', borderColor: '#3a46b0' }}>
+              <Panel.Heading style={{ textAlign: 'center', backgroundColor: '#3f51b5', borderColor: '#3a46b0', color: 'white', height: 45 }}>
+                <Panel.Title>
+                  <Col lg={6} style={{ textAlign: 'center', color: '#64bd64' }}>
+                    <Glyphicon glyph="ok" /> Facturación de los comercios
+                  </Col>
+                  <Col lg={6} style={{ textAlign: 'center', color: '#e9635f' }}>
+                    <Glyphicon glyph="remove" /> Pérdidas por cancelación
+                  </Col>
+                </Panel.Title>
+              </Panel.Heading>
+              <Panel.Body>
+                <Col lg={12}>
+                  {this.props.pedidos.ventas && <CustomGraphic pedidos={this.props.pedidos.ventas}/>}
+                </Col>
+              </Panel.Body>
+              <Panel.Footer style={{ backgroundColor: '#3a46b0', borderColor: '#3a46b0', color: 'white', fontSize: 15 }}>
+                <b><Glyphicon glyph="usd" />  FACTURACIÓN EN LOS ÚLTIMOS 30 DIAS</b>
               </Panel.Footer>
             </Panel>
           </Col>
@@ -175,9 +250,6 @@ export class DashboardIndex extends React.Component {
 }
 
 const mapDispatch = (dispatch) => ({
-  getDashboard: () => {
-    dispatch(getDashboard())
-  },
   clearResult: () => {
     dispatch(resetDashboard())
   },
