@@ -53,10 +53,10 @@ export class DashboardIndex extends React.Component {
               </Panel.Heading>
               <Panel.Body style={{ backgroundColor: '#ABB0D5', borderColor: '#3a46b0' }}>
                 <Col lg={6} style={{ textAlign: 'center', color: '#449d44', fontSize: 50, padding: '0px', margin: '0px', lineHeight: '0.7' }}>
-                  <b>{this.props.comercios.habilitados}</b>
+                  <b>{this.props.comercios && this.props.comercios.habilitados}</b>
                 </Col>
                 <Col lg={6} style={{ textAlign: 'center', color: '#d9534f', fontSize: 50, padding: '0px', margin: '0px', lineHeight: '0.7' }}>
-                  <b>{this.props.comercios.deshabilitados}</b>
+                  <b>{this.props.comercios && this.props.comercios.deshabilitados}</b>
                 </Col>
               </Panel.Body>
               <Panel.Footer style={{ backgroundColor: '#3a46b0', borderColor: '#3a46b0', color: 'white', fontSize: 15 }}>
@@ -78,10 +78,10 @@ export class DashboardIndex extends React.Component {
               </Panel.Heading>
               <Panel.Body style={{ backgroundColor: '#ABB0D5', borderColor: '#3a46b0' }}>
                 <Col lg={6} style={{ textAlign: 'center', color: '#449d44', fontSize: 50, padding: '0px', margin: '0px', lineHeight: '0.7' }}>
-                  <b>{this.props.usuarios.habilitados}</b>
+                  <b>{this.props.usuarios && this.props.usuarios.habilitados}</b>
                 </Col>
                 <Col lg={6} style={{ textAlign: 'center', color: '#d9534f', fontSize: 50, padding: '0px', margin: '0px', lineHeight: '0.7' }}>
-                  <b>{this.props.usuarios.deshabilitados}</b>
+                  <b>{this.props.usuarios && this.props.usuarios.deshabilitados}</b>
                 </Col>
               </Panel.Body>
               <Panel.Footer style={{ backgroundColor: '#3a46b0', borderColor: '#3a46b0', color: 'white', fontSize: 15 }}>
@@ -211,7 +211,7 @@ export class DashboardIndex extends React.Component {
               </Panel.Heading>
               <Panel.Body>
                 <Col lg={12}>
-                  {this.props.pedidos.pedidos && <CustomGraphic pedidos={this.props.pedidos.pedidos}/>}
+                  {this.props.pedidos.pedidos && <CustomGraphic YAxis={'Pedidos'} desc1={'entregados'}  desc2={'cancelados'} pedidos={this.props.pedidos.pedidos}/>}
                 </Col>
               </Panel.Body>
               <Panel.Footer style={{ backgroundColor: '#3a46b0', borderColor: '#3a46b0', color: 'white', fontSize: 15 }}>
@@ -235,7 +235,7 @@ export class DashboardIndex extends React.Component {
               </Panel.Heading>
               <Panel.Body>
                 <Col lg={12}>
-                  {this.props.pedidos.ventas && <CustomGraphic pedidos={this.props.pedidos.ventas}/>}
+                  {this.props.pedidos.ventas && <CustomGraphic YAxis={'Pesos'} desc1={'pesos facturados'}  desc2={'pesos perdidos'} pedidos={this.props.pedidos.ventas}/>}
                 </Col>
               </Panel.Body>
               <Panel.Footer style={{ backgroundColor: '#3a46b0', borderColor: '#3a46b0', color: 'white', fontSize: 15 }}>

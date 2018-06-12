@@ -109,7 +109,7 @@ const fetchUsuarios = (usuarios) => {
       returnValue.deshabilitados += 1
     }
   })
-  returnValue.habilitados += Math.floor((Math.random() * 10) + 1)
+  // returnValue.habilitados += Math.floor((Math.random() * 10) + 1)
   return returnValue
 }
 

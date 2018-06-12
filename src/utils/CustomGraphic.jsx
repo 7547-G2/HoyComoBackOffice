@@ -55,7 +55,7 @@ export class CustomGraphic extends React.Component {
         <HorizontalGridLines />
         <VerticalGridLines />
         <XAxis title="Día" position="start" />
-        <YAxis title="Pedidos" />
+        <YAxis title={this.props.YAxis} />
         <LineSeries
           id="primeros"
           name="primeros"
@@ -74,7 +74,7 @@ export class CustomGraphic extends React.Component {
           <div >
             {this.state.crosshairValues.length > 0 &&
               <h4>
-                <Label>{moment(this.state.crosshairValues[0].x).format('YYYY/MM/DD')}: {this.state.crosshairValues[0].y} entregados - {this.state.z} cancelados</Label>
+                <Label>{moment(this.state.crosshairValues[0].x).format('YYYY/MM/DD')}: {this.state.crosshairValues[0].y} {this.props.desc1} - {this.state.z} {this.props.desc2}</Label>
               </h4>
             }
           </div>
