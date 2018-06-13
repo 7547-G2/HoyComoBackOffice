@@ -63,18 +63,20 @@ export class CustomGraphic extends React.Component {
           onNearestX={this._onNearestX1}
           className="first-series"
           data={this.props.pedidos.entregados} />
-        <LineSeries
+        {/* <LineSeries
           id="segundos"
           name="segundos"
           stroke="#d9534f"
           onNearestX={this._onNearestX2}
           className="first-series"
-          data={this.props.pedidos.cancelados} />
+          data={this.props.pedidos.cancelados} /> */}
         <Crosshair values={this.state.crosshairValues}>
           <div >
             {this.state.crosshairValues.length > 0 &&
               <h4>
-                <Label>{moment(this.state.crosshairValues[0].x).format('YYYY/MM/DD')}: {this.state.crosshairValues[0].y} {this.props.desc1} - {this.state.z} {this.props.desc2}</Label>
+                <Label>{moment(this.state.crosshairValues[0].x).format('YYYY/MM/DD')}: {this.state.crosshairValues[0].y} {this.props.desc1} 
+                {/* - {this.state.z} {this.props.desc2} */}
+                </Label>
               </h4>
             }
           </div>

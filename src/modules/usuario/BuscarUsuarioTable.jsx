@@ -18,7 +18,7 @@ export class BuscarUsuarioTable extends React.Component {
 
   getTablaUsuarios() {
     if (this.props.activeSearch && this.props.result.length != 0) {
-      return <CustomTableWithPaginationAndButtons data={ordenarPorId(this.props.result)} headers={['Usuario','Direccion','Link a Facebook','Estado', 'Motivo de Deshabilitacion']}
+      return <CustomTableWithPaginationAndButtons data={ordenarPorId(this.props.result)} headers={['Usuario','Direccion','Link a Facebook','Teléfono','Estado', 'Motivo de Deshabilitacion']}
         habilitarAction={this.props.habilitar} deshabilitarAction={this.props.deshabilitar} />
     } else if (this.props.activeSearch) {
       return <Alert bsStyle="info">La búsqueda no trajo resultados</Alert>
