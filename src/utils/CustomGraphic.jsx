@@ -75,7 +75,7 @@ export class CustomGraphic extends React.Component {
             {this.state.crosshairValues.length > 0 &&
               <h4>
                 <Label>{moment(this.state.crosshairValues[0].x).format('YYYY/MM/DD')}: {this.state.crosshairValues[0].y} {this.props.desc1} 
-                {/* - {this.state.z} {this.props.desc2} */}
+                  {/* - {this.state.z} {this.props.desc2} */}
                 </Label>
               </h4>
             }

@@ -332,7 +332,7 @@ const fetchUsuariosTable = (data) => {
     returnValue.push({ id: rowObject.facebookId, username: rowObject.username, domicilio: rowObject.address.street +
         piso +
         dpto + 
-        cp, link: rowObject.facebookId, telefono: rowObject.telefono, estado: rowObject.state, motivoDeshabilitacion: rowObject.motivoDeshabilitacion })
+        cp, link: rowObject.facebookId, telefono: rowObject.telephone, estado: rowObject.state, motivoDeshabilitacion: rowObject.motivoDeshabilitacion })
   })
   return returnValue
 }

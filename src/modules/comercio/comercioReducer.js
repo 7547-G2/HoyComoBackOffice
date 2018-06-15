@@ -419,7 +419,7 @@ const fetchComercio = (data, platos, categorias) => {
     tipoComercio: tipoComida,
     mensajeEncabezado: mensajeEncabezado,
     platos: returnValue,
-    leadTime: data.leadTime?data.leadTime:'-'
+    leadTime: data.leadTime?data.leadTime+' min':'-'
   }
 }
 

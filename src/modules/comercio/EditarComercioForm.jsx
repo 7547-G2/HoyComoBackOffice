@@ -242,6 +242,10 @@ export class EditarComercioForm extends React.Component {
       codigoPostal: { error: false, mensaje: '' },
       calle: { error: false, mensaje: '' },
       email: { error: false, mensaje: '' },
+      telefonoEncargado: { error: false, mensaje: '' },
+      leadTime: { error: false, mensaje: '' },
+      dniEncargado: { error: false, mensaje: '' },
+      nombreEncargado: { error: false, mensaje: '' },
       estado: this.state.updateForm.estado,
       tipoComercio: this.state.updateForm.tipoComercio
     }
