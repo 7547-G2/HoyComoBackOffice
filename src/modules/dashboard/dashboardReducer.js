@@ -127,42 +127,48 @@ const fetchComercios = (comercios) => {
 }
 
 const fetchPedidos = (pedidosDelMes) => {
-  let returnValue = { ventasHoy: 0, ventasMes: 0, pedidosEntregadosHoy: 0, pedidosEntregadosMes: 0
-    , pedidosCanceladosHoy: 0, pedidosCanceladosMes: 0 }
-  let pedidos = {entregados: getLast30Days(), cancelados: getLast30Days()} 
-  let ventas = {entregados: getLast30Days(), cancelados: getLast30Days()}  
-  let diaDeHoy = moment()
-  pedidosDelMes.map(function (pedido) {
-    let fechaPedido = moment(pedido.fecha, 'YYYY/MM/DD')
-    let diasDiferencia = diaDeHoy.diff(fechaPedido, 'days')
-    if((29 - diasDiferencia) >= 0){
-      if(pedido.estado === 'Cancelado'){
-        pedidos.cancelados[29 - diasDiferencia].y += 1
-        ventas.cancelados[29 - diasDiferencia].y += pedido.monto
-        if(diasDiferencia == 0){
-          returnValue.pedidosCanceladosHoy += 1
-          returnValue.pedidosCanceladosMes += 1
-        } else {
-          returnValue.pedidosCanceladosMes += 1
-        }
-      } else if(pedido.estado === 'Entregado'){
-        ventas.entregados[29 - diasDiferencia].y += pedido.monto    
-        pedidos.entregados[29 - diasDiferencia].y += 1
-        if(diasDiferencia == 0){
-          returnValue.ventasHoy += pedido.monto
-          returnValue.ventasMes += pedido.monto
-          returnValue.pedidosEntregadosHoy += 1
-          returnValue.pedidosEntregadosMes += 1
-        } else {
-          returnValue.ventasMes += pedido.monto
-          returnValue.pedidosEntregadosMes += 1
+  if(pedidosDelMes){
+    let returnValue = { ventasHoy: 0, ventasMes: 0, pedidosEntregadosHoy: 0, pedidosEntregadosMes: 0
+      , pedidosCanceladosHoy: 0, pedidosCanceladosMes: 0 }
+    let pedidos = {entregados: getLast30Days(), cancelados: getLast30Days()} 
+    let ventas = {entregados: getLast30Days(), cancelados: getLast30Days()}  
+    let diaDeHoy = moment()
+    pedidosDelMes.map(function (pedido) {
+      let fechaPedido = moment(pedido.fecha, 'YYYY/MM/DD')
+      let diasDiferencia = diaDeHoy.diff(fechaPedido, 'days')
+      if((29 - diasDiferencia) >= 0){
+        if(pedido.estado === 'Cancelado'){
+          pedidos.cancelados[29 - diasDiferencia].y += 1
+          ventas.cancelados[29 - diasDiferencia].y += pedido.monto
+          if(diasDiferencia == 0){
+            returnValue.pedidosCanceladosHoy += 1
+            returnValue.pedidosCanceladosMes += 1
+          } else {
+            returnValue.pedidosCanceladosMes += 1
+          }
+        } else if(pedido.estado === 'Entregado'){
+          ventas.entregados[29 - diasDiferencia].y += pedido.monto    
+          pedidos.entregados[29 - diasDiferencia].y += 1
+          if(diasDiferencia == 0){
+            returnValue.ventasHoy += pedido.monto
+            returnValue.ventasMes += pedido.monto
+            returnValue.pedidosEntregadosHoy += 1
+            returnValue.pedidosEntregadosMes += 1
+          } else {
+            returnValue.ventasMes += pedido.monto
+            returnValue.pedidosEntregadosMes += 1
+          }
         }
       }
-    }
-  })
-  returnValue.pedidos = pedidos
-  returnValue.ventas = ventas
-  return returnValue
+    })
+    returnValue.pedidos = pedidos
+    returnValue.ventas = ventas
+    console.log(returnValue)
+    return returnValue
+  } else {
+    return null
+  }
+
 }
 
 export default (state = initialState, action) => {

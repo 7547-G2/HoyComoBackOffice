@@ -103,10 +103,10 @@ export class DashboardIndex extends React.Component {
               </Panel.Heading>
               <Panel.Body style={{ backgroundColor: '#ABB0D5', borderColor: '#3a46b0' }}>
                 <Col lg={6} style={{ textAlign: 'center', color: 'white', fontSize: 30, padding: '0px', margin: '0px', lineHeight: '0.7' }}>
-                  <b>{this.props.pedidos && this.props.pedidos.ventasMes.toFixed(2)}</b>
+                  <b>{this.props.pedidos && ('$' + this.props.pedidos.ventasMes.toFixed(2))}</b>
                 </Col>
                 <Col lg={6} style={{ textAlign: 'center', color: 'white', fontSize: 30, padding: '0px', margin: '0px', lineHeight: '0.7' }}>
-                  <b>{this.props.pedidos && this.props.pedidos.ventasHoy.toFixed(2)}</b>
+                  <b>{this.props.pedidos && ('$' + this.props.pedidos.ventasHoy.toFixed(2))}</b>
                 </Col>
               </Panel.Body>
               <Panel.Footer style={{ backgroundColor: '#3a46b0', borderColor: '#3a46b0', color: 'white', fontSize: 15 }}>
@@ -181,10 +181,10 @@ export class DashboardIndex extends React.Component {
               </Panel.Heading>
               <Panel.Body style={{ backgroundColor: '#ABB0D5', borderColor: '#3a46b0' }}>
                 <Col lg={6} style={{ textAlign: 'center', color: 'white', fontSize: 30, padding: '0px', margin: '0px', lineHeight: '0.7' }}>
-                  <b>{this.props.pedidos && (this.props.pedidos.ventasMes * 0.01).toFixed(2)}</b>
+                  <b>{this.props.pedidos && ('$' + (this.props.pedidos.ventasMes * 0.01).toFixed(2))}</b>
                 </Col>
                 <Col lg={6} style={{ textAlign: 'center', color: 'white', fontSize: 30, padding: '0px', margin: '0px', lineHeight: '0.7' }}>
-                  <b>{this.props.pedidos && (this.props.pedidos.ventasHoy * 0.01).toFixed(2)}</b>
+                  <b>{this.props.pedidos && ('$' + (this.props.pedidos.ventasHoy * 0.01).toFixed(2))}</b>
                 </Col>
               </Panel.Body>
               <Panel.Footer style={{ backgroundColor: '#3a46b0', borderColor: '#3a46b0', color: 'white', fontSize: 15 }}>
@@ -208,7 +208,7 @@ export class DashboardIndex extends React.Component {
               </Panel.Heading> */}
               <Panel.Body>
                 <Col lg={12}>
-                  {this.props.pedidos.pedidos && <CustomGraphic YAxis={'Pedidos'} desc1={'entregados'}  desc2={'cancelados'} pedidos={this.props.pedidos.pedidos}/>}
+                  {this.props.pedidos && this.props.pedidos.pedidos && <CustomGraphic YAxis={'Pedidos'} desc1={'entregados'}  desc2={'cancelados'} pedidos={this.props.pedidos.pedidos}/>}
                 </Col>
               </Panel.Body>
               <Panel.Footer style={{ backgroundColor: '#3a46b0', borderColor: '#3a46b0', color: 'white', fontSize: 15 }}>
@@ -232,7 +232,7 @@ export class DashboardIndex extends React.Component {
               </Panel.Heading> */}
               <Panel.Body>
                 <Col lg={12}>
-                  {this.props.pedidos.ventas && <CustomGraphic YAxis={'Pesos'} desc1={'pesos facturados'}  desc2={'pesos perdidos'} pedidos={this.props.pedidos.ventas}/>}
+                  {this.props.pedidos && this.props.pedidos.ventas && <CustomGraphic YAxis={'Pesos'} desc1={'pesos facturados'}  desc2={'pesos perdidos'} pedidos={this.props.pedidos.ventas}/>}
                 </Col>
               </Panel.Body>
               <Panel.Footer style={{ backgroundColor: '#3a46b0', borderColor: '#3a46b0', color: 'white', fontSize: 15 }}>
