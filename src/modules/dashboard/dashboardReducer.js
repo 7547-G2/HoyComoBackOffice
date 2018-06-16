@@ -146,8 +146,8 @@ const fetchPedidos = (pedidosDelMes) => {
           } else {
             returnValue.pedidosCanceladosMes += 1
           }
-        } else if(pedido.estado === 'Entregado'){
-          ventas.entregados[29 - diasDiferencia].y += pedido.monto    
+        } else if(pedido.estado != 'Cancelado' && pedido.estado != 'EnPreparacion' && pedido.estado != 'Ingresado' && pedido.estado != 'Despachado')  {
+          ventas.entregados[29 - diasDiferencia].y += pedido.monto
           pedidos.entregados[29 - diasDiferencia].y += 1
           if(diasDiferencia == 0){
             returnValue.ventasHoy += pedido.monto
