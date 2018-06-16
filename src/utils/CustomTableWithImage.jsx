@@ -1,7 +1,7 @@
 import React from 'react'
-import {  Table, Glyphicon } from 'react-bootstrap'
+import {  Table, Glyphicon, Image } from 'react-bootstrap'
 
-export class CustomTable extends React.Component {
+export class CustomTableWithImage extends React.Component {
 
   getHeaders() {
     let headers = this.props.headers, i, returnHeaders = [], editAction = this.props.editAction, deleteAction = this.props.deleteAction
@@ -26,10 +26,18 @@ export class CustomTable extends React.Component {
       var returnValue = []
 
       for (i in rowObject) {
-        if (i != 'id')
+        if (i != 'id' && i != 'imagen')
           returnValue.push(
             <td key={i}>
               {rowObject[i]}
+            </td>)
+        if (i == 'imagen')
+          returnValue.push(
+            <td key={i}>
+              <Image id={'imageTable'+i} key={'imageTable'+i} 
+                src={rowObject[i]} 
+                style={{ width: 50, height: 50 }}
+                rounded responsive />
             </td>)
       }
 

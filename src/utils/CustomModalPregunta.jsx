@@ -1,8 +1,8 @@
 import React from 'react'
-import { Modal, Button } from 'react-bootstrap'
+import { Modal } from 'react-bootstrap'
 
 
-export class CustomModal extends React.Component {
+export class CustomModalPregunta extends React.Component {
 
   constructor(props) {
     super()
@@ -21,7 +21,7 @@ export class CustomModal extends React.Component {
 
   render() {
     return (
-      <Modal  bsSize='lg'
+      <Modal
         {...this.props}
         show={this.state.show}
         onHide={this.hideModal}
@@ -34,9 +34,10 @@ export class CustomModal extends React.Component {
           {this.props.body}
         </Modal.Body>
         <Modal.Footer>
-          <Button bsSize={'small'} onClick={this.hideModal}>Cerrar</Button>&nbsp;{this.props.buttons}
+          {this.props.buttons}
         </Modal.Footer>
       </Modal>
     )
   }
 }
+ 

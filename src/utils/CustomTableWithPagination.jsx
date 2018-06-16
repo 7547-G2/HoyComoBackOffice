@@ -1,11 +1,23 @@
 import React from 'react'
-import {  Table, Glyphicon } from 'react-bootstrap'
+import { Table, Glyphicon } from 'react-bootstrap'
+import Pagination from 'react-js-pagination'
 
-export class CustomTable extends React.Component {
+export class CustomTableWithPagination extends React.Component {
+
+  constructor() {
+    super()
+    this.state = {
+      activePage: 1,
+    }
+    this.handlePageChange = this.handlePageChange.bind(this)
+  }
+
+  handlePageChange(pageNumber) {
+    this.setState({activePage: pageNumber})
+  }
 
   getHeaders() {
     let headers = this.props.headers, i, returnHeaders = [], editAction = this.props.editAction, deleteAction = this.props.deleteAction
-
     for (i in headers) {
       returnHeaders.push(
         <th key={i}>
@@ -21,6 +33,9 @@ export class CustomTable extends React.Component {
 
   getTableRows() {
     let data = this.props.data, editAction = this.props.editAction, deleteAction = this.props.deleteAction
+    const perPage = this.props.perPage || 5
+    const activePage = this.state.activePage
+    data = data.slice((activePage-1)*perPage,(activePage-1)*perPage + perPage)
     var tableRow = data.map(function (rowObject) {
       let i
       var returnValue = []
@@ -64,18 +79,40 @@ export class CustomTable extends React.Component {
     return tableRow
   }
 
+  getPagination() {
+    const PER_PAGE = this.props.perPage || 5
+    const TOTAL_COUNT = this.props.data.length
+    if(TOTAL_COUNT <= PER_PAGE){
+      return(null)
+    } else {
+      return (<Pagination
+        firstPageText={<i className='glyphicon glyphicon-chevron-left'/>}
+        lastPageText={<i className='glyphicon glyphicon-chevron-right'/>}
+        prevPageText={<i className='glyphicon glyphicon-menu-left'/>}
+        nextPageText={<i className='glyphicon glyphicon-menu-right'/>}
+        activePage={this.state.activePage}
+        itemsCountPerPage={PER_PAGE}
+        totalItemsCount={TOTAL_COUNT}
+        onChange={this.handlePageChange}
+      />)
+    }
+  }
+
   render() {
     return (
-      <Table hover striped>
-        <thead>
-          <tr>
-            {this.getHeaders()}
-          </tr>
-        </thead>
-        <tbody>
-          {this.getTableRows()}
-        </tbody>
-      </Table>
+      <div>
+        <Table hover striped>
+          <thead>
+            <tr>
+              {this.getHeaders()}
+            </tr>
+          </thead>
+          <tbody>
+            {this.getTableRows()}
+          </tbody>
+        </Table>
+        {this.getPagination()}
+      </div>
     )
   }
 }
