@@ -2,6 +2,10 @@
 
 Ejecución local:
 
+0) Copiar el contenido de configuracion del dist a api.js (En caso de no existir el archivo, crearlo)
+```
+cp src/config/api.dist.js src/config/api.js 
+```
 1) Instalar en forma global webpack-dev-server
 ```
 npm install -g webpack webpack-dev-server
