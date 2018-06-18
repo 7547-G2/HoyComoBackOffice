@@ -395,7 +395,7 @@ export class EditarComercioForm extends React.Component {
           <Col md={(this.props.activeComercio.estado == 'pendiente activación') ? 10 : 9}>
             <h5 className="pull-right"><i> {this.props.activeComercio.mensajeEncabezado}  </i></h5>
           </Col>
-          {(this.props.activeComercio.estado == 'pendiente menú' || this.props.activeComercio.estado == 'deshabilitado' )&& <Col md={1}>
+          {(this.props.activeComercio.estado == 'pendiente menu' || this.props.activeComercio.estado == 'pendiente menú' || this.props.activeComercio.estado == 'deshabilitado' )&& <Col md={1}>
             <Button bsStyle="success"
               className="pull-right" bsSize="sm"
               onClick={this.habilitar}>Habilitar</Button>
