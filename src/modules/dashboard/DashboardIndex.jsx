@@ -94,10 +94,10 @@ export class DashboardIndex extends React.Component {
               <Panel.Heading style={{ textAlign: 'center', backgroundColor: '#3f51b5', borderColor: '#3a46b0', color: 'white', height: 35 }}>
                 <Panel.Title>
                   <Col lg={6} style={{ textAlign: 'center', color: 'white' }}>
-                    Mes
+                    Últimos 30 dias
                   </Col>
                   <Col lg={6} style={{ textAlign: 'center', color: 'white' }}>
-                    Día
+                    Día Actual
                   </Col>
                 </Panel.Title>
               </Panel.Heading>
@@ -122,10 +122,10 @@ export class DashboardIndex extends React.Component {
               <Panel.Heading style={{ textAlign: 'center', backgroundColor: '#3f51b5', borderColor: '#3a46b0', color: 'white', height: 35 }}>
                 <Panel.Title>
                   <Col lg={6} style={{ textAlign: 'center', color: 'white' }}>
-                    Mes
+                    Últimos 30 dias
                   </Col>
                   <Col lg={6} style={{ textAlign: 'center', color: 'white' }}>
-                    Día
+                    Día Actual
                   </Col>
                 </Panel.Title>
               </Panel.Heading>
@@ -147,10 +147,10 @@ export class DashboardIndex extends React.Component {
               <Panel.Heading style={{ textAlign: 'center', backgroundColor: '#3f51b5', borderColor: '#3a46b0', color: 'white', height: 35 }}>
                 <Panel.Title>
                   <Col lg={6} style={{ textAlign: 'center', color: 'white' }}>
-                    Mes
+                    Últimos 30 dias
                   </Col>
                   <Col lg={6} style={{ textAlign: 'center', color: 'white' }}>
-                    Día
+                    Día Actual
                   </Col>
                 </Panel.Title>
               </Panel.Heading>
@@ -172,10 +172,10 @@ export class DashboardIndex extends React.Component {
               <Panel.Heading style={{ textAlign: 'center', backgroundColor: '#3f51b5', borderColor: '#3a46b0', color: 'white', height: 35 }}>
                 <Panel.Title>
                   <Col lg={6} style={{ textAlign: 'center', color: 'white' }}>
-                    Mes
+                    Últimos 30 dias
                   </Col>
                   <Col lg={6} style={{ textAlign: 'center', color: 'white' }}>
-                    Día
+                    Día actual
                   </Col>
                 </Panel.Title>
               </Panel.Heading>
